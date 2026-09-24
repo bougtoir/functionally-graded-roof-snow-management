@@ -28,6 +28,9 @@ make test
 make all
 ```
 
+The Makefile exposes the repository's `src/` tree through `PYTHONPATH`, so an
+editable package install is not required for these targets.
+
 `make all` regenerates processed data, analyses, figures, tables, the manuscript,
 audits, and the CRST submission package. It fails if a critical validation gate
 fails.

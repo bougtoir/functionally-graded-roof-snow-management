@@ -1,4 +1,5 @@
 PYTHON ?= python
+export PYTHONPATH := $(CURDIR)/src$(if $(PYTHONPATH),:$(PYTHONPATH))
 
 .PHONY: test lint data baseline optimize jma sensitivity robustness figures tables manuscript validate all clean
 
