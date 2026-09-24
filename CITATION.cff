@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated article and this repository."
+title: "Functionally graded roofs for passive snow management"
+type: software
+authors:
+  - family-names: Onishi
+    given-names: Tatsuki
+version: 0.1.0
+date-released: 2026-09-24
+repository-code: "https://github.com/bougtoir/functionally-graded-roof-snow-management"
+license: MIT

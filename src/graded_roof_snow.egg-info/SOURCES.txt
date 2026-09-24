@@ -1,0 +1,16 @@
+LICENSE
+README.md
+pyproject.toml
+src/graded_roof/__init__.py
+src/graded_roof/config.py
+src/graded_roof/metrics.py
+src/graded_roof/models.py
+src/graded_roof/simulation.py
+src/graded_roof/weather.py
+src/graded_roof_snow.egg-info/PKG-INFO
+src/graded_roof_snow.egg-info/SOURCES.txt
+src/graded_roof_snow.egg-info/dependency_links.txt
+src/graded_roof_snow.egg-info/requires.txt
+src/graded_roof_snow.egg-info/top_level.txt
+tests/test_metrics.py
+tests/test_simulation.py
