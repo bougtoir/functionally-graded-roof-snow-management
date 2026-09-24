@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from pymoo.algorithms.moo.nsga2 import NSGA2
 
 from graded_roof.config import load_config
 from graded_roof.models import SimulationConfig, WeatherSeries
-from graded_roof.optimization import variable_bounds
+from graded_roof.optimization import (
+    _load_checkpoint,
+    _save_checkpoint,
+    variable_bounds,
+)
 from graded_roof.reporting import design_from_row
 from graded_roof.study import evaluate_design, interpolate_profile, uniform_design
 
@@ -65,6 +70,21 @@ def test_joint_variable_bounds_cover_all_profile_properties() -> None:
     assert upper.shape == (12,)
     np.testing.assert_allclose(lower[:4], 2.0)
     np.testing.assert_allclose(upper[-4:], 250.0)
+
+
+def test_optimization_checkpoint_restores_random_state(tmp_path) -> None:
+    checkpoint_path = tmp_path / "optimization.pkl"
+    algorithm = NSGA2(pop_size=4)
+    np.random.seed(1701)
+    np.random.random()
+    _save_checkpoint(checkpoint_path, algorithm)
+    expected = np.random.random()
+    np.random.seed(2903)
+
+    loaded = _load_checkpoint(checkpoint_path)
+
+    assert isinstance(loaded, NSGA2)
+    assert np.random.random() == expected
 
 
 def test_front_variables_are_reconstructed_in_numeric_order() -> None:

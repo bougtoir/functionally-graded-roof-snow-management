@@ -2,17 +2,25 @@ from __future__ import annotations
 
 import csv
 import pickle
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.core.algorithm import Algorithm
 from pymoo.core.problem import ElementwiseProblem
 from pymoo.termination import get_termination
 
 from graded_roof.metrics import nondominated_mask
 from graded_roof.models import SimulationConfig, WeatherSeries
 from graded_roof.study import evaluate_design, heterogeneous_design
+
+
+@dataclass
+class OptimizationCheckpoint:
+    algorithm: Algorithm
+    numpy_random_state: tuple[str, np.ndarray, int, int, float]
 
 
 def variable_bounds(config: dict, mode: str) -> tuple[np.ndarray, np.ndarray]:
@@ -166,6 +174,29 @@ def _front_from_history(history_path: Path, output_path: Path) -> pd.DataFrame:
     return front
 
 
+def _load_checkpoint(path: Path) -> Algorithm:
+    with path.open("rb") as handle:
+        checkpoint = pickle.load(handle)
+    if isinstance(checkpoint, OptimizationCheckpoint):
+        np.random.set_state(checkpoint.numpy_random_state)
+        return checkpoint.algorithm
+    if isinstance(checkpoint, Algorithm):
+        return checkpoint
+    raise TypeError(f"unsupported optimization checkpoint: {type(checkpoint)}")
+
+
+def _save_checkpoint(path: Path, algorithm: Algorithm) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = path.with_suffix(f"{path.suffix}.tmp")
+    checkpoint = OptimizationCheckpoint(
+        algorithm=algorithm,
+        numpy_random_state=np.random.get_state(),
+    )
+    with temporary_path.open("wb") as handle:
+        pickle.dump(checkpoint, handle)
+    temporary_path.replace(path)
+
+
 def run_optimization(
     config: dict,
     weathers: list[WeatherSeries],
@@ -184,8 +215,7 @@ def run_optimization(
     problem = GradedRoofProblem(config, weathers, simulation_settings, mode)
 
     if checkpoint_path.exists():
-        with checkpoint_path.open("rb") as handle:
-            algorithm = pickle.load(handle)
+        algorithm = _load_checkpoint(checkpoint_path)
     else:
         history_path.unlink(missing_ok=True)
         front_path.unlink(missing_ok=True)
@@ -209,9 +239,7 @@ def run_optimization(
             objectives,
             constraints,
         )
-        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-        with checkpoint_path.open("wb") as handle:
-            pickle.dump(algorithm, handle)
+        _save_checkpoint(checkpoint_path, algorithm)
 
     _front_from_history(history_path, front_path)
     return front_path
