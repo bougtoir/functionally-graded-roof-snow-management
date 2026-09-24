@@ -21,6 +21,10 @@ snow:
   rain_heat_factor_kg_m2_mm: 0.02
   gravity_m_s2: 9.80665
   dynamic_friction_age_scale_days: 5.0
+  friction_age_gain: 0.18
+  near_melt_friction_loss: 0.22
+  near_melt_center_c: -0.5
+  near_melt_width_c: 1.8
   intervention_mass_kg_per_m: 800.0
 
 surface:
@@ -91,7 +95,7 @@ robustness:
   coefficient_of_variation:
     friction: 0.15
     adhesion: 0.25
-    density: 0.15
+    fresh_snow_density: 0.15
     snowfall: 0.20
     temperature_sd_c: 1.5
 
@@ -101,7 +105,7 @@ sensitivity:
     - static_friction
     - kinetic_friction
     - adhesion
-    - density
+    - fresh_snow_density
     - aging_rate
     - temperature
     - snowfall

@@ -13,7 +13,9 @@ will be reported without changing the model to rescue the hypothesis.
 
 ## Locked primary outcomes
 
-- `L_max`: maximum modeled roof snow mass per metre roof width over time.
+- `L_max`: maximum modeled roof snow mass per metre roof width over time,
+  sampled after interval snowfall is added but before interval melt and
+  shedding. End-of-interval retained mass remains a separate time series.
 - `S_max`: maximum mass leaving the eave in one simulation timestep per metre
   roof width.
 - Primary comparison: nondominated optimized uniform and heterogeneous design
@@ -41,7 +43,9 @@ The roof is a ridge-to-eave plane divided into `N` cells. Each cell has slope,
 static friction, kinetic friction, and adhesion. Snowfall adds mass; a
 force-balance threshold initiates motion; kinetic friction controls transport;
 temperature and age modify snow state through prespecified functions. Melt and
-rain-on-snow are included only as configured scenario processes.
+rain-on-snow are included only as configured scenario processes. Snow density
+controls the diagnostic snow-depth state and converts JMA snowfall-depth
+observations to mass; at fixed mass it is not asserted to alter basal sliding.
 
 Synthetic scenarios span snowfall intensity and duration, temperature, warming,
 repeated snowfall, and rain-on-snow. Official JMA observations from contrasting
@@ -64,7 +68,8 @@ coarsest production resolution meeting frozen relative-change tolerances for
 ## Sensitivity, robustness, and ablation
 
 Prespecified sensitivity dimensions are static/kinetic friction, adhesion,
-density, aging rate, temperature, snowfall intensity, roof length, `N`, `dt`,
+fresh-snow density for depth-to-mass conversion and modeled depth, aging rate,
+temperature, snowfall intensity, roof length, `N`, `dt`,
 slope bounds, adjacent-slope bounds, transition penalty, rain-on-snow, and
 constant versus dynamic friction. Monte Carlo perturbations estimate
 distributions for selected uniform and heterogeneous Pareto designs. Analyses

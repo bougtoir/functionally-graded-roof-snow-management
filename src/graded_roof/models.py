@@ -96,6 +96,10 @@ class SimulationConfig:
     maximum_density_kg_m3: float = 420.0
     compaction_rate_per_day: float = 0.035
     dynamic_friction_age_scale_days: float = 5.0
+    friction_age_gain: float = 0.18
+    near_melt_friction_loss: float = 0.22
+    near_melt_center_c: float = -0.5
+    near_melt_width_c: float = 1.8
     friction_model: str = "dynamic"
     transport_fraction_limit: float = 1.0
     event_threshold_kg_per_m: float = 0.1
@@ -104,6 +108,14 @@ class SimulationConfig:
     def __post_init__(self) -> None:
         if self.friction_model not in {"constant", "dynamic"}:
             raise ValueError("friction_model must be constant or dynamic")
+        if self.dynamic_friction_age_scale_days <= 0:
+            raise ValueError("dynamic_friction_age_scale_days must be positive")
+        if self.friction_age_gain < 0:
+            raise ValueError("friction_age_gain cannot be negative")
+        if not 0 <= self.near_melt_friction_loss < 1:
+            raise ValueError("near_melt_friction_loss must be in [0, 1)")
+        if self.near_melt_width_c <= 0:
+            raise ValueError("near_melt_width_c must be positive")
         if not 0 < self.transport_fraction_limit <= 1:
             raise ValueError("transport_fraction_limit must be in (0, 1]")
 
@@ -111,6 +123,8 @@ class SimulationConfig:
 @dataclass(frozen=True)
 class SimulationResult:
     roof_mass_kg_per_m: FloatArray
+    pre_release_roof_mass_kg_per_m: FloatArray
+    pre_release_max_depth_m: FloatArray
     shed_mass_kg_per_m: FloatArray
     melt_mass_kg_per_m: FloatArray
     density_kg_m3: FloatArray
@@ -126,3 +140,4 @@ class SimulationResult:
     manual_triggers: int
     residual_mass_kg_per_m: float
     mass_balance_error_kg_per_m: float
+    maximum_snow_depth_m: float

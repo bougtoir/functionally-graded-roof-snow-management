@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from graded_roof.metrics import ssci
 from graded_roof.models import RoofDesign, SimulationConfig, WeatherSeries
@@ -60,6 +61,69 @@ def test_deterministic_reproducibility() -> None:
     second = simulate(design, forcing, SimulationConfig())
     np.testing.assert_array_equal(first.roof_mass_kg_per_m, second.roof_mass_kg_per_m)
     np.testing.assert_array_equal(first.shed_mass_kg_per_m, second.shed_mass_kg_per_m)
+
+
+def test_complete_melt_removes_snow_age_state() -> None:
+    design = RoofDesign.uniform(4, 4.0, 30.0, 0.55, 0.4, 0.0)
+    config = SimulationConfig(melt_factor_kg_m2_c_h=10.0)
+    temperature = np.r_[np.full(120, -10.0), 10.0, -10.0]
+    snowfall = np.zeros(temperature.size)
+    snowfall[0] = 5.0
+    snowfall[-1] = 5.0
+    cycled = simulate(
+        design,
+        WeatherSeries(
+            temperature_c=temperature,
+            snowfall_kg_m2=snowfall,
+            rain_mm=np.zeros_like(temperature),
+            dt_hours=1.0,
+        ),
+        config,
+    )
+    fresh = simulate(
+        design,
+        WeatherSeries(
+            temperature_c=np.array([-10.0]),
+            snowfall_kg_m2=np.array([5.0]),
+            rain_mm=np.zeros(1),
+            dt_hours=1.0,
+        ),
+        config,
+    )
+    assert cycled.shed_mass_kg_per_m[-1] == pytest.approx(
+        fresh.shed_mass_kg_per_m[-1]
+    )
+
+
+def test_l_max_includes_snow_that_sheds_within_the_interval() -> None:
+    design = RoofDesign.uniform(4, 4.0, 35.0, 0.0, 0.0, 0.0)
+    result = simulate(
+        design,
+        weather(np.array([100.0])),
+        SimulationConfig(friction_model="constant"),
+    )
+    assert result.l_max_kg_per_m == pytest.approx(result.input_snow_kg_per_m)
+    assert result.roof_mass_kg_per_m[-1] == 0.0
+    assert result.s_max_kg_per_m > 0.0
+
+
+def test_density_changes_depth_but_not_mass_at_fixed_mass_forcing() -> None:
+    design = RoofDesign.uniform(4, 4.0, 0.0, 0.5, 0.4, 0.0)
+    forcing = weather(np.array([12.0]))
+    light = simulate(
+        design,
+        forcing,
+        SimulationConfig(initial_density_kg_m3=100.0),
+    )
+    dense = simulate(
+        design,
+        forcing,
+        SimulationConfig(initial_density_kg_m3=300.0),
+    )
+    assert light.l_max_kg_per_m == pytest.approx(dense.l_max_kg_per_m)
+    assert light.maximum_snow_depth_m == pytest.approx(
+        3.0 * dense.maximum_snow_depth_m
+    )
 
 
 def test_sanity_monotonic_tendencies() -> None:

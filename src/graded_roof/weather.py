@@ -5,6 +5,18 @@ import numpy as np
 from graded_roof.models import WeatherSeries
 
 
+def snowfall_depth_to_mass(
+    snowfall_depth_cm: np.ndarray,
+    fresh_snow_density_kg_m3: float,
+) -> np.ndarray:
+    if fresh_snow_density_kg_m3 <= 0:
+        raise ValueError("fresh_snow_density_kg_m3 must be positive")
+    depth = np.asarray(snowfall_depth_cm, dtype=float)
+    if np.any(depth < 0):
+        raise ValueError("snowfall depth cannot be negative")
+    return depth / 100.0 * fresh_snow_density_kg_m3
+
+
 def synthetic_weather(
     *,
     name: str,
@@ -16,8 +28,16 @@ def synthetic_weather(
     repeated_events: int,
     rain_on_snow_mm: float,
     dt_hours: float = 1.0,
+    rain_duration_h: float = 12.0,
 ) -> WeatherSeries:
-    steps = int(round(duration_h / dt_hours))
+    if dt_hours <= 0:
+        raise ValueError("dt_hours must be positive")
+    if repeated_events <= 0:
+        raise ValueError("repeated_events must be positive")
+    step_count = duration_h / dt_hours
+    if not np.isclose(step_count, round(step_count)):
+        raise ValueError("duration_h must be divisible by dt_hours")
+    steps = int(round(step_count))
     time_h = np.arange(steps, dtype=float) * dt_hours
     temperature = (
         base_temperature_c
@@ -34,9 +54,9 @@ def synthetic_weather(
     if rain_on_snow_mm > 0:
         warm_steps = np.flatnonzero(temperature > -0.5)
         if warm_steps.size:
-            rain[warm_steps[-min(12, warm_steps.size) :]] = rain_on_snow_mm / min(
-                12, warm_steps.size
-            )
+            window_start_h = (warm_steps[-1] + 1) * dt_hours - rain_duration_h
+            rain_steps = warm_steps[warm_steps * dt_hours >= window_start_h]
+            rain[rain_steps] = rain_on_snow_mm / rain_steps.size
     return WeatherSeries(
         temperature_c=temperature,
         snowfall_kg_m2=snowfall,
@@ -47,10 +67,15 @@ def synthetic_weather(
 
 
 def resample_weather(weather: WeatherSeries, dt_hours: float) -> WeatherSeries:
+    if dt_hours <= 0:
+        raise ValueError("dt_hours must be positive")
     if np.isclose(dt_hours, weather.dt_hours):
         return weather
     total_h = len(weather.temperature_c) * weather.dt_hours
-    new_steps = int(round(total_h / dt_hours))
+    step_count = total_h / dt_hours
+    if not np.isclose(step_count, round(step_count)):
+        raise ValueError("new time step must divide the source duration exactly")
+    new_steps = int(round(step_count))
     source_t = np.arange(len(weather.temperature_c)) * weather.dt_hours
     target_t = np.arange(new_steps) * dt_hours
     temperature = np.interp(target_t, source_t, weather.temperature_c)
