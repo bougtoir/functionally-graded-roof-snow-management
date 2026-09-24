@@ -16,6 +16,9 @@ from graded_roof.config import load_config
 from graded_roof.jma import daily_weather, parse_daily_html
 from graded_roof.manuscript import (
     build_cover_letter,
+    build_editable_figures,
+    build_editable_tables,
+    build_inline_manuscript,
     build_manuscript,
     build_supplement,
     build_text_files,
@@ -761,6 +764,9 @@ def stage_manuscript(config: dict) -> None:
     artifacts = [
         *generate_initial_audits(ROOT),
         build_manuscript(ROOT),
+        build_inline_manuscript(ROOT),
+        build_editable_tables(ROOT),
+        build_editable_figures(ROOT),
         build_supplement(ROOT),
         build_cover_letter(ROOT),
         *build_text_files(ROOT),

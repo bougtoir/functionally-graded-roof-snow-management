@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import zipfile
+from copy import deepcopy
 from pathlib import Path
 
 import pandas as pd
@@ -13,11 +14,40 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
+from PIL import Image
+from pptx import Presentation
+from pptx.enum.text import PP_ALIGN
+from pptx.util import Inches as PptxInches
+from pptx.util import Pt as PptxPt
 
 TITLE = (
     "Functionally graded roofs for passive snow management: "
     "a reduced-order multiobjective modeling study"
 )
+
+FIGURE_CAPTIONS = [
+    "Figure 1. Reduced-order model and comparative optimization workflow.",
+    "Figure 2. Synthetic snowfall scenarios and JMA ground-snow contexts.",
+    "Figure 3. Primary modeled retained-mass and release-mass Pareto comparison.",
+    "Figure 4. Selected graded joint profile and generic mapped surface classes.",
+    "Figure 5. Geometry-only, surface-only, and joint heterogeneous Pareto fronts.",
+    "Figure 6. Numerical convergence relative to the finest tested resolution.",
+    "Figure 7. Prespecified one-at-a-time sensitivity of primary outcomes.",
+    "Figure 8. Monte Carlo perturbation distributions for frontier candidates.",
+    "Figure 9. Labor-scarcity selections and frozen strategy classifications.",
+]
+
+FIGURE_FILENAMES = [
+    "figure_1_conceptual_model.png",
+    "figure_2_weather_scenarios.png",
+    "figure_3_primary_pareto_comparison.png",
+    "figure_4_selected_graded_profile.png",
+    "figure_5_ablation_pareto_fronts.png",
+    "figure_6_numerical_convergence.png",
+    "figure_7_sensitivity.png",
+    "figure_8_monte_carlo_robustness.png",
+    "figure_9_decision_phase_diagram.png",
+]
 
 
 def _format_number(value: float) -> str:
@@ -80,17 +110,23 @@ def _enforce_ascii(document: Document) -> None:
     }
     for paragraph in document.paragraphs:
         for run in paragraph.runs:
+            text = run.text
             for original, replacement in replacements.items():
-                run.text = run.text.replace(original, replacement)
-            run.text.encode("ascii")
+                text = text.replace(original, replacement)
+            text.encode("ascii")
+            if text != run.text:
+                run.text = text
     for table in document.tables:
         for row in table.rows:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     for run in paragraph.runs:
+                        text = run.text
                         for original, replacement in replacements.items():
-                            run.text = run.text.replace(original, replacement)
-                        run.text.encode("ascii")
+                            text = text.replace(original, replacement)
+                        text.encode("ascii")
+                        if text != run.text:
+                            run.text = text
 
 
 def _add_title_page(document: Document, metadata: dict) -> None:
@@ -749,18 +785,7 @@ def build_manuscript(root: Path) -> Path:
             ],
         )
     document.add_heading("Figure captions", level=1)
-    captions = [
-        "Figure 1. Reduced-order model and comparative optimization workflow.",
-        "Figure 2. Synthetic snowfall scenarios and JMA ground-snow contexts.",
-        "Figure 3. Primary modeled retained-mass and release-mass Pareto comparison.",
-        "Figure 4. Selected graded joint profile and generic mapped surface classes.",
-        "Figure 5. Geometry-only, surface-only, and joint heterogeneous Pareto fronts.",
-        "Figure 6. Numerical convergence relative to the finest tested resolution.",
-        "Figure 7. Prespecified one-at-a-time sensitivity of primary outcomes.",
-        "Figure 8. Monte Carlo perturbation distributions for frontier candidates.",
-        "Figure 9. Labor-scarcity selections and frozen strategy classifications.",
-    ]
-    for caption in captions:
+    for caption in FIGURE_CAPTIONS:
         document.add_paragraph(caption)
 
     _enforce_ascii(document)
@@ -770,6 +795,233 @@ def build_manuscript(root: Path) -> Path:
     submission_output = root / "manuscript" / "manuscript_CRST.docx"
     document.save(submission_output)
     return submission_output
+
+
+def _find_paragraph(document: Document, text: str):
+    for paragraph in document.paragraphs:
+        if text in paragraph.text:
+            return paragraph
+    raise ValueError(f"paragraph not found: {text}")
+
+
+def _remove_paragraph(paragraph) -> None:
+    parent = paragraph._p.getparent()
+    if parent is not None:
+        parent.remove(paragraph._p)
+
+
+def _insert_after(paragraph, elements: list) -> None:
+    anchor = paragraph._p
+    for element in elements:
+        anchor.addnext(element)
+        anchor = element
+
+
+def _figure_elements(document: Document, path: Path, caption: str) -> list:
+    image_paragraph = document.add_paragraph()
+    image_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    image_paragraph.paragraph_format.space_before = Pt(12)
+    image_paragraph.add_run().add_picture(str(path), width=Inches(6.2))
+    caption_paragraph = document.add_paragraph(caption, style="Caption")
+    caption_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    caption_paragraph.paragraph_format.space_before = Pt(12)
+    caption_paragraph.paragraph_format.space_after = Pt(6)
+    return [image_paragraph._p, caption_paragraph._p]
+
+
+def build_inline_manuscript(root: Path) -> Path:
+    source = root / "manuscript" / "manuscript_CRST.docx"
+    document = Document(source)
+
+    table_4 = pd.read_csv(
+        root / "tables" / "generated" / "table_4_strategy_phase_diagram.csv"
+    )
+    _add_dataframe_table(
+        document,
+        table_4,
+        "Table 4. Strategy phase-diagram classifications "
+        "(selected columns; the complete table is supplied as CSV).",
+        [
+            "snowfall_factor",
+            "shedding_penalty_weight",
+            "labor_scarcity",
+            "allowable_shed_kg_per_m",
+            "constraint_feasible",
+            "selected_design_class",
+            "strategy",
+            "mean_manual_triggers",
+        ],
+        headers=[
+            "Snowfall factor",
+            "Shed penalty",
+            "Labor scarcity",
+            "Allowable shed",
+            "Feasible",
+            "Class",
+            "Strategy",
+            "Manual triggers",
+        ],
+    )
+
+    table_elements = {}
+    for number in range(1, 10):
+        caption = next(
+            paragraph
+            for paragraph in document.paragraphs
+            if paragraph.text.startswith(f"Table {number}.")
+        )
+        table = caption._p.getnext()
+        if table is None or table.tag != qn("w:tbl"):
+            raise ValueError(f"editable table missing after Table {number} caption")
+        caption.paragraph_format.space_before = Pt(12)
+        caption.paragraph_format.space_after = Pt(6)
+        table_elements[number] = [caption._p, table]
+
+    editable_heading = _find_paragraph(document, "Editable tables")
+    preceding = editable_heading._p.getprevious()
+    if preceding is not None:
+        page_breaks = preceding.findall(f".//{qn('w:br')}")
+        if any(item.get(qn("w:type")) == "page" for item in page_breaks):
+            preceding.getparent().remove(preceding)
+    _remove_paragraph(editable_heading)
+    _remove_paragraph(_find_paragraph(document, "Table 4 (strategy phase-diagram"))
+    _remove_paragraph(_find_paragraph(document, "Figure captions"))
+    for caption in FIGURE_CAPTIONS:
+        _remove_paragraph(_find_paragraph(document, caption))
+
+    primary_anchor = _find_paragraph(document, "Figure 1 summarizes")
+    convergence_anchor = _find_paragraph(document, "Figure 6 reports")
+    robustness_anchor = _find_paragraph(document, "Figures 8-9 and Tables 4-8")
+    jma_anchor = _find_paragraph(document, "Table 9 reports")
+
+    figure_elements = {
+        number: _figure_elements(
+            document,
+            root / "figures" / "png" / filename,
+            FIGURE_CAPTIONS[number - 1],
+        )
+        for number, filename in enumerate(FIGURE_FILENAMES, start=1)
+    }
+    _insert_after(
+        primary_anchor,
+        [
+            *figure_elements[1],
+            *figure_elements[2],
+            *figure_elements[3],
+            *figure_elements[4],
+            *figure_elements[5],
+            *table_elements[1],
+            *table_elements[2],
+            *table_elements[3],
+        ],
+    )
+    _insert_after(
+        convergence_anchor,
+        [*figure_elements[6], *figure_elements[7]],
+    )
+    _insert_after(
+        robustness_anchor,
+        [
+            *figure_elements[8],
+            *figure_elements[9],
+            *table_elements[4],
+            *table_elements[5],
+            *table_elements[6],
+            *table_elements[7],
+            *table_elements[8],
+        ],
+    )
+    _insert_after(jma_anchor, table_elements[9])
+
+    _enforce_ascii(document)
+    output = root / "manuscript" / "manuscript_CRST_inline.docx"
+    document.save(output)
+    return output
+
+
+def build_editable_tables(root: Path) -> Path:
+    source = Document(root / "manuscript" / "manuscript_CRST_inline.docx")
+    document = Document()
+    _configure_document(document)
+    document.add_heading("Editable manuscript tables", level=0)
+    document.add_paragraph(TITLE)
+    body = document._body._element
+    for number in range(1, 10):
+        caption = next(
+            paragraph
+            for paragraph in source.paragraphs
+            if paragraph.text.startswith(f"Table {number}.")
+        )
+        table = caption._p.getnext()
+        if table is None or table.tag != qn("w:tbl"):
+            raise ValueError(f"editable table missing after Table {number} caption")
+        body.insert(len(body) - 1, deepcopy(caption._p))
+        body.insert(len(body) - 1, deepcopy(table))
+    _enforce_ascii(document)
+    output = root / "manuscript" / "editable_tables_CRST.docx"
+    document.save(output)
+    return output
+
+
+def build_editable_figures(root: Path) -> Path:
+    presentation = Presentation()
+    presentation.slide_width = PptxInches(13.333)
+    presentation.slide_height = PptxInches(7.5)
+    blank_layout = presentation.slide_layouts[6]
+
+    for number, (filename, caption) in enumerate(
+        zip(FIGURE_FILENAMES, FIGURE_CAPTIONS, strict=True),
+        start=1,
+    ):
+        slide = presentation.slides.add_slide(blank_layout)
+        title = slide.shapes.add_textbox(
+            PptxInches(0.5),
+            PptxInches(0.15),
+            PptxInches(12.333),
+            PptxInches(0.5),
+        )
+        title_frame = title.text_frame
+        title_frame.clear()
+        title_paragraph = title_frame.paragraphs[0]
+        title_paragraph.text = f"Figure {number}"
+        title_paragraph.alignment = PP_ALIGN.CENTER
+        title_paragraph.runs[0].font.name = "Arial"
+        title_paragraph.runs[0].font.size = PptxPt(24)
+        title_paragraph.runs[0].font.bold = True
+
+        image_path = root / "figures" / "png" / filename
+        with Image.open(image_path) as image:
+            image_width, image_height = image.size
+        width = 12.0
+        height = width * image_height / image_width
+        if height > 5.6:
+            height = 5.6
+            width = height * image_width / image_height
+        slide.shapes.add_picture(
+            str(image_path),
+            PptxInches((13.333 - width) / 2),
+            PptxInches(0.85 + (5.6 - height) / 2),
+            width=PptxInches(width),
+            height=PptxInches(height),
+        )
+
+        caption_box = slide.shapes.add_textbox(
+            PptxInches(0.5),
+            PptxInches(6.55),
+            PptxInches(12.333),
+            PptxInches(0.65),
+        )
+        caption_frame = caption_box.text_frame
+        caption_frame.clear()
+        caption_paragraph = caption_frame.paragraphs[0]
+        caption_paragraph.text = caption
+        caption_paragraph.alignment = PP_ALIGN.CENTER
+        caption_paragraph.runs[0].font.name = "Arial"
+        caption_paragraph.runs[0].font.size = PptxPt(11)
+
+    output = root / "manuscript" / "editable_figures_CRST.pptx"
+    presentation.save(output)
+    return output
 
 
 def build_supplement(root: Path) -> Path:
