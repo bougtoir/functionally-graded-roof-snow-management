@@ -187,6 +187,8 @@ def run_optimization(
         with checkpoint_path.open("rb") as handle:
             algorithm = pickle.load(handle)
     else:
+        history_path.unlink(missing_ok=True)
+        front_path.unlink(missing_ok=True)
         algorithm = NSGA2(pop_size=population, eliminate_duplicates=True)
         algorithm.setup(
             problem,
