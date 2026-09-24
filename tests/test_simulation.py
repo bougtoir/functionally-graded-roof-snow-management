@@ -126,6 +126,23 @@ def test_density_changes_depth_but_not_mass_at_fixed_mass_forcing() -> None:
     )
 
 
+def test_uniform_roof_energy_proxy_is_cell_count_independent() -> None:
+    forcing = weather(np.array([100.0]))
+    coarse = simulate(
+        RoofDesign.uniform(4, 8.0, 35.0, 0.0, 0.0, 0.0),
+        forcing,
+        SimulationConfig(),
+    )
+    fine = simulate(
+        RoofDesign.uniform(16, 8.0, 35.0, 0.0, 0.0, 0.0),
+        forcing,
+        SimulationConfig(),
+    )
+    assert coarse.kinetic_energy_proxy_j_per_m == pytest.approx(
+        fine.kinetic_energy_proxy_j_per_m
+    )
+
+
 def test_sanity_monotonic_tendencies() -> None:
     forcing = weather(np.r_[np.full(6, 5.0), np.zeros(18)])
     low_slope = RoofDesign.uniform(8, 8.0, 8.0, 0.3, 0.22, 40.0)

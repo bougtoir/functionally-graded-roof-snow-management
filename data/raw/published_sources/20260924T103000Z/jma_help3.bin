@@ -1,0 +1,538 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+        <title>気象庁|過去の気象データ・ダウンロード</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="Author" content="気象庁 Japan Meteorological Agency" />
+        <meta name="keywords" content="気象庁 Japan Meteorological Agency" />
+        <meta name="description" content="気象庁が提供するページです" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta http-equiv="Content-Script-Type" content="text/javascript" />
+        <link rel="stylesheet" type="text/css" href="/com/css/define.css" media="all" />
+        <style type="text/css" media="all"><!-- @import url(/com/default.css); --></style>
+        <script type="text/javascript">
+            /*@cc_on _d=document;
+             eval('var document=_d');
+             @*/
+        </script>
+        <style>
+            <!--
+            .tblnarabi td{
+                padding:0;
+                white-space:nowrap;
+            }
+            -->
+        </style>
+        <link href="https://www.data.jma.go.jp/risk/obsdl/web/css/top.2.0.css" rel="stylesheet" type="text/css">    </head>
+    <body>
+        <div id="main-area">
+            <div id="header_area">
+	<div id="nheader">
+		<div id="logo"><a href="//www.jma.go.jp/jma/index.html"><img src="//www.jma.go.jp/jma/com/images/logo.gif" alt="気象庁" width="120" height="67" /></a></div>
+
+                <div id="header2_right">
+                    <div id="header2_link">
+                        <ul>
+                        <li xml:lang="en" lang="en"><a href="//www.jma.go.jp/jma/indexe.html">ENGLISH</a></li>
+                        </ul>
+                    </div>
+                    <!-- search -->　
+                    <div id="gsearch">
+                        <form id="cse-search-box" action="//google.com/cse">
+                        <input type="hidden" name="cx" value="009950868052057056798:0yrbmp7chwi" />
+                        <input type="hidden" name="ie" value="UTF-8" />
+                        <input type="text" name="q" />
+                        <input type="image" name="sa" src="/jma/com/images/btn_search6.png" alt="検索"/>
+                        </form>
+                    <script type="text/javascript" src="//www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+                    </div>
+                    <!-- search end -->
+                </div>
+                
+		<ul id="gnavi">
+			<li><a href="//www.jma.go.jp/">ホーム</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menuflash.html">防災情報</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menureport.html" class="on">各種データ・資料</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/areas.html">地域の情報</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuknowledge.html">知識・解説</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuappli.html">各種申請・ご案内</a></li>
+		</ul>
+	</div>
+</div>
+<!--header end -->            <div id="contents_area2">
+                        <div id="ncontents2">
+<!-- pankuzu menu -->
+<div class="clearfix">
+<ul class="breadcrumb2">
+<li><a href="//www.jma.go.jp/">ホーム</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="//www.jma.go.jp/jma/menu/menureport.html">各種データ・資料</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="./../index.php">過去の気象データ・ダウンロード</a>&nbsp;&gt;&nbsp;</li>
+<li>ダウンロードファイルの形式</li>
+</ul>
+</div>
+<!-- //pankuzu menu -->
+<div id="main">
+<noscript>このページはJavascriptを使用しています</noscript>
+<ul class="pagelink">
+    <li><a href="https://www.data.jma.go.jp/risk/obsdl/index.php">メニューページに戻る</a></li>
+</ul>
+<br />
+
+
+<h1>ダウンロードファイル(CSVファイル)の形式</h1>
+<div class="contents">
+<h2>CSVファイルとは</h2>
+    <div class="indent">
+        <p class="mtx">検索したデータは、CSV ファイルでダウンロードすることができます。</p>
+        <p class="mtx">CSV ファイルは、テキスト形式のひとつひとつのデータをカンマで区切り、それらを複数行にわたって収めたものです。
+            パソコンによっては、このファイルを開くと、表計算ソフトが自動的に立ち上がり、内容を表示するようになっています。また、パソコンのテキストファイルの編集ソフトでも中身を見ることができます。</p>
+    </div>
+    
+<h2>CSVファイルの全体構造について</h2>
+    <div class="indent">
+        <div class="mtx">
+            CSVファイルは
+            <ul>
+                <li>ダウンロードした時刻</li>
+                <li>データの表題行(複数行)</li>
+                <li>データ行(複数行)</li>
+            </ul>
+            という構造になっています。データ行の1行には、ひとつのデータ期間の、地点(ひとつまたは複数地点)ごと、データ項目(ひとつまたは複数地点)ごとの値が横方向に入っています。
+            データ期間が複数ある場合には、データ行も複数行になります。
+            ダウンロードされるデータには、観測された値の他に選択されたオプションの組み合わせによって、品質情報や現象なし情報、均質番号といった値が付加されます。
+            それぞれの値の意味については下記の「オプションの組み合わせとデータに付加される情報の値」の項をご覧ください。
+        </div>
+    </div>
+    <h3>CSVファイルのデータの並びの例</h3>
+    <div class="indent">
+        <p class="mtx">2地点、2項目のX日別値を選んだときのオプションごとの表示例</p>
+        <table style="background-color:#eeeeee;border-collapse:collapse;" class="tblnarabi">
+            <tr><td style='color:#009900;'>　第1行</td><td colspan="15">ダウンロードした時刻：yyyy/mm/dd hh:nn:ss</td></tr>
+            <tr><td style='color:#009900;'>　第2行</td><td>空行</td></tr>
+            <tr><td style='color:#009900;'>　第3行</td>
+                <td>集計開始</td><td>,</td><td></td><td>,</td><td></td><td>,</td>
+                <td>集計終了</td><td>,</td><td></td><td>,</td><td></td><td>,</td>
+                <td>地点名1</td><td>,</td><td>地点名1</td><td>,</td><td>地点名1</td><td>,</td><td>地点名1</td><td>,</td><td>地点名1</td><td>,</td><td>地点名1</td><td>,</td><td>地点名1</td><td>,</td>
+                <td>地点名2</td><td>,</td><td>地点名2</td><td>,</td><td>地点名2</td><td>,</td><td>地点名2</td><td>,</td><td>地点名2</td><td>,</td><td>地点名2</td><td>,</td><td>地点名2</td></tr>
+            <tr><td style='color:#009900;'>　第4行</td>
+                <td> 年</td><td>,</td><td>月</td><td>,</td><td>日</td><td>,</td><td>年</td><td>,</td><td>月</td><td>,</td><td>日</td><td>,</td>
+                <td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名2</td><td>,</td><td>項目名2</td><td>,</td><td>項目名2</td><td>,</td>
+                <td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名1</td><td>,</td><td>項目名2</td><td>,</td><td>項目名2</td><td>,</td><td>項目名2</td>
+            </tr>
+            <tr id="l51"><td style='color:#009900;'>　第5行</td>
+                <td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td>
+                <td>現象なし情報</td><td>,</td><td>品質情報</td><td>,</td><td>均質番号</td><td>,</td><td></td><td>,</td><td >品質情報</td><td>,</td><td>均質番号</td><td>,</td><td></td><td>,</td>
+                <td>現象なし情報</td><td>,</td><td >品質情報</td><td>,</td><td>均質番号</td><td>,</td><td></td><td>,</td><td>品質情報</td><td>,</td><td>均質番号</td>
+            </tr>
+            <tr id="l6"><td style='color:#009900;'>　第6行</td><td colspan="15">データ・・・</td></tr>
+        </table>
+    </div>
+    <br />
+
+    <h3>CSVファイルの時刻の表示</h3>
+    <div class="indent mtx">
+	「表示オプションを選ぶ」の「ダウンロードCSVファイルのデータ仕様」において、日付の形式「日付リテラルで格納」を選択した場合、24時は翌日0時として格納されます。
+    </div>
+    <br />
+
+<h2 id="data_tenki">天気記号の対応表</h2>
+    <div class="indent">
+    <p class="mtx">
+    時別値で天気を選択した場合に天気欄にダウンロードされる値と、天気記号、天気の対応は以下の通りです。なお、目視および機械で観測する天気にそれぞれ○をつけています。
+    現在は、天気の観測を、気象台等（特別地域気象観測所を除く）では原則として目視で、特別地域気象観測所では機械で行っています。詳しくは<a href="//www.jma.go.jp/jma/kishou/know/chijyou/surf.html">地上気象観測</a>を参照してください。
+    </p>
+<table class="data2">
+<tr class="mtx" align="center">
+  <th width="40">値</th><th width="80">天気記号</th><th width="260">天気</th><th width="100">目視観測<span class="must"> *</span></th><th width="100">機械観測</th>
+</tr>
+<tr class="mtx">
+  <td align="center">1</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F89F.gif" class="" alt="快晴"></td>
+  <td>快晴</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">2</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A0.gif" class="" alt="晴れ"></td>
+  <td>晴れ</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">3</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A1.gif" class="" alt="薄曇"></td>
+  <td>薄曇</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">4</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A2.gif" class="" alt="曇"></td>
+  <td>曇</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">5</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A3.gif" class="" alt="煙霧"></td>
+  <td>煙霧</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">6</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A4.gif" class="" alt="砂じん嵐"></td>
+  <td>砂じん嵐</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">7</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A5.gif" class="" alt="地ふぶき"></td>
+  <td>地ふぶき</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">8</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A6.gif" class="" alt="霧"></td>
+  <td>霧</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">9</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A7.gif" class="" alt="霧雨"></td>
+  <td>霧雨</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">10</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A8.gif" class="" alt="雨"></td>
+  <td>雨</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">11</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8A9.gif" class="" alt="みぞれ"></td>
+  <td>みぞれ</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">12</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AA.gif" class="" alt="雪"></td>
+  <td>雪</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">13</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AB.gif" class="" alt="あられ"></td>
+  <td>あられ</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">14</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AC.gif" class="" alt="ひょう"></td>
+  <td>ひょう</td>
+  <td align="center">○</td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">15</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AD.gif" class="" alt="雷"></td>
+  <td>雷</td>
+  <td align="center">○</td>
+  <td></td>
+</tr>
+<tr class="mtx">
+  <td align="center">16</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AE.gif" class="" alt="しゅう雨または止み間のある雨"></td>
+  <td>しゅう雨または止み間のある雨</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">17</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8AF.gif" class="" alt="着氷性の雨"></td>
+  <td>着氷性の雨</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">18</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8B0.gif" class="" alt="着氷性の霧雨"></td>
+  <td>着氷性の霧雨</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">19</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8B1.gif" class="" alt="しゅう雪または止み間のある雪"></td>
+  <td>しゅう雪または止み間のある雪</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">22</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8B4.gif" class="" alt="霧雪"></td>
+  <td>霧雪</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">23</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8B5.gif" class="" alt="凍雨"></td>
+  <td>凍雨</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">24</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8B6.gif" class="" alt="細氷"></td>
+  <td>細氷</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">28</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8BA.gif" class="" alt="もや"></td>
+  <td>もや</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+<tr class="mtx">
+  <td align="center">101</td>
+  <td align="center"><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/tenki/F8E6.gif" class="" alt="降水またはしゅう雨性の降水"></td>
+  <td>降水またはしゅう雨性の降水</td>
+  <td></td>
+  <td align="center">○</td>
+</tr>
+</table>
+    <p class="mtx">
+        <span class="must">*</span> 目視観測では、天気の値1～15のうち、該当する天気が複数存在する場合は、値の大きい方を優先します。
+    </p>
+    </div>
+<br />
+
+<h2>個々のデータに付加される情報について</h2>
+    <div class="indent">
+        <p class="mtx">
+            ダウンロードされるデータには、観測された値（または推計値）に加えて選択されたオプションの組み合わせによって、品質情報、現象なし情報(現象の有無を記録している項目のみ)、均質番号といった値が付加されます。
+        </p>
+        <div class="mtx indent">
+            <p>データの構造(ひと固まりで値を表す)</p>
+            <span style="border:solid #000 1px;padding:3px;">データ：データ,　(現象なし情報,)　品質情報,　均質番号</span>
+        </div>
+    </div>
+    <h3>品質情報の値と意味</h3>
+    <div class="indent">
+        <p class="mtx">表示オプションで「利用上注意が必要なデータは値を表示する」を選んだ場合には、CSVファイルにはデータの値とともにその品質情報が格納されます。品質情報の値と意味は以下の通りです。</p>
+        <table class="data2">
+            <tr class="mtx">
+                <th>品質情報の値</th>
+                <th>記号</th>
+                <th>意味</th>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>8</td>
+                <td>値</td>
+                <td>統計のもととなるデータに欠損がない（正常値）</td>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>5</td>
+                <td>値)</td>
+                <td>統計を行う対象資料が許容範囲で欠けている（準正常値）<br>
+                    <span class="s">※必要な資料数は、要素または現象、統計方法により若干異なるが全体数の80％が基準</span>
+                </td>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>4</td>
+                <td>値]</td>
+                <td>統計を行う対象資料が許容範囲を超えて欠けている（資料不足値）</td>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>2</td>
+                <td>#</td>
+                <td>値がかなり疑わしい（時別値のみが対象）（疑問値）</td>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>1</td>
+                <td>///</td>
+                <td>統計値がない（欠測）</td>
+            </tr>
+
+            <tr class="mtx">
+                <td style='text-align: center;'>0</td>
+                <td>空</td>
+                <td>観測・統計項目ではない(<a href="//www.data.jma.go.jp/stats/data/mdrr/man/remark.html">「参考値」</a>とされている平年値含む)</td>
+            </tr>
+        </table>
+        <p class="mtx">オプションで「CSVファイルのデータ仕様はすべて数値で格納」を選んだときは、品質情報が値と別の列に格納されます。「CSVファイルのデータ仕様は数値以外の記号も含む」を選んだときには品質情報の値は表示されず、品質情報を表す記号が付いた値が表示されます。</p>
+    </div>
+    <br />
+    <h3>現象なし情報の値</h3>
+    <div class="indent">
+        <p class="mtx">官署の降水量合計など該当現象の有無を記録している項目を選んだ場合、CSVファイルにはデータの値とともに現象なし情報が格納されます。現象なし情報の値の意味は以下の通りです。</p>
+        <table class="data2">
+            <tr class="mtx">
+                <th>現象なし情報の値</th>
+                <th>記号</th>
+                <th>意味</th>
+            </tr>
+            <tr class="mtx">
+                <td>1</td>
+                <td>--</td>
+                <td>現象なし</td>
+            </tr>
+            <tr class="mtx">
+                <td>0</td>
+                <td>値</td>
+                <td>現象あり</td>
+            </tr></table>
+        <p class="mtx">
+            現象なし情報は、官署の降水や日照、降雪など該当現象の有無を記録している項目にのみ付加され、アメダスのすべての項目や官署の気温や気圧などには付加されません。表示オプションで「CSVファイルのデータ仕様はすべて数値で格納する」を選んだときに現象なし情報の列が追加され、品質が正常値、準正常値、資料不足値のときには0か1が格納されますが、それ以外にときには何も格納されません。また、オプションで「観測環境などの変化前の値を表示(格納)しない」としたとき、環境変化の前の現象なし情報には空白が格納されます。
+        </p>
+    </div>
+    <h3>均質番号の値</h3>
+    <div class="indent">
+        <p class="mtx"> 表示オプションで「観測環境などの変化にかかわらず、すべての期間の値を表示する」を選んだ場合には、CSVファイルにはデータの値とともにデータの均質性をあらわす番号が格納されます。
+            値そのものに意味はありませんが、均質番号の違いは観測環境の変化を表しているため、異なった均質番号を持つ値同士を単純に比較することはできません。<br />
+	    <u>均質番号はCSVファイルの取得ごとに、観測時期の古いものから、1から順番に付けられます</u>ので、選択期間が異なった複数のCSVファイルをマージする場合には注意が必要です。
+    </p>
+    </div>
+    <br />
+    <h2 id="hukajoho">オプションの組み合わせとデータに付加される情報の値</h2>
+    <p class="mtx">
+        表示オプションの選択によってCSVファイルのデータの並びは異なります。以下のチェックを変えることで選択したオプションごとにデータの構造、それに付加される情報の値が、データの品質に応じてどのようになるかを以下に示します。
+    </p>
+    <div style="border:#000 solid 1px;padding:5px;" id="comb2">
+        <p>利用上注意が必要なデータは　<label><input type="radio" name="rmk2" value="1" checked>表示する</label>　<label><input type="radio" name="rmk2" value="0">表示しない</label></p>
+        <p>観測環境などの変化前の値を　<label><input type="radio" name="discon2" value="1" checked>表示する</label>　<label><input type="radio" name="discon2" value="0">表示しない</label></p>
+        <p>CSVファイルのデータは　<label><input type="radio" name="csv2" value="1" checked>数値で格納</label>　<label><input type="radio" name="csv2" value="0">記号を含む</label></p>
+    </div>
+    <div id="comb1str">
+        <p>  <span>データに付加する値：</span><span class="csv">「現象なし情報」</span><span class="rmk csv">「品質情報」</span><span class="discon">「均質番号」</span>
+        </p>
+        <div class="indent">
+            <p class="gensho s" style="display:none;">
+                「現象なし情報」は値のところに文字列として表示しているので別の列に格納されません。
+            </p>
+            <p class="rmk s" style="display:none;">
+                「品質情報」は正常な値のみ表示されているので格納されません。
+            </p>
+            <p class="csv s" style="display:none;">
+                「品質情報」は該当する文字列を値に付加しているので別の列に格納されません。            
+            </p>
+            <p class="discon s"  style="display:none;">
+                均質な値のみを表示しているので「均質番号」は格納されません。
+            </p>
+        </div>
+    </div>
+    <table style="background-color:#eeeeee;border-collapse:collapse;" class="tblnarabi">
+        <tr><td style='color:#009900;'>　第1行</td><td colspan="15">ダウンロードした時刻：yyyy/mm/dd hh:nn:ss</td></tr>
+        <tr><td style='color:#009900;'>　第2行</td><td>空行</td></tr>
+        <tr><td style='color:#009900;'>　第3行</td><td>集計開始</td><td>,</td><td></td><td>,</td><td></td><td>,</td><td>集計終了</td><td>,</td><td></td><td>,</td><td></td><td>,</td>
+            <td>地点名1</td><td class="gensho csv">,</td><td class="gensho csv">地点名1</td><td class="rmk csv">,</td><td class="rmk csv">地点名1</td><td class="discon">,</td><td class="discon">地点名1</td><td>,</td><td>地点名1</td><td class="rmk csv">,</td><td class="rmk csv">地点名1</td><td class="discon">,</td><td class="discon">地点名1</td><td>,</td><td>地点名2</td><td class="gensho csv">,</td><td class="gensho csv">地点名2</td><td class="rmk csv">,</td><td class="rmk csv">地点名2</td><td class="discon">,</td><td class="discon">地点名2</td><td>,</td><td>地点名2</td><td class="rmk csv">,</td><td  class="rmk csv">地点名2</td><td class="discon">,</td><td class="discon">地点名2</td></tr>
+        <tr><td style='color:#009900;'>　第4行</td><td> 年</td><td>,</td><td>月</td><td>,</td><td>日</td><td>,</td><td>年</td><td>,</td><td>月</td><td>,</td><td>日</td>
+            <td>,</td><td>項目名1</td><td class="gensho csv">,</td><td class="gensho csv">項目名1</td><td class="rmk csv">,</td><td class="rmk csv">項目名1</td><td class="discon">,</td><td class="discon">項目名1</td><td>,</td><td>項目名2</td><td  class="rmk csv">,</td><td class="rmk csv">項目名2</td><td class="discon">,</td><td class="discon">項目名2</td><td>,</td><td>項目名1</td><td class="gensho csv">,</td><td class="gensho csv">項目名1</td><td class="rmk csv">,</td><td class="rmk csv">項目名1</td><td class="discon">,</td><td class="discon">項目名1</td><td>,</td><td>項目名2</td><td class="rmk csv">,</td><td class="rmk csv">項目名2</td><td class="discon">,</td><td class="discon">項目名2</td>
+        </tr>
+        <tr id="l51"><td style='color:#009900;'>　第5行</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td>,</td><td></td><td class="gensho csv">,</td><td class="gensho csv">現象なし情報</td><td class="rmk csv">,</td><td class="rmk csv">品質情報</td><td class="discon">,</td><td class="discon">均質番号</td><td>,</td><td></td><td class="rmk csv">,</td><td  class="rmk csv">品質情報</td><td class="discon">,</td><td class="discon">均質番号</td><td>,</td><td></td><td class="gensho csv">,</td><td class="gensho csv">現象なし情報</td><td class="rmk csv">,</td><td  class="rmk csv">品質情報</td><td class="discon">,</td><td class="discon">均質番号</td><td>,</td><td></td><td class="rmk csv">,</td><td  class="rmk csv">品質情報</td><td class="discon">,</td><td class="discon">均質番号</td>
+        </tr>
+        <tr id="l6"><td style='color:#009900;'>　第6行</td><td colspan="15">データ・・・</td></tr>
+        <tr id="l52" style="display:none"><td style='color:#009900;'>　第5行</td><td colspan="15">データ・・・</td></tr>
+    </table>
+   <p>※&nbsp;「都道府県名を格納（CSVファイルダウンロード実行時）」を選択すると、都道府県名を格納する行が追加されます。追加する位置は、上記の第2行と第3行の間です。</p>
+
+    <table class="data2">
+        <caption class="noboder">表示例 (品質情報ごとのCSVの中身)</caption>
+        <tr class="mtx" >
+            <th></th>
+            <th>値</th>
+            <th class="gensho">現象なし情報</th>
+            <th class="rmk">品質情報</th>
+            <th class="discon">均質番号</th>
+        </tr>
+        <tr class="rmk8 mtx"><td class="colheading">正常値</td>
+            <td class="val">値</td>
+            <td class="gensho">0</td>
+            <td class="rmk">8</td>
+            <td class="discon">1または2以上</td>
+
+        </tr>
+        <tr class="rmk8 nashi mtx"><td class="colheading">正常値(現象なし)</td>
+            <td class="val">値</td>
+            <td class="gensho">1</td>
+            <td class="rmk">8</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk5 mtx"><td class="colheading">準正常値</td>
+            <td class="val">値</td>
+            <td class="gensho">0</td>
+            <td class="rmk">5</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk5 nashi mtx"><td class="colheading">準正常値(現象なし)</td>
+            <td class="val">値</td>
+            <td class="gensho">1</td>
+            <td class="rmk">5</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk4 mtx"><td class="colheading">資料不足値</td>
+            <td class="val">値</td>
+            <td class="gensho">0</td>
+            <td class="rmk">4</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk4 nashi mtx"><td class="colheading">資料不足値(現象なし)</td>
+            <td class="val">値</td>
+            <td class="gensho">1</td>
+            <td class="rmk">4</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk2 mtx"><td class="colheading">疑問値</td>
+            <td class="val">空</td>
+            <td class="gensho">空</td>
+            <td class="rmk">2</td>
+            <td class="discon">1または2以上</td>  
+        </tr>
+        <tr class="rmk1 mtx"><td class="colheading">欠測</td>
+            <td class="val">空</td>
+            <td class="gensho">空</td>
+            <td class="rmk">1</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+        <tr class="rmk0 mtx"><td class="colheading">統計項目でない</td>
+            <td class="val">空</td>
+            <td class="gensho">空</td>
+            <td class="rmk">0</td>
+            <td class="discon">1または2以上</td>
+        </tr>
+    </table>
+</div>
+<script src="https://www.data.jma.go.jp/risk/obsdl/web/js/help3.js"></script></div>
+<p class="totop"><a href="#nheader">このページのトップへ</a></p>
+</div>
+            </div>
+            <div id="footer_area">
+	<div id="nfooter">
+                        <ul>
+            <li><a href="//www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページについて</a></li>
+                        </ul>
+	</div>
+</div>
+        </div>
+    </body>
+</html>

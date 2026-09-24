@@ -45,6 +45,20 @@ surface:
       mu_kinetic: 0.42
       adhesion_pa: 180.0
 
+baselines:
+  retention_non_shedding:
+    slope_deg: 5.0
+    mu_static: 0.65
+    adhesion_pa: 250.0
+  conventional_shedding:
+    slope_deg: 45.0
+    mu_static: 0.08
+    adhesion_pa: 0.0
+  uniform_intermediate:
+    slope_deg: 25.0
+    mu_static: 0.28
+    adhesion_pa: 80.0
+
 simulation:
   dt_hours: 1.0
   friction_model: dynamic
@@ -87,11 +101,14 @@ optimizer:
   seeds: [1701, 2903, 4517]
   uniform_slope_grid: 30
   uniform_friction_grid: 30
+  uniform_adhesion_grid: 7
   profile_control_points: 4
 
 robustness:
   samples: 250
   seed: 7021
+  candidate_count_per_class: 12
+  robust_quantile: 0.95
   coefficient_of_variation:
     friction: 0.15
     adhesion: 0.25
@@ -123,6 +140,15 @@ classification:
   retention_shed_fraction_threshold: 0.05
   shedding_residual_fraction_threshold: 0.20
   intermediate_shed_fraction_threshold: 0.20
+
+complexity:
+  slope_rounding_deg: 1.0
+  transition_penalty_base: 0.10
+  transition_penalty_high: 0.25
+  transition_penalties: [0.0, 0.10, 0.25]
+
+phase_diagram:
+  snowfall_factors: [0.5, 1.0, 1.5]
 
 decision:
   shedding_penalty_weights: [0.25, 1.0, 4.0]

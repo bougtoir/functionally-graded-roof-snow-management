@@ -1,0 +1,4 @@
+- Uniform and graded roof-snow trade-off sets were optimized.
+- Spatial slope, friction, and adhesion profiles were compared.
+- Convergence, ablation, sensitivity, and robustness were quantified.
+- Outputs are reduced-order model evidence, not safety certification.

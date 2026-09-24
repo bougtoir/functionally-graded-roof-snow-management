@@ -36,4 +36,4 @@ No paper in the verified CRST set directly tests a **passive, functionally grade
 
 ## Reproducibility note
 
-No repository files were edited. Raw Crossref records, Elsevier core-metadata responses, DOI landing snapshots, institutional evidence, and search snapshots were preserved under `/home/ubuntu/research/crst-literature-2026-09-24/raw/`. The machine-readable acquisition ledger records source URLs, identifiers, UTC acquisition times, conditions, storage paths, byte sizes, SHA-256 checksums, and usage notes for every raw file.
+Authoritative Crossref metadata and institutional evidence used by the study are preserved in persistent repository snapshots under `data/raw/`. Historical child-worker DOI landing-page and search-result scratch captures were not recoverable from the worker VM; they remain marked `not_recovered` in the machine-readable acquisition ledger and are not treated as archived evidence or quantitative inputs. The ledger records source URLs, identifiers, UTC acquisition times, conditions, storage paths, byte sizes, SHA-256 checksums, and usage notes.

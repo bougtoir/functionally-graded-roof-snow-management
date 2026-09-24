@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "checks": {
+    "baseline_parameters_are_config_driven": true,
+    "manuscript_has_no_literal_latex": true,
+    "manuscript_method_counts_are_config_driven": true,
+    "generated_results_not_embedded_in_source": true,
+    "ablation_reference_is_config_driven": true
+  },
+  "scope": "Automated guard against embedding baseline parameters, optimizer settings, or generated primary results in executable manuscript and pipeline source."
+}

@@ -130,10 +130,20 @@ def simulate(
             mass[index] -= moving_mass
             age_mass_days[index] -= moving_age
             volume[index] -= moving_volume
-            velocity = min(np.sqrt(2.0 * kinetic_acceleration * cell_length), 25.0)
             if index == cells - 1:
                 shed_step += moving_mass
-                energy_proxy += 0.5 * moving_mass * velocity**2 / width
+                specific_energy = np.sum(
+                    np.maximum(
+                        0.0,
+                        gravity
+                        * (
+                            np.sin(theta)
+                            - mu_kinetic * np.cos(theta)
+                        )
+                        * cell_length,
+                    )
+                )
+                energy_proxy += moving_mass * specific_energy / width
             else:
                 mass[index + 1] += moving_mass
                 age_mass_days[index + 1] += moving_age
@@ -170,6 +180,12 @@ def simulate(
         ssci=ssci(events),
         total_shed_kg_per_m=total_shed,
         shed_event_count=int(events.size),
+        mean_shed_event_mass_kg_per_m=(
+            float(events.mean()) if events.size else 0.0
+        ),
+        median_shed_event_mass_kg_per_m=(
+            float(np.median(events)) if events.size else 0.0
+        ),
         kinetic_energy_proxy_j_per_m=float(energy_proxy),
         time_above_intervention_h=float(above.sum() * weather.dt_hours),
         manual_triggers=manual_triggers,

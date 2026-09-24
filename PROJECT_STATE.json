@@ -1,26 +1,168 @@
 {
-  "current_phase": "01_literature_and_parameter_provenance",
-  "journal": "Cold Regions Science and Technology",
-  "last_updated_utc": "2026-09-24T00:00:00Z",
-  "phases": {
-    "00_bootstrap": "complete",
-    "01_literature_and_parameter_provenance": "in_progress",
-    "02_physics_and_unit_tests": "pending",
-    "03_synthetic_weather_and_baselines": "pending",
-    "04_numerical_convergence": "pending",
-    "05_uniform_design_space": "pending",
-    "06_heterogeneous_optimization": "pending",
-    "07_ablation": "pending",
-    "08_complexity_and_discrete_materials": "pending",
-    "09_sensitivity": "pending",
-    "10_robustness": "pending",
-    "11_japanese_real_weather": "pending",
-    "12_strategy_phase_diagram": "pending",
-    "13_labor_scarcity": "pending",
-    "14_secondary_outcomes": "pending",
-    "15_figures_and_tables": "pending",
-    "16_manuscript": "pending",
-    "17_initial_review": "pending",
-    "18_final_qc": "pending"
-  }
+  "updated_utc": "2026-09-24T11:53:26.846080+00:00",
+  "research_question": "How spatial variation in roof geometry and snow-surface interaction changes the modeled retained-load versus shedding-event trade-off.",
+  "phases": [
+    {
+      "phase": "00",
+      "name": "Bootstrap and target journal",
+      "status": "completed",
+      "evidence": [
+        "README.md",
+        "analysis_plan.md"
+      ]
+    },
+    {
+      "phase": "01",
+      "name": "Literature and parameter provenance",
+      "status": "completed",
+      "evidence": [
+        "references/literature_database.csv",
+        "references/parameter_sources.csv"
+      ]
+    },
+    {
+      "phase": "02",
+      "name": "Physics and unit tests",
+      "status": "completed",
+      "evidence": [
+        "src/graded_roof/simulation.py",
+        "tests"
+      ]
+    },
+    {
+      "phase": "03",
+      "name": "Synthetic weather and fair baselines",
+      "status": "completed",
+      "evidence": [
+        "results/generated/baseline_aggregate.csv"
+      ]
+    },
+    {
+      "phase": "04",
+      "name": "Numerical convergence",
+      "status": "completed",
+      "evidence": [
+        "results/generated/convergence.csv"
+      ]
+    },
+    {
+      "phase": "05",
+      "name": "Optimized uniform space",
+      "status": "completed",
+      "evidence": [
+        "results/generated/uniform_pareto.csv"
+      ]
+    },
+    {
+      "phase": "06",
+      "name": "Heterogeneous optimization",
+      "status": "completed",
+      "evidence": [
+        "results/generated/joint_pareto.csv"
+      ]
+    },
+    {
+      "phase": "07",
+      "name": "Ablation",
+      "status": "completed",
+      "evidence": [
+        "results/generated/geometry_pareto.csv",
+        "results/generated/surface_pareto.csv"
+      ]
+    },
+    {
+      "phase": "08",
+      "name": "Complexity and discrete materials",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_6_complexity_analysis.csv",
+        "tables/generated/table_7_complexity_penalty.csv"
+      ]
+    },
+    {
+      "phase": "09",
+      "name": "Sensitivity",
+      "status": "completed",
+      "evidence": [
+        "results/generated/sensitivity.csv"
+      ]
+    },
+    {
+      "phase": "10",
+      "name": "Robustness",
+      "status": "completed",
+      "evidence": [
+        "results/generated/robustness.csv",
+        "results/generated/robustness_summary.csv"
+      ]
+    },
+    {
+      "phase": "11",
+      "name": "Japanese weather",
+      "status": "completed",
+      "evidence": [
+        "results/generated/jma_daily_evaluation.csv"
+      ]
+    },
+    {
+      "phase": "12",
+      "name": "Strategy phase diagram",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_4_strategy_phase_diagram.csv"
+      ]
+    },
+    {
+      "phase": "13",
+      "name": "Labor scarcity",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_5_labor_scarcity.csv"
+      ]
+    },
+    {
+      "phase": "14",
+      "name": "Secondary outcomes",
+      "status": "completed",
+      "evidence": [
+        "results/generated/baseline_scenarios.csv"
+      ]
+    },
+    {
+      "phase": "15",
+      "name": "Figures and tables",
+      "status": "completed",
+      "evidence": [
+        "figures/png",
+        "tables/generated"
+      ]
+    },
+    {
+      "phase": "16",
+      "name": "Manuscript and submission files",
+      "status": "completed",
+      "evidence": [
+        "manuscript/manuscript_CRST.docx",
+        "submission/CRST_submission_package.zip"
+      ]
+    },
+    {
+      "phase": "17",
+      "name": "Initial review",
+      "status": "completed",
+      "evidence": [
+        "audit/INITIAL_REVIEW.md"
+      ]
+    },
+    {
+      "phase": "18",
+      "name": "Mandatory final QC",
+      "status": "completed",
+      "evidence": [
+        "audit/FINAL_AUDIT.md"
+      ]
+    }
+  ],
+  "completed_phases": 19,
+  "total_phases": 19
 }

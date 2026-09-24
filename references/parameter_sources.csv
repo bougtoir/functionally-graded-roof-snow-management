@@ -26,3 +26,4 @@ intervention_mass_kg_per_m,800,kg/m,scenario_assumption,NA,"Illustrative operati
 optimizer_population,48,count,numerical_choice,NA,"NSGA-II population fixed before production.",multi-seed convergence
 optimizer_generations,45,count,numerical_choice,NA,"NSGA-II generation budget fixed before production.",checkpoint and convergence diagnostics
 robustness_samples,250,count,numerical_choice,NA,"Monte Carlo budget fixed before production; uncertainty intervals must be reported.",Monte Carlo stability check
+jma_daily_rain_rule,"precipitation when mean temperature >1 C and snowfall depth=0",rule,analysis_assumption,NA,"Daily precipitation is assigned to rain only on warm days with no reported snowfall; raw precipitation and snowfall strings remain retained.",JMA scenario limitation

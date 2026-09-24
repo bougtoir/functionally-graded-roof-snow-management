@@ -135,6 +135,8 @@ class SimulationResult:
     ssci: float
     total_shed_kg_per_m: float
     shed_event_count: int
+    mean_shed_event_mass_kg_per_m: float
+    median_shed_event_mass_kg_per_m: float
     kinetic_energy_proxy_j_per_m: float
     time_above_intervention_h: float
     manual_triggers: int

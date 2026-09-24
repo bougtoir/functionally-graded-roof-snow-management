@@ -1,0 +1,9 @@
+authors:
+  - name: Tatsuki Onishi
+    affiliation: REQUIRED
+    postal_address: REQUIRED
+    email: bougtoir@gmail.com
+    corresponding: true
+funding: REQUIRED
+competing_interests: REQUIRED
+acknowledgements: ""

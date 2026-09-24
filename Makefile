@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: test lint data baseline optimize sensitivity robustness figures tables manuscript validate all clean
+.PHONY: test lint data baseline optimize jma sensitivity robustness figures tables manuscript validate all clean
 
 test:
 	$(PYTHON) -m pytest
@@ -17,13 +17,16 @@ baseline:
 optimize:
 	$(PYTHON) scripts/run_pipeline.py optimize
 
+jma:
+	$(PYTHON) scripts/run_pipeline.py jma
+
 sensitivity:
 	$(PYTHON) scripts/run_pipeline.py sensitivity
 
 robustness:
 	$(PYTHON) scripts/run_pipeline.py robustness
 
-figures:
+figures: tables
 	$(PYTHON) scripts/run_pipeline.py figures
 
 tables:
