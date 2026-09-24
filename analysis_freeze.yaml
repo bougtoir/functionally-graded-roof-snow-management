@@ -1,5 +1,5 @@
 freeze_date_utc: "2026-09-24"
-commit: "TO_BE_SET_BEFORE_PRODUCTION"
+commit: "6cb5aef3d20befc2c5db6a61dccf1ad1d01a2c28"
 environment:
   python: "3.11.10"
   definition: "environment.yml"

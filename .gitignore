@@ -4,5 +4,6 @@
 .ruff_cache/
 __pycache__/
 *.py[cod]
+*.egg-info/
 logs/*.log
 checkpoints/*.pkl
