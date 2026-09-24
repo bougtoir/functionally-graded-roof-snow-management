@@ -1,0 +1,36 @@
+verified_utc: "2026-09-24"
+official_sources:
+  guide_for_authors: "https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors"
+  generative_ai_policy: "https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals"
+  cover_letter_guidance: "https://www.elsevier.support/publishing/answer/what-should-be-included-in-a-cover-letter"
+article_type: "Research Article"
+manuscript:
+  editable_word_source: true
+  layout: "single column"
+  abstract_max_words: 250
+  keywords_min: 1
+  keywords_max: 7
+  continuous_line_numbers: true
+  credit_statement_required: true
+highlights:
+  required: true
+  separate_editable_file: true
+  bullets_min: 3
+  bullets_max: 5
+  max_characters_per_bullet: 85
+tables:
+  editable_text: true
+  cite_in_order: true
+  vertical_rules: false
+  cell_shading: false
+figures:
+  separate_files: true
+  cite_in_order: true
+  vector_formats: [EPS, PDF]
+  photograph_min_dpi: 300
+  line_art_min_dpi: 1000
+graphical_abstract:
+  required: false
+  encouraged: true
+  minimum_pixels_height: 531
+  minimum_pixels_width: 1328
