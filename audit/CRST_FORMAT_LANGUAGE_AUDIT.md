@@ -33,9 +33,9 @@ Automated status: PASS
 
 ## Measured values
 
-- Abstract: 196 words.
+- Abstract: 210 words.
 - Keywords: 6.
-- Highlights: 4; lengths 59, 61, 67, 67 characters.
+- Highlights: 4; lengths 67, 55, 60, 70 characters.
 - Native Word math objects: 6.
 - Font-superscript unit exponent runs: 18.
 - Separate TIFF figures: 9.

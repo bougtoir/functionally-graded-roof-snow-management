@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-09-25T11:53:06.493208+00:00",
+  "updated_utc": "2026-09-25T12:50:30.576047+00:00",
   "research_question": "How spatial variation in roof geometry and snow-surface interaction changes the modeled retained-load versus shedding-event trade-off.",
   "phases": [
     {
@@ -142,8 +142,8 @@
       "name": "Manuscript and submission files",
       "status": "completed",
       "evidence": [
-        "manuscript/manuscript_CRST.docx",
-        "submission/CRST_submission_package_final.zip"
+        "manuscript/manuscript_CRST_submission_final.docx",
+        "submission/CRST_submission_package_FINAL.zip"
       ]
     },
     {

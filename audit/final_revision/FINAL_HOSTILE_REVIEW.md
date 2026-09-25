@@ -23,7 +23,7 @@ Status: PASS
 
 ## Verdict
 
-The nominal joint front retains intermediate modeled trade-offs, but the central practical interpretation is negative: constructability and interval sensitivity dominate the theoretical grading benefit. This conclusion does not rely on JMA validation, structural safety, or universal-superiority claims.
+The nominal joint front retains intermediate modeled trade-offs, but the constructability screen and interval sensitivity substantially limit interpretation of that nominal expansion. This conclusion does not rely on JMA validation, structural safety, or universal-superiority claims.
 
 ## Reproducibility and residual items
 

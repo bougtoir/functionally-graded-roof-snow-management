@@ -241,25 +241,26 @@ def validate_submission(root: Path) -> dict[str, object]:
             "verified snapshots"
         )
 
-    package = root / "submission" / "CRST_submission_package_final.zip"
+    package = root / "submission" / "CRST_submission_package_FINAL.zip"
     if not package.exists():
         errors.append("submission ZIP is missing")
     else:
         with zipfile.ZipFile(package) as archive:
             names = set(archive.namelist())
         required_members = {
-            "manuscript_CRST_final_0p5h.docx",
+            "manuscript_CRST_submission_final.docx",
             "review_copy/manuscript_CRST_inline_final_0p5h.docx",
-            "cover_letter_CRST_final.docx",
-            "supplementary_material_CRST.docx",
+            "cover_letter_CRST_submission_final.docx",
+            "supplementary_material_CRST_submission_final.docx",
             "editable_tables_CRST.docx",
             "editable_figures_CRST.pptx",
             "highlights_CRST.txt",
-            "CRST_submission_checklist.md",
-            "CRST_scope_fit.md",
+            "CRST_submission_checklist_final.md",
+            "CRST_scope_fit_final.md",
             "REPRODUCIBILITY_README.md",
             "audit/reference_audit.csv",
             "audit/FINAL_AUDIT.md",
+            "audit/FINAL_FINISHING_AUDIT.md",
             "audit/REPRODUCIBILITY_AUDIT.md",
             "audit/FABRICATION_AUDIT.md",
             "audit/FABRICATION_AUDIT_FINAL.md",

@@ -24,7 +24,7 @@ from pptx.util import Pt as PptxPt
 
 TITLE = (
     "Functionally graded roofs for passive snow management: "
-    "a reduced-order multiobjective modeling study"
+    "nominal trade-off expansion limited by constructability and timestep sensitivity"
 )
 
 FIGURE_CAPTIONS = [
@@ -33,10 +33,11 @@ FIGURE_CAPTIONS = [
     "Figure 3. Unique objective pairs for the exhaustive uniform and heuristic joint "
     "sets, shown over the full range and the intermediate trade-off region.",
     "Figure 4. Continuous joint-knee slope and friction profiles compared with the "
-    "post hoc segmented, generic-class mapping.",
+    "post hoc rule-compliant segmented, generic-class mapping; the mapped profile is "
+    "not a constrained optimum.",
     "Figure 5. Unique objective pairs for the uniform, geometry-only, surface-only, "
     "and joint sets.",
-    "Figure 6. Four-metric numerical convergence relative to the 48-cell, 0.5-h "
+    "Figure 6. Four-metric numerical-resolution comparison relative to the 48-cell, 0.5-h "
     "reference; the dashed line is the frozen relative-error tolerance.",
     "Figure 7. Prespecified one-at-a-time sensitivity. Labels state each low/high "
     "factor or encoded alternative; bars are relative changes from baseline.",
@@ -441,7 +442,7 @@ def build_manuscript(root: Path) -> Path:
     one_hour_timestep = timestep_audit.loc[
         timestep_audit["dt_hours"].eq(1.0)
     ]
-    quarter_hour_production = quarter_hour_audit.loc[
+    production_against_quarter_hour = quarter_hour_audit.loc[
         quarter_hour_audit["dt_hours"].eq(config["simulation"]["dt_hours"])
     ]
     production_step_text = f"{config['simulation']['dt_hours']:g}"
@@ -449,7 +450,7 @@ def build_manuscript(root: Path) -> Path:
         (~one_hour_timestep["within_tolerance"]).sum()
     )
     failed_quarter_hour_count = int(
-        (~quarter_hour_production["within_frozen_tolerance"]).sum()
+        (~production_against_quarter_hour["within_frozen_tolerance"]).sum()
     )
     uniform_pairs = unique_regions.loc[
         unique_regions["attainable_by_uniform_under_same_caps"]
@@ -495,16 +496,17 @@ def build_manuscript(root: Path) -> Path:
         + f" The joint set had {joint_unique_count} "
         "intermediate objective pairs unavailable to the uniform set under the same "
         f"objective caps. {len(robust_ties)} candidates tied the minimum robustness "
-        "score. Mapping the "
-        "continuous joint knee to rule-compliant generic segments changed modeled retained "
-        "mass by "
+        "score. Mapping the continuous joint knee to rule-compliant generic segments "
+        "changed modeled retained mass by "
         f"{discretization_loss['l_max_percent_change']:+.2f}% and release mass by "
-        f"{discretization_loss['s_max_percent_change']:+.2f}%. "
+        f"{discretization_loss['s_max_percent_change']:+.2f}%, shifting the selected "
+        "point toward the low-retention, high-release shedding regime. "
         f"A targeted 0.25-h sensitivity failed the four-metric tolerance for "
-        f"{failed_quarter_hour_count} of {len(quarter_hour_production)} selected "
+        f"{failed_quarter_hour_count} of {len(production_against_quarter_hour)} selected "
         f"designs relative to the {production_step_text}-h production results. Spatial "
-        "grading expanded the nominal modeled set, but constructability and interval "
-        "sensitivity dominated the practical interpretation; no front-wide "
+        "grading produced nominal intermediate trade-offs absent from the exhaustive "
+        "uniform grid, but constructability and interval sensitivity substantially "
+        "limit interpretation; no front-wide "
         "superiority, structural safety, or validated roof performance is established."
     )
     document.add_paragraph(abstract)
@@ -611,7 +613,7 @@ def build_manuscript(root: Path) -> Path:
         f"population of {config['optimizer']['population']}, "
         f"{config['optimizer']['generations']} generations, and seeds "
         + ", ".join(str(seed) for seed in config["optimizer"]["seeds"])
-        + ". Feasible historical evaluations from every seed were combined "
+        + ". All feasible evaluations from every seed were combined "
         "and filtered to approximate nondominated heterogeneous sets; only the uniform "
         "grid was exhaustively enumerated. Objective pairs were deduplicated at six "
         "decimal places for frontier metrics while design rows remained available for "
@@ -625,8 +627,8 @@ def build_manuscript(root: Path) -> Path:
         f"Production used a {production_step_text}-h timestep, the finest resolution "
         "in the frozen grid. A targeted 0.25-h reevaluation of selected designs was "
         "reported as post-freeze numerical sensitivity rather than a second optimization. "
-        "Figure 6 reports numerical "
-        "convergence; Figure 7 reports prespecified one-at-a-time sensitivity."
+        "Figure 6 reports the numerical-resolution comparison; Figure 7 reports "
+        "prespecified one-at-a-time sensitivity."
     )
     document.add_paragraph(
         f"Monte Carlo robustness used {config['robustness']['samples']} deterministic "
@@ -650,7 +652,7 @@ def build_manuscript(root: Path) -> Path:
     )
 
     document.add_heading("3. Results", level=1)
-    document.add_heading("3.1 Baselines and convergence", level=2)
+    document.add_heading("3.1 Baselines and numerical resolution", level=2)
     document.add_paragraph(
         "Across the synthetic scenarios, the retention baseline produced "
         f"Lmax={_format_number(retention['l_max_kg_per_m'])} kg m−1 and "
@@ -663,9 +665,10 @@ def build_manuscript(root: Path) -> Path:
         + f" The {production_step_text}-h interval was the frozen numerical reference "
         f"and production resolution. At 1 h, {failed_one_hour_count} of "
         f"{len(one_hour_timestep)} selected uniform, continuous-joint, and mapped-joint "
-        "designs failed the same composite criterion relative to 0.5 h. The targeted "
-        f"0.25-h check failed it for {failed_quarter_hour_count} of "
-        f"{len(quarter_hour_production)} selected designs relative to 0.25 h. "
+        "designs failed the same composite criterion relative to 0.5 h. Comparing the "
+        "0.5-h production outcomes against targeted 0.25-h reevaluations, "
+        f"{failed_quarter_hour_count} of {len(production_against_quarter_hour)} selected "
+        "designs failed the frozen four-metric tolerance. "
         "Accordingly, 0.5 h is described as the production reference resolution, not "
         "as demonstrated convergence beyond that interval. Smax is release mass in one "
         "model interval and therefore must be interpreted with the stated timestep."
@@ -829,9 +832,8 @@ def build_manuscript(root: Path) -> Path:
     document.add_heading("4. Discussion", level=1)
     document.add_paragraph(
         "The frozen research question can be answered narrowly: under identical modeled "
-        f"forcing, spatial variation did not improve the {uniform_unique_count} uniform "
-        "objective regimes, "
-        "but it introduced "
+        f"forcing, spatial variation retained the {uniform_unique_count} uniform "
+        "objective regimes and introduced "
         f"{joint_unique_count} "
         "observed intermediate Lmax-Smax combinations that the exhaustive uniform grid "
         "did not attain under the same objective caps. This is "
@@ -851,10 +853,11 @@ def build_manuscript(root: Path) -> Path:
         "trade-offs were found in continuous profiles that did not directly satisfy all "
         "segment and transition limits. Post hoc mapping changed the selected knee's "
         f"Lmax by {discretization_loss['l_max_percent_change']:+.2f}% and Smax by "
-        f"{discretization_loss['s_max_percent_change']:+.2f}%, and every "
-        "frozen transition penalty selected a uniform "
-        "regime. The nominal intermediate expansion therefore did not survive the "
-        "constructability screen as a practical advantage. Graded concepts require "
+        f"{discretization_loss['s_max_percent_change']:+.2f}%, moving the point toward "
+        "the low-retention, high-release shedding regime; every frozen transition "
+        "penalty selected a uniform regime. Thus, the selected continuous-profile "
+        "location in objective space was not preserved by the rule-compliant post hoc "
+        "mapping. Graded concepts require "
         "constrained reoptimization and physical testing before practical comparison."
     )
     document.add_paragraph(
@@ -900,10 +903,11 @@ def build_manuscript(root: Path) -> Path:
         "regimes. Heuristic joint spatial grading preserved those regimes and added "
         f"{joint_unique_count} intermediate "
         "trade-off combinations. However, no joint row directly passed all frozen "
-        "constructability checks, post hoc mapping removed the selected nominal "
-        "intermediate advantage, nominal objectives did not determine robustness, and "
-        "the targeted 0.25-h check confirmed interval sensitivity. Constructability and "
-        "numerical interpretation therefore dominate the theoretical grading benefit. "
+        "constructability checks, post hoc mapping shifted the selected point toward the "
+        "low-retention, high-release shedding regime, nominal objectives did not "
+        "determine robustness, and the targeted 0.25-h check confirmed interval "
+        "sensitivity. Constructability and numerical resolution therefore substantially "
+        "limit interpretation of the nominal trade-off expansion. "
         "The findings are reproducible design-space hypotheses for constrained "
         "reoptimization and roof-scale validation, not design approval or safety "
         "certification."
@@ -998,7 +1002,7 @@ def build_manuscript(root: Path) -> Path:
                 {"manufacturable_discrete_generic_classes": "discrete_generic"}
             )
         ),
-        "Table 3. Continuous-to-discrete profile loss.",
+        "Table 3. Post hoc continuous-to-discrete objective-space movement.",
         [
             "mapping",
             "l_max_kg_per_m",
@@ -1173,6 +1177,9 @@ def build_manuscript(root: Path) -> Path:
     document.save(submission_output)
     document.save(root / "manuscript" / "manuscript_CRST_final.docx")
     document.save(root / "manuscript" / "manuscript_CRST_final_0p5h.docx")
+    document.save(
+        root / "manuscript" / "manuscript_CRST_submission_final.docx"
+    )
     return submission_output
 
 
@@ -1424,7 +1431,7 @@ def build_supplement(root: Path) -> Path:
     document.add_paragraph(
         "Create the pinned Python 3.11 environment, run `make lint` and `make test`, "
         "then run `make all`. The production workflow regenerates processed synthetic "
-        "and JMA weather, evaluates baselines and convergence, resumes or executes "
+        "and JMA weather, evaluates baselines and numerical resolution, resumes or executes "
         "optimization, runs sensitivity and robustness, creates figures and editable "
         "tables, builds submission documents, validates them, and packages the "
         "submission."
@@ -1446,10 +1453,11 @@ def build_supplement(root: Path) -> Path:
         + ", ".join(f"{key}={value}" for key, value in counts.items())
         + ". Each locally retained record includes a path, size, checksum, retrieval "
         "time, request context where applicable, and usage-conditions reference. "
-        "Records marked not_recovered are historical child-worker scratch captures, "
-        "not quantitative inputs. Quantitative inputs and redistributable evidence are "
-        "retained in verified repository snapshots; non-redistributed third-party "
-        "documents remain identified by provenance metadata."
+        "Records marked not_recovered identify non-quantitative source leads that were "
+        "not retained locally and were not used as analysis inputs. Quantitative inputs "
+        "and redistributable evidence are retained in verified repository snapshots; "
+        "non-redistributed third-party documents remain identified by provenance "
+        "metadata."
     )
     document.add_heading("S5. Machine-readable outputs", level=1)
     document.add_paragraph(
@@ -1465,6 +1473,11 @@ def build_supplement(root: Path) -> Path:
     document.save(submission_output)
     document.save(root / "manuscript" / "supplement_CRST_final.docx")
     document.save(root / "manuscript" / "supplementary_material_CRST.docx")
+    document.save(
+        root
+        / "manuscript"
+        / "supplementary_material_CRST_submission_final.docx"
+    )
     return submission_output
 
 
@@ -1485,10 +1498,13 @@ def build_cover_letter(root: Path) -> Path:
     document.add_paragraph(
         "The manuscript presents a reproducible reduced-order comparison of optimized "
         "spatially uniform and functionally graded passive roof-snow strategies. It "
-        "maps the retained-mass versus discrete-release trade-off, includes "
-        "geometry and surface ablations, convergence, sensitivity, Monte Carlo "
+        "maps the retained-mass versus discrete-release trade-off, includes geometry and "
+        "surface ablations, numerical-resolution checks, sensitivity, Monte Carlo "
         "perturbation, manufacturing-complexity analysis, and supplementary scenarios "
-        "from official Japanese weather observations."
+        "from official Japanese weather observations. Spatial grading produced four "
+        "nominal intermediate trade-offs absent from the exhaustive uniform grid, but "
+        "constructability and timestep sensitivity substantially qualify their "
+        "interpretation."
     )
     document.add_paragraph(
         "The work fits the journal because it addresses cold-regions roof-snow "
@@ -1518,6 +1534,9 @@ def build_cover_letter(root: Path) -> Path:
     submission_output = root / "manuscript" / "cover_letter_CRST.docx"
     document.save(submission_output)
     document.save(root / "manuscript" / "cover_letter_CRST_final.docx")
+    document.save(
+        root / "manuscript" / "cover_letter_CRST_submission_final.docx"
+    )
     return submission_output
 
 
@@ -1544,10 +1563,10 @@ def build_text_files(root: Path) -> list[Path]:
         )
     files: dict[str, str] = {
         "highlights.txt": (
-            "- Uniform and graded roof-snow trade-off sets were optimized.\n"
-            "- Spatial slope, friction, and adhesion profiles were compared.\n"
-            "- Convergence, ablation, sensitivity, and robustness were quantified.\n"
-            "- Outputs are reduced-order model evidence, not safety certification.\n"
+            "- Grading added four nominal trade-offs absent from the uniform grid.\n"
+            "- No joint row passed all frozen constructability checks.\n"
+            "- Post hoc mapping shifted the selected point toward shedding.\n"
+            "- Timestep sensitivity limits interpretation beyond the 0.5-h reference.\n"
         ),
         "scope_fit.md": (
             "# Scope fit\n\n"
@@ -1606,28 +1625,38 @@ def build_text_files(root: Path) -> list[Path]:
         path = root / "manuscript" / alias_name
         path.write_text(files[source_name], encoding="utf-8")
         outputs.append(path)
+    final_aliases = {
+        "scope_fit.md": "CRST_scope_fit_final.md",
+        "crst_checklist.md": "CRST_submission_checklist_final.md",
+    }
+    for source_name, alias_name in final_aliases.items():
+        path = root / "manuscript" / alias_name
+        path.write_text(files[source_name], encoding="utf-8")
+        outputs.append(path)
     return outputs
 
 
 def package_submission(root: Path) -> Path:
-    output = root / "submission" / "CRST_submission_package_final.zip"
+    output = root / "submission" / "CRST_submission_package_FINAL.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
     submission_files = [
         (
-            root / "manuscript" / "manuscript_CRST_final_0p5h.docx",
-            "manuscript_CRST_final_0p5h.docx",
+            root / "manuscript" / "manuscript_CRST_submission_final.docx",
+            "manuscript_CRST_submission_final.docx",
         ),
         (
             root / "manuscript" / "manuscript_CRST_inline_final_0p5h.docx",
             "review_copy/manuscript_CRST_inline_final_0p5h.docx",
         ),
         (
-            root / "manuscript" / "cover_letter_CRST_final.docx",
-            "cover_letter_CRST_final.docx",
+            root / "manuscript" / "cover_letter_CRST_submission_final.docx",
+            "cover_letter_CRST_submission_final.docx",
         ),
         (
-            root / "manuscript" / "supplementary_material_CRST.docx",
-            "supplementary_material_CRST.docx",
+            root
+            / "manuscript"
+            / "supplementary_material_CRST_submission_final.docx",
+            "supplementary_material_CRST_submission_final.docx",
         ),
         (
             root / "manuscript" / "editable_tables_CRST.docx",
@@ -1642,12 +1671,12 @@ def package_submission(root: Path) -> Path:
             "highlights_CRST.txt",
         ),
         (
-            root / "manuscript" / "CRST_submission_checklist.md",
-            "CRST_submission_checklist.md",
+            root / "manuscript" / "CRST_submission_checklist_final.md",
+            "CRST_submission_checklist_final.md",
         ),
         (
-            root / "manuscript" / "CRST_scope_fit.md",
-            "CRST_scope_fit.md",
+            root / "manuscript" / "CRST_scope_fit_final.md",
+            "CRST_scope_fit_final.md",
         ),
         (
             root / "manuscript" / "REPRODUCIBILITY_README.md",
@@ -1660,6 +1689,10 @@ def package_submission(root: Path) -> Path:
         (
             root / "audit" / "FINAL_AUDIT.md",
             "audit/FINAL_AUDIT.md",
+        ),
+        (
+            root / "audit" / "FINAL_FINISHING_AUDIT.md",
+            "audit/FINAL_FINISHING_AUDIT.md",
         ),
         (
             root / "audit" / "REPRODUCIBILITY_AUDIT.md",
@@ -1749,6 +1782,10 @@ def package_submission(root: Path) -> Path:
             archive.write(path, archive_path)
     legacy_output = root / "submission" / "CRST_submission_package.zip"
     legacy_output.write_bytes(output.read_bytes())
+    final_legacy_output = (
+        root / "submission" / "CRST_submission_package_final.zip"
+    )
+    final_legacy_output.write_bytes(output.read_bytes())
     return output
 
 

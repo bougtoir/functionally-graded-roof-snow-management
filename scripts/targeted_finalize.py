@@ -11,7 +11,9 @@ from docx import Document
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "generated"
 TABLES = ROOT / "tables" / "generated"
-MANUSCRIPT = ROOT / "manuscript" / "manuscript_CRST_final_0p5h.docx"
+MANUSCRIPT = (
+    ROOT / "manuscript" / "manuscript_CRST_submission_final.docx"
+)
 
 
 def _document_text(path: Path) -> str:
@@ -401,7 +403,8 @@ def build_manuscript_values() -> Path:
         "dt_hours=0.5; within_frozen_tolerance=False",
         "Count of 0.5-h selected designs failing relative to 0.25 h.",
         "scripts/run_0p5h_revision.py:stage_quarter_hour",
-        f"failed it for {quarter_failures} of {len(quarter)} selected",
+        f"{quarter_failures} of {len(quarter)} selected designs failed the "
+        "frozen four-metric tolerance",
     )
 
     for design, prefix, label in [

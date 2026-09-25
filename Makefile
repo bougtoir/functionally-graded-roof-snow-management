@@ -71,4 +71,4 @@ all:
 	$(PYTHON) scripts/run_pipeline.py validate
 
 clean:
-	rm -rf results/generated figures/png figures/tiff figures/vector tables/generated manuscript/build submission/CRST_submission_package.zip submission/CRST_submission_package_final.zip
+	rm -rf results/generated figures/png figures/tiff figures/vector tables/generated manuscript/build submission/CRST_submission_package.zip submission/CRST_submission_package_final.zip submission/CRST_submission_package_FINAL.zip

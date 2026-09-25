@@ -14,7 +14,7 @@ Warnings: 4
     "CRST checklist has unresolved manual items"
   ],
   "checks": {
-    "abstract_words": 203,
+    "abstract_words": 217,
     "continuous_line_numbering": true,
     "native_word_equations": 6,
     "non_ascii_characters": [
@@ -23,10 +23,10 @@ Warnings: 4
     "unsupported_non_ascii_characters": [],
     "reference_count": 22,
     "highlight_lengths": [
-      59,
-      61,
       67,
-      67
+      55,
+      60,
+      70
     ],
     "figures": [
       {
@@ -112,7 +112,7 @@ Warnings: 4
       }
     ],
     "unrecovered_acquisition_records": 131,
-    "zip_file_count": 82
+    "zip_file_count": 83
   }
 }
 ```

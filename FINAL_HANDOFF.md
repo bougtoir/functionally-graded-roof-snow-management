@@ -1,106 +1,106 @@
-# Final CRST handoff
+# Final CRST finishing handoff
 
-## Status
+## Decision
 
-**CRST decision: GO after author-supplied placeholders are completed.**
+**GO after the author completes the approved placeholders and submission
+declarations.**
 
-No unresolved critical scientific, numerical, citation, or file-integrity
-defect was found. Affiliation, postal address, funding, competing interests,
-CRediT roles, originality, author approval, and the final generative-AI
-responsibility statement remain for local author completion as requested.
+The canonical scientific analysis remained frozen. No optimizer, Monte Carlo,
+JMA, or new sensitivity run was started. No unresolved critical scientific,
+numerical, citation, formatting, or package-integrity defect remains.
 
-## Attached-manuscript revision
+## Finishing changes
 
-The supplied pre-revision inline manuscript was used as the comparison
-baseline. Its structure was preserved: 109 paragraphs, 9 editable Tables, and
-9 inline Figures. The canonical 0.5-hour manuscript updates the Abstract,
-Methods, Results, Discussion, Limitations, Conclusions, and all numerical
-Tables while retaining the prior literature positioning, notation corrections,
-claim limits, author placeholders, and CRST organization.
+- Calibrated the title, Abstract, Discussion, Conclusions, cover letter, and
+  highlights to describe nominal expansion of the modeled trade-off set without
+  claiming practical superiority, safety, validation, or convergence beyond
+  the 0.5-h production reference.
+- Reframed continuous-to-discrete mapping as objective-space movement. The
+  mapped selected point moves toward the low-retention, high-release shedding
+  regime and is not presented as a constrained optimum.
+- Clarified that the failed targeted 0.25-h check compares the 0.5-h production
+  outcomes with 0.25-h reevaluations. No release-rate endpoint or finer
+  production analysis was added.
+- Updated Figure 4, Figure 6, and Table 3 wording and regenerated Figures 1-9
+  and Tables 1-9 once from the canonical outputs.
+- Created the requested submission-final filenames and final CRST ZIP.
 
-The principal 1-hour to 0.5-hour changes are recorded in
-`audit/0p5h_revision/OLD_VS_NEW_PRIMARY_AUDIT.md`. The central conclusion
-changed in degree but not direction:
+## Numerical consistency
 
-- the uniform set still has 2 unique objective pairs;
-- the joint set has 6 unique pairs, including 4 intermediate pairs absent from
-  the uniform set under the same objective caps;
-- this does not establish front-wide superiority;
-- no joint nondominated row passed every frozen post hoc constructability
-  check;
-- mapping the selected continuous profile changed Lmax by -98.28% and Smax by
-  +537.47%, removing the nominal selected-profile advantage;
-- nominal objective equivalence still did not imply robustness equivalence;
-- JMA daily observations remain supplementary scenario forcing, not
-  validation;
-- the 0.5-hour production interval is the frozen numerical reference, while
-  the targeted 0.25-hour check confirms remaining interval sensitivity.
+No incorrect canonical numerical result was found. The mapping arithmetic was
+independently rechecked:
 
-## Analyses rerun or preserved
+- Lmax: -4469.093535562355 kg m-1 (-98.27857106412374%).
+- Smax: +66.00002741316608 kg m-1 (+537.4694412764242%).
 
-- Preserved the frozen research question, outcomes, physical assumptions,
-  forcing, parameter ranges, optimizer effort, seeds, robustness
-  distributions, constraints, and decision rules.
-- Used the completed canonical 0.5-hour baseline, exhaustive uniform,
-  multi-seed heterogeneous, frontier, constructability, robustness, JMA, and
-  targeted 0.25-hour outputs.
-- Regenerated Figures 1-9, Tables 1-9, the CRST manuscript, inline review copy,
-  supplement, cover letter, editable Tables, editable Figures, and submission
-  package from the canonical outputs.
-- Preserved the archived 1-hour outputs only for the explicit old-versus-new
-  audit.
-- Did not start a new optimizer run or broaden the scientific analysis.
+The only inconsistency corrected in this pass was wording that obscured which
+rows in the 0.25-h audit represented the production-versus-reference
+comparison.
 
-## Verification
+## Gates
 
-| Check | Status |
+| Gate | Status |
 |---|---|
 | `manuscript_values.csv` | PASS: 65/65 rows |
 | Manuscript-number consistency | PASS |
+| Canonical mapping arithmetic | PASS |
 | Figures | PASS: 9/9 in PNG, TIFF, EPS, PDF, and SVG |
 | Tables | PASS: 9/9 |
-| References and citations | PASS |
-| Reviewer-style scientific audit | PASS with limitations retained |
-| Checkpoint integrity | PASS: 9/9 |
+| Figure/table visual inspection | PASS |
+| References and citations | PASS: 22/22 verified |
+| Fabrication and provenance audit | PASS |
+| Final hostile CRST review | PASS |
+| CRST format and language audit | PASS |
 | Ruff | PASS |
 | Pytest | PASS: 34 tests |
 | Pipeline validation | PASS: 0 errors |
-| CRST ZIP integrity | PASS |
+| CRST ZIP integrity | PASS: 83 files |
 
-The checkpoint-based regeneration is the final reproducibility evidence for
-this finishing pass. A detached full optimizer rerun is not claimed.
+Four intended warnings remain: approved author/declaration placeholders,
+unresolved manual submission-checklist items, and non-quantitative source leads
+that were not retained locally. Quantitative inputs and redistributable
+evidence used by the study have verified snapshots.
 
-## Final CRST files
+## Final files
 
-- `manuscript/manuscript_CRST_final_0p5h.docx`
+- `manuscript/manuscript_CRST_submission_final.docx`
 - `manuscript/manuscript_CRST_inline_final_0p5h.docx`
-- `manuscript/cover_letter_CRST_final.docx`
-- `manuscript/supplementary_material_CRST.docx`
+- `manuscript/cover_letter_CRST_submission_final.docx`
+- `manuscript/supplementary_material_CRST_submission_final.docx`
 - `manuscript/editable_tables_CRST.docx`
 - `manuscript/editable_figures_CRST.pptx`
 - `manuscript/highlights_CRST.txt`
-- `manuscript/CRST_submission_checklist.md`
-- `manuscript/CRST_scope_fit.md`
-- `submission/CRST_submission_package_final.zip`
-- `submission/CRST_submission_manifest.csv`
-- `manuscript_values.csv`
-- `audit/FINAL_AUDIT.md`
+- `manuscript/CRST_submission_checklist_final.md`
+- `manuscript/CRST_scope_fit_final.md`
+- `audit/FINAL_FINISHING_AUDIT.md`
 - `audit/FINAL_CRST_REVIEW.md`
 - `audit/FABRICATION_AUDIT_FINAL.md`
 - `audit/NUMERICAL_CONSISTENCY_FINAL.md`
 - `references/REFERENCE_AUDIT_FINAL.csv`
+- `figures/png/`
+- `figures/tiff/`
+- `figures/vector/`
+- `tables/generated/`
+- `manuscript_values.csv`
+- `submission/CRST_submission_manifest.csv`
+- `submission/CRST_submission_package_FINAL.zip`
 
-## Reproduction command
-
-The complete pipeline entry point is:
+## Exact finishing build and verification commands
 
 ```bash
-make all PYTHON=.venv/bin/python
-```
-
-For this final manuscript-only finishing pass, the executed path was:
-
-```bash
+.venv/bin/python scripts/run_pipeline.py tables
+.venv/bin/python scripts/run_pipeline.py figures
 .venv/bin/python scripts/run_pipeline.py manuscript
+.venv/bin/python scripts/targeted_finalize.py --stage all
 .venv/bin/python scripts/run_pipeline.py validate
+.venv/bin/python -m ruff check src scripts tests
+.venv/bin/python -m pytest
 ```
+
+The full scientific pipeline remains available as
+`make all PYTHON=.venv/bin/python`, but it was intentionally not rerun during
+this frozen-analysis finishing pass.
+
+## Git
+
+Finishing implementation commit: `TO_BE_RECORDED_AFTER_COMMIT`.

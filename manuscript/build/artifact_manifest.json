@@ -45,7 +45,7 @@
   },
   {
     "path": "manuscript/build/cover_letter.docx",
-    "size_bytes": 37411
+    "size_bytes": 37502
   },
   {
     "path": "manuscript/build/crst_checklist.md",
@@ -53,11 +53,11 @@
   },
   {
     "path": "manuscript/build/highlights.txt",
-    "size_bytes": 266
+    "size_bytes": 264
   },
   {
     "path": "manuscript/build/manuscript.docx",
-    "size_bytes": 49988
+    "size_bytes": 50091
   },
   {
     "path": "manuscript/build/reproducibility_readme.md",
@@ -69,7 +69,7 @@
   },
   {
     "path": "manuscript/build/supplement.docx",
-    "size_bytes": 37724
+    "size_bytes": 37741
   },
   {
     "path": "manuscript/build/validation_report.json",

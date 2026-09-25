@@ -394,8 +394,8 @@ def generate_audits(root: Path, validation: dict[str, object]) -> list[Path]:
         "reference.\n\n"
         "## Verdict\n\n"
         "The nominal joint front retains intermediate modeled trade-offs, but the "
-        "central practical interpretation is negative: constructability and interval "
-        "sensitivity dominate the theoretical grading benefit. This conclusion does "
+        "constructability screen and interval sensitivity substantially limit "
+        "interpretation of that nominal expansion. This conclusion does "
         "not rely on JMA validation, structural safety, or universal-superiority "
         "claims.\n\n"
         "## Reproducibility and residual items\n\n"
@@ -588,7 +588,7 @@ def generate_audits(root: Path, validation: dict[str, object]) -> list[Path]:
         f"hypervolume, epsilon, matched caps, normalization, and {len(robustness_ties)}-way "
         "tie separated |\n"
         f"| Constructability | PASS | {joint_feasible} feasible joint rows; mapping "
-        "loss and transition penalties distinguished |\n"
+        "movement and transition penalties distinguished |\n"
         "| Weather interpretation | PASS | JMA observations are supplementary forcing, "
         "not roof validation |\n"
         f"| References | PASS | {len(references)} verified records in current CRST "
@@ -609,4 +609,14 @@ def generate_audits(root: Path, validation: dict[str, object]) -> list[Path]:
         "- Finalize the generative-AI responsibility statement after author review.\n"
     )
     paths.append(_write(root / "audit" / "FINAL_AUDIT.md", final_audit))
+    paths.append(
+        _write(
+            root / "audit" / "FINAL_FINISHING_AUDIT.md",
+            final_audit.replace(
+                "# Final submission audit",
+                "# Final finishing audit",
+                1,
+            ),
+        )
+    )
     return paths

@@ -67,7 +67,7 @@ single-timestep shed mass (`S_max`). The Snow Shedding Concentration Index
 Submission-ready aliases are written under `manuscript/`, separate PNG, TIFF,
 SVG, PDF, and EPS figures under `figures/`, machine-readable tables under
 `tables/generated/`, and the curated archive at
-`submission/CRST_submission_package_final.zip`. Author affiliation, declarations,
+`submission/CRST_submission_package_FINAL.zip`. Author affiliation, declarations,
 CRediT roles, originality, and approval remain explicit placeholders for local
 completion before submission.
 

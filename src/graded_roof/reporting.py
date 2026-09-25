@@ -580,7 +580,7 @@ def generate_figures(config: dict, root: Path) -> None:
         profile["discrete_slope_deg"],
         where="mid",
         color="#ff7f0e",
-        label="Mapped",
+        label="Post hoc mapped",
     )
     axes[1].plot(
         profile["cell"],
@@ -593,7 +593,7 @@ def generate_figures(config: dict, root: Path) -> None:
         profile["discrete_mu_static"],
         where="mid",
         color="#9467bd",
-        label="Mapped",
+        label="Post hoc mapped",
     )
     class_codes, class_labels = pd.factorize(
         profile["discrete_material_class"],
@@ -609,7 +609,7 @@ def generate_figures(config: dict, root: Path) -> None:
     axes[1].set_ylabel("Static friction")
     axes[2].set(
         xlabel="Ridge-to-eave cell",
-        ylabel="Mapped class",
+        ylabel="Post hoc class",
         yticks=np.arange(len(class_labels)),
         yticklabels=class_labels,
     )
@@ -728,7 +728,7 @@ def generate_figures(config: dict, root: Path) -> None:
         )
         axis.set(xlabel="Time step (h)", ylabel="Relative error", title=title)
     axes[0, 1].legend(frameon=False)
-    figure.suptitle("Error versus 48-cell, 0.5-h reference")
+    figure.suptitle("Relative difference from 48-cell, 0.5-h reference")
     figure.tight_layout()
     _save_figure(figure, root, "figure_6_numerical_convergence")
 

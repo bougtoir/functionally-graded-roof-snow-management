@@ -6,8 +6,8 @@ This handoff is regenerated from persistent repository artifacts; it does not re
 
 ## Evidence
 
-- `manuscript/manuscript_CRST.docx`: present
-- `submission/CRST_submission_package_final.zip`: present
+- `manuscript/manuscript_CRST_submission_final.docx`: present
+- `submission/CRST_submission_package_FINAL.zip`: present
 
 ## Unresolved items
 

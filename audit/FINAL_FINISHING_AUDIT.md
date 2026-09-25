@@ -1,4 +1,4 @@
-# Final submission audit
+# Final finishing audit
 
 Overall scientific and computational status: PASS
 
