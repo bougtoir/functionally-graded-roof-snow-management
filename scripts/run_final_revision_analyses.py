@@ -195,17 +195,169 @@ def stage_frontier() -> None:
     )
 
 
+def knee_row(
+    points: pd.DataFrame,
+    minimum: np.ndarray,
+    maximum: np.ndarray,
+) -> tuple[pd.Series, float]:
+    span = np.where(maximum > minimum, maximum - minimum, 1.0)
+    normalized = (points[OBJECTIVES].to_numpy(float) - minimum) / span
+    distances = np.linalg.norm(normalized, axis=1)
+    index = int(np.argmin(distances))
+    return points.iloc[index], float(distances[index])
+
+
+def stage_knee() -> None:
+    fronts = {
+        name: unique_objectives(
+            pd.read_csv(RESULTS / f"{name}_pareto.csv")
+        )
+        for name in CLASSES
+    }
+    combined = pd.concat(fronts.values(), ignore_index=True)[OBJECTIVES]
+    common_minimum = combined.min().to_numpy(float)
+    common_maximum = combined.max().to_numpy(float)
+    knee_rows = []
+    for name, points in fronts.items():
+        class_minimum = points[OBJECTIVES].min().to_numpy(float)
+        class_maximum = points[OBJECTIVES].max().to_numpy(float)
+        front_knee, front_distance = knee_row(
+            points,
+            class_minimum,
+            class_maximum,
+        )
+        common_knee, common_distance = knee_row(
+            points,
+            common_minimum,
+            common_maximum,
+        )
+        for method, row, distance in [
+            ("front_specific_minmax", front_knee, front_distance),
+            ("common_combined_minmax", common_knee, common_distance),
+        ]:
+            knee_rows.append(
+                {
+                    "design_class": name,
+                    "normalization": method,
+                    "l_max_kg_per_m": row["l_max_kg_per_m"],
+                    "s_max_kg_per_m": row["s_max_kg_per_m"],
+                    "normalized_distance_to_ideal": distance,
+                }
+            )
+    pd.DataFrame(knee_rows).to_csv(
+        RESULTS / "final_revision_knee_audit.csv",
+        index=False,
+    )
+
+    l_thresholds = sorted(
+        set(
+            pd.concat(fronts.values(), ignore_index=True)[
+                "l_max_kg_per_m"
+            ].tolist()
+        )
+    )
+    s_thresholds = sorted(
+        set(
+            pd.concat(fronts.values(), ignore_index=True)[
+                "s_max_kg_per_m"
+            ].tolist()
+        )
+    )
+    matched_rows = []
+    for threshold in l_thresholds:
+        for name, points in fronts.items():
+            feasible = points[points["l_max_kg_per_m"] <= threshold + 1e-6]
+            matched_rows.append(
+                {
+                    "constraint": "l_max_at_most",
+                    "threshold_kg_per_m": threshold,
+                    "design_class": name,
+                    "feasible": not feasible.empty,
+                    "best_other_objective_kg_per_m": (
+                        feasible["s_max_kg_per_m"].min()
+                        if not feasible.empty
+                        else np.nan
+                    ),
+                }
+            )
+    for threshold in s_thresholds:
+        for name, points in fronts.items():
+            feasible = points[points["s_max_kg_per_m"] <= threshold + 1e-6]
+            matched_rows.append(
+                {
+                    "constraint": "s_max_at_most",
+                    "threshold_kg_per_m": threshold,
+                    "design_class": name,
+                    "feasible": not feasible.empty,
+                    "best_other_objective_kg_per_m": (
+                        feasible["l_max_kg_per_m"].min()
+                        if not feasible.empty
+                        else np.nan
+                    ),
+                }
+            )
+    pd.DataFrame(matched_rows).to_csv(
+        RESULTS / "final_revision_matched_tradeoffs.csv",
+        index=False,
+    )
+
+    config_thresholds = [20.0, 80.0, 200.0]
+    constrained_rows = []
+    for threshold in config_thresholds:
+        for name, points in fronts.items():
+            feasible = points[points["s_max_kg_per_m"] <= threshold + 1e-6]
+            constrained_rows.append(
+                {
+                    "s_max_limit_kg_per_m": threshold,
+                    "design_class": name,
+                    "feasible": not feasible.empty,
+                    "minimum_l_max_kg_per_m": (
+                        feasible["l_max_kg_per_m"].min()
+                        if not feasible.empty
+                        else np.nan
+                    ),
+                }
+            )
+    pd.DataFrame(constrained_rows).to_csv(
+        RESULTS / "final_revision_prespecified_constraints.csv",
+        index=False,
+    )
+
+    uniform = fronts["uniform"]
+    joint = fronts["joint"]
+    region_rows = []
+    for _, point in joint.iterrows():
+        uniform_same_or_better = uniform[
+            (uniform["l_max_kg_per_m"] <= point["l_max_kg_per_m"] + 1e-6)
+            & (uniform["s_max_kg_per_m"] <= point["s_max_kg_per_m"] + 1e-6)
+        ]
+        region_rows.append(
+            {
+                **point.to_dict(),
+                "attainable_by_uniform_under_same_caps": (
+                    not uniform_same_or_better.empty
+                ),
+            }
+        )
+    pd.DataFrame(region_rows).to_csv(
+        RESULTS / "final_revision_joint_unique_regions.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=["frontier"],
+        choices=["frontier", "knee"],
         required=True,
     )
     args = parser.parse_args()
     AUDIT.mkdir(parents=True, exist_ok=True)
     if args.stage == "frontier":
         stage_frontier()
+    elif args.stage == "knee":
+        stage_knee()
 
 
 if __name__ == "__main__":
