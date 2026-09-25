@@ -1,0 +1,4 @@
+- Uniform and graded roof-snow trade-off sets were optimized.
+- Spatial slope, friction, and adhesion profiles were compared.
+- Constructability removed the selected nominal graded advantage.
+- Outputs are modeled evidence, not safety certification.

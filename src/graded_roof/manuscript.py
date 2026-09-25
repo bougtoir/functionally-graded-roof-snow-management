@@ -1540,8 +1540,7 @@ def build_text_files(root: Path) -> list[Path]:
     else:
         reproduction_text = (
             "The current 0.5-h checkpoint manifests passed configuration, source, "
-            "weather, seed, and checksum compatibility checks. The final detached "
-            "clean-environment reproduction record is generated before packaging. "
+            "weather, seed, and checksum compatibility checks. "
         )
     files: dict[str, str] = {
         "highlights.txt": (
@@ -1584,10 +1583,12 @@ def build_text_files(root: Path) -> list[Path]:
             "snapshots, optimization outputs, figures, tables, manuscript files, "
             "validation reports, and this submission package.\n\n"
             + reproduction_text
-            + "Three redistribution-restricted literature "
-            "documents are not included in the public checkout; their URLs, recorded "
-            "sizes, SHA-256 values, and usage conditions remain in the acquisition "
-            "ledger. They are not quantitative inputs.\n"
+            + "The five public-source snapshots used by the final literature audit "
+            "are retained under `data/raw/published_sources/` with ledgered URLs, "
+            "sizes, SHA-256 values, and usage conditions. They are not quantitative "
+            "analysis inputs. The targeted finalization intentionally did not repeat "
+            "a full clean pipeline rebuild after the one-time Figure and Table "
+            "regeneration; see `FINAL_HANDOFF.md` and `manuscript_values.csv`.\n"
         ),
     }
     outputs = []
