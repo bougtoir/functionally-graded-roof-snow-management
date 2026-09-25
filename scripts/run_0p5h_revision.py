@@ -11,6 +11,7 @@ import pandas as pd
 import yaml
 
 from graded_roof.complexity import manufacturable_mapping
+from graded_roof.optimization import _checkpoint_metadata, _load_checkpoint
 from graded_roof.simulation import simulate
 from graded_roof.study import (
     evaluate_design,
@@ -352,9 +353,228 @@ def stage_comparison() -> None:
                 float(old_knee[metric]),
                 float(new_knee[metric]),
             )
-    pd.DataFrame(rows).to_csv(
-        RESULTS / "1h_vs_0p5h.csv",
-        index=False,
+
+    old_hypervolume = pd.read_csv(
+        REFERENCE / "final_revision_frontier_metric_sensitivity.csv"
+    )
+    new_hypervolume = pd.read_csv(
+        RESULTS / "final_revision_frontier_metric_sensitivity.csv"
+    )
+    for design_class in ["uniform", "geometry", "surface", "joint"]:
+        old_row = old_hypervolume.loc[
+            old_hypervolume["design_class"].eq(design_class)
+            & old_hypervolume["normalization_origin"].eq("zero")
+            & old_hypervolume["reference_margin"].eq(1.05)
+        ].iloc[0]
+        new_row = new_hypervolume.loc[
+            new_hypervolume["design_class"].eq(design_class)
+            & new_hypervolume["normalization_origin"].eq("zero")
+            & new_hypervolume["reference_margin"].eq(1.05)
+        ].iloc[0]
+        _append_comparison(
+            rows,
+            "frontier_metric",
+            design_class,
+            "zero_origin_1p05_reference",
+            "normalized_hypervolume_fraction",
+            float(old_row["normalized_hypervolume_fraction"]),
+            float(new_row["normalized_hypervolume_fraction"]),
+        )
+
+    old_constructability = pd.read_csv(
+        REFERENCE / "final_revision_constructability_by_objective.csv"
+    )
+    new_constructability = pd.read_csv(
+        RESULTS / "final_revision_constructability_by_objective.csv"
+    )
+    for design_class in ["uniform", "geometry", "surface", "joint"]:
+        _append_comparison(
+            rows,
+            "constructability",
+            design_class,
+            "all_objective_groups",
+            "feasible_design_rows",
+            float(
+                old_constructability.loc[
+                    old_constructability["design_class"].eq(design_class),
+                    "feasible_design_rows",
+                ].sum()
+            ),
+            float(
+                new_constructability.loc[
+                    new_constructability["design_class"].eq(design_class),
+                    "feasible_design_rows",
+                ].sum()
+            ),
+        )
+
+    old_mapping = pd.read_csv(
+        REFERENCE / "final_revision_discretization_loss.csv"
+    ).iloc[0]
+    new_mapping = pd.read_csv(
+        RESULTS / "final_revision_discretization_loss.csv"
+    ).iloc[0]
+    for metric in [
+        "l_max_percent_change",
+        "s_max_percent_change",
+        "continuous_slope_transitions",
+        "mapped_slope_transitions",
+    ]:
+        _append_comparison(
+            rows,
+            "constructability",
+            "joint",
+            "selected_knee_mapping",
+            metric,
+            float(old_mapping[metric]),
+            float(new_mapping[metric]),
+        )
+
+    old_robustness = pd.read_csv(
+        REFERENCE / "final_revision_objective_equivalent_robustness.csv"
+    ).sort_values("candidate_count", ascending=False).iloc[0]
+    new_robustness = pd.read_csv(
+        RESULTS / "final_revision_objective_equivalent_robustness.csv"
+    ).sort_values("candidate_count", ascending=False).iloc[0]
+    for metric in [
+        "candidate_count",
+        "q95_l_min_kg_per_m",
+        "q95_l_max_kg_per_m",
+        "q95_s_min_kg_per_m",
+        "q95_s_max_kg_per_m",
+        "intervention_probability_min",
+        "intervention_probability_max",
+    ]:
+        _append_comparison(
+            rows,
+            "robustness",
+            "joint_and_uniform",
+            "largest_objective_equivalent_group",
+            metric,
+            float(old_robustness[metric]),
+            float(new_robustness[metric]),
+        )
+    _append_comparison(
+        rows,
+        "robustness",
+        "joint_and_uniform",
+        "minimum_score_tie",
+        "candidate_count",
+        float(
+            len(
+                pd.read_csv(
+                    REFERENCE / "final_revision_robust_selection_ties.csv"
+                )
+            )
+        ),
+        float(
+            len(
+                pd.read_csv(
+                    RESULTS / "final_revision_robust_selection_ties.csv"
+                )
+            )
+        ),
+    )
+
+    old_jma = pd.read_csv(
+        REFERENCE / "final_revision_jma_paired_summary.csv"
+    ).set_index("metric")
+    new_jma = pd.read_csv(
+        RESULTS / "final_revision_jma_paired_summary.csv"
+    ).set_index("metric")
+    for metric in [
+        "joint_to_uniform_l_max_ratio",
+        "joint_to_uniform_s_max_ratio",
+        "l_max_increase_percent",
+        "s_max_reduction_percent",
+    ]:
+        _append_comparison(
+            rows,
+            "jma_scenario",
+            "joint_vs_uniform",
+            "station_winter_median",
+            metric,
+            float(old_jma.loc[metric, "median"]),
+            float(new_jma.loc[metric, "median"]),
+        )
+    comparison = pd.DataFrame(rows)
+    comparison.to_csv(RESULTS / "1h_vs_0p5h.csv", index=False)
+    primary = comparison.loc[
+        (
+            comparison["section"].eq("baseline")
+            & comparison["item"].eq("conventional_shedding")
+            & comparison["metric"].isin(OBJECTIVES)
+        )
+        | (
+            comparison["section"].eq("frontier")
+            & comparison["design_class"].isin(["uniform", "joint"])
+            & comparison["metric"].eq("unique_objective_pairs")
+        )
+        | (
+            comparison["section"].eq("descriptive_knee")
+            & comparison["design_class"].eq("joint")
+        )
+        | (
+            comparison["section"].eq("frontier_metric")
+            & comparison["design_class"].isin(["uniform", "joint"])
+        )
+        | (
+            comparison["section"].eq("constructability")
+            & comparison["design_class"].eq("joint")
+            & comparison["metric"].isin(
+                [
+                    "feasible_design_rows",
+                    "l_max_percent_change",
+                    "s_max_percent_change",
+                ]
+            )
+        )
+        | (
+            comparison["section"].eq("robustness")
+            & comparison["metric"].isin(
+                [
+                    "candidate_count",
+                    "q95_l_min_kg_per_m",
+                    "q95_l_max_kg_per_m",
+                    "q95_s_min_kg_per_m",
+                    "q95_s_max_kg_per_m",
+                ]
+            )
+        )
+        | comparison["section"].eq("jma_scenario")
+    ]
+    audit_lines = [
+        "# Old-versus-new primary audit",
+        "",
+        "The 0.5-h rerun retained nominal intermediate joint trade-offs, but fewer "
+        "unique pairs remained and no joint row passed every post hoc constructability "
+        "check. Mapping loss and the targeted 0.25-h sensitivity make "
+        "constructability and interval dependence the dominant interpretation.",
+        "",
+        "| Section | Class | Item | Metric | 1 h | 0.5 h | Relative change |",
+        "|---|---|---|---|---:|---:|---:|",
+    ]
+    for row in primary.itertuples(index=False):
+        relative = (
+            "NA"
+            if pd.isna(row.relative_change)
+            else f"{100 * row.relative_change:+.2f}%"
+        )
+        audit_lines.append(
+            f"| {row.section} | {row.design_class} | {row.item} | "
+            f"{row.metric} | {row.value_1h:.6g} | {row.value_0p5h:.6g} | "
+            f"{relative} |"
+        )
+    audit_lines.extend(
+        [
+            "",
+            "The complete machine-readable comparison is "
+            "`results/generated/1h_vs_0p5h.csv`.",
+        ]
+    )
+    (AUDIT / "OLD_VS_NEW_PRIMARY_AUDIT.md").write_text(
+        "\n".join(audit_lines) + "\n",
+        encoding="utf-8",
     )
 
 
@@ -428,6 +648,48 @@ def stage_quarter_hour() -> None:
         "\n".join(lines),
         encoding="utf-8",
     )
+    timestep = pd.read_csv(
+        RESULTS / "final_revision_selected_design_timestep_audit.csv"
+    )
+    one_hour = timestep.loc[timestep["dt_hours"].eq(1.0)]
+    quarter_failures = int(
+        (~production_rows["within_frozen_tolerance"]).sum()
+    )
+    one_hour_failures = int((~one_hour["within_tolerance"]).sum())
+    targeted_lines = [
+        "# Targeted corrective analyses",
+        "",
+        "## Numerical resolution",
+        "",
+        f"All {one_hour_failures} selected-design 1-h rows fail the frozen "
+        "composite criterion relative to 0.5 h. Production was therefore rerun "
+        "at 0.5 h with unchanged outcomes, weather, parameter ranges, optimizer "
+        "effort, constraints, seeds, and decision rules.",
+        "",
+        f"All {quarter_failures} selected 0.5-h rows fail the targeted frozen "
+        "tolerance relative to 0.25 h. The 0.25-h calculation is disclosed as "
+        "post-freeze sensitivity only; it neither reopens the optimizer nor "
+        "supports a claim of convergence beyond the 0.5-h production reference.",
+        "",
+        "## Interpretation",
+        "",
+        "The 0.5-h joint front retains nominal intermediate objective pairs, "
+        "but interval dependence and the failure of continuous joint rows under "
+        "post hoc constructability checks dominate the practical interpretation. "
+        "No outcome definition was changed to rescue the hypothesis.",
+        "",
+    ]
+    targeted_path = (
+        ROOT
+        / "audit"
+        / "final_revision"
+        / "TARGETED_CORRECTIVE_ANALYSES.md"
+    )
+    targeted_path.parent.mkdir(parents=True, exist_ok=True)
+    targeted_path.write_text(
+        "\n".join(targeted_lines),
+        encoding="utf-8",
+    )
 
 
 def stage_checkpoint_audit() -> None:
@@ -435,27 +697,64 @@ def stage_checkpoint_audit() -> None:
     dt_token = str(config["simulation"]["dt_hours"]).replace(".", "p")
     checkpoint_dir = ROOT / "checkpoints" / f"dt_{dt_token}h"
     rows = []
-    for path in sorted(checkpoint_dir.glob("*.pkl")):
-        manifest_path = path.with_suffix(f"{path.suffix}.json")
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        checksum = hashlib.sha256(path.read_bytes()).hexdigest()
-        rows.append(
-            {
-                "checkpoint": str(path.relative_to(ROOT)),
-                "manifest": str(manifest_path.relative_to(ROOT)),
-                "mode": manifest["mode"],
-                "seed": manifest["seed"],
-                "dt_hours": manifest["dt_hours"],
-                "config_sha256": manifest["config_sha256"],
-                "weather_sha256": manifest["weather_sha256"],
-                "source_sha256": manifest["source_sha256"],
-                "code_commit": manifest["code_commit"],
-                "checkpoint_sha256": checksum,
-                "integrity_verified": (
-                    checksum == manifest["checkpoint_sha256"]
-                ),
-            }
-        )
+    weathers = synthetic_weather_set(config)
+    compatibility_keys = [
+        "mode",
+        "seed",
+        "dt_hours",
+        "population",
+        "generations",
+        "config_sha256",
+        "weather_sha256",
+        "source_sha256",
+    ]
+    for mode in ["geometry", "surface", "joint"]:
+        for seed in config["optimizer"]["seeds"]:
+            path = checkpoint_dir / f"{mode}_seed_{seed}.pkl"
+            manifest_path = path.with_suffix(f"{path.suffix}.json")
+            manifest = json.loads(
+                manifest_path.read_text(encoding="utf-8")
+            )
+            expected = _checkpoint_metadata(
+                config,
+                weathers,
+                mode,
+                int(seed),
+            )
+            checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+            metadata_verified = all(
+                manifest[key] == expected[key]
+                for key in compatibility_keys
+            )
+            embedded_metadata_verified = True
+            try:
+                _load_checkpoint(path, expected)
+            except (TypeError, ValueError):
+                embedded_metadata_verified = False
+            rows.append(
+                {
+                    "checkpoint": str(path.relative_to(ROOT)),
+                    "manifest": str(manifest_path.relative_to(ROOT)),
+                    **{
+                        key: manifest[key]
+                        for key in compatibility_keys
+                    },
+                    "code_commit": manifest["code_commit"],
+                    "checkpoint_sha256": checksum,
+                    "checksum_verified": (
+                        checksum == manifest["checkpoint_sha256"]
+                    ),
+                    "metadata_verified": metadata_verified,
+                    "embedded_metadata_verified": (
+                        embedded_metadata_verified
+                    ),
+                    "integrity_verified": (
+                        checksum == manifest["checkpoint_sha256"]
+                        and metadata_verified
+                        and embedded_metadata_verified
+                    ),
+                }
+            )
     audit = pd.DataFrame(rows)
     expected = 3 * len(config["optimizer"]["seeds"])
     if len(audit) != expected or not audit["integrity_verified"].all():

@@ -241,17 +241,17 @@ def validate_submission(root: Path) -> dict[str, object]:
             "verified snapshots"
         )
 
-    package = root / "submission" / "CRST_submission_package.zip"
+    package = root / "submission" / "CRST_submission_package_final.zip"
     if not package.exists():
         errors.append("submission ZIP is missing")
     else:
         with zipfile.ZipFile(package) as archive:
             names = set(archive.namelist())
         required_members = {
-            "manuscript_CRST_final.docx",
-            "review_copy/manuscript_CRST_inline_final.docx",
+            "manuscript_CRST_final_0p5h.docx",
+            "review_copy/manuscript_CRST_inline_final_0p5h.docx",
             "cover_letter_CRST_final.docx",
-            "supplement_CRST_final.docx",
+            "supplementary_material_CRST.docx",
             "editable_tables_CRST.docx",
             "editable_figures_CRST.pptx",
             "highlights_CRST.txt",
@@ -262,11 +262,22 @@ def validate_submission(root: Path) -> dict[str, object]:
             "audit/FINAL_AUDIT.md",
             "audit/REPRODUCIBILITY_AUDIT.md",
             "audit/FABRICATION_AUDIT.md",
+            "audit/FABRICATION_AUDIT_FINAL.md",
+            "audit/NUMERICAL_CONSISTENCY_FINAL.md",
+            "audit/REFERENCE_AUDIT_FINAL.csv",
+            "audit/FINAL_CRST_REVIEW.md",
+            "audit/TIMESTEP_AUDIT.md",
+            "audit/NUMERICAL_REFERENCE_AUDIT.md",
+            "audit/OLD_VS_NEW_PRIMARY_AUDIT.md",
             "audit/CRST_FORMAT_LANGUAGE_AUDIT.md",
             "audit/FINAL_HOSTILE_REVIEW.md",
-            "audit/fresh_reproduction_comparison.csv",
             "CRST_submission_manifest.csv",
         }
+        reproduction_summary = (
+            root / "audit" / "0p5h_revision" / "reproduction_summary.json"
+        )
+        if reproduction_summary.exists():
+            required_members.add("audit/fresh_reproduction_comparison.csv")
         missing_members = sorted(required_members - names)
         if missing_members:
             errors.append(f"submission ZIP missing: {missing_members}")

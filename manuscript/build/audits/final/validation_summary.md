@@ -14,7 +14,7 @@ Warnings: 4
     "CRST checklist has unresolved manual items"
   ],
   "checks": {
-    "abstract_words": 187,
+    "abstract_words": 203,
     "continuous_line_numbering": true,
     "native_word_equations": 6,
     "non_ascii_characters": [
@@ -58,7 +58,7 @@ Warnings: 4
       },
       {
         "name": "figure_4_selected_graded_profile.tiff",
-        "width_px": 7391,
+        "width_px": 7394,
         "height_px": 6890,
         "dpi": [
           1000,
@@ -85,7 +85,7 @@ Warnings: 4
       },
       {
         "name": "figure_7_sensitivity.tiff",
-        "width_px": 9895,
+        "width_px": 9896,
         "height_px": 7880,
         "dpi": [
           1000,
@@ -103,7 +103,7 @@ Warnings: 4
       },
       {
         "name": "figure_9_decision_phase_diagram.tiff",
-        "width_px": 8437,
+        "width_px": 8671,
         "height_px": 4321,
         "dpi": [
           1000,
@@ -112,7 +112,7 @@ Warnings: 4
       }
     ],
     "unrecovered_acquisition_records": 131,
-    "zip_file_count": 76
+    "zip_file_count": 82
   }
 }
 ```

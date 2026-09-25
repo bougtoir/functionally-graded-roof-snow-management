@@ -794,6 +794,14 @@ def stage_manuscript(config: dict) -> None:
         build_supplement(ROOT),
         build_cover_letter(ROOT),
         *build_text_files(ROOT),
+        *generate_audits(
+            ROOT,
+            {
+                "errors": [],
+                "warnings": ["final validation has not run"],
+                "checks": {},
+            },
+        ),
     ]
     artifacts.append(write_manifest(ROOT, artifacts))
     package_submission(ROOT)

@@ -2,6 +2,7 @@ reported_quantity,canonical_source,derivation,manuscript_location,status
 retention baseline Lmax and Smax,results/generated/baseline_aggregate.csv,retention_non_shedding aggregate row,Abstract and Results 3.1,verified
 shedding baseline Lmax and Smax,results/generated/baseline_aggregate.csv,conventional_shedding aggregate row,Results 3.1,verified
 convergence pass count and production-timestep qualification,results/generated/convergence.csv; results/generated/final_revision_selected_design_timestep_audit.csv,frozen four-metric tolerance and selected-design timestep evaluation,Results 3.1 and Figure 6,verified
+targeted 0.25-h numerical sensitivity,results/generated/final_revision_selected_design_0p25h_audit.csv,post-freeze reevaluation of selected 0.5-h designs without reoptimization,Abstract Results 3.1 Limitations and Conclusion,verified
 frontier design-row and unique-pair counts,results/generated/final_revision_frontier_summary.csv,six-decimal objective-pair deduplication by design class,Results 3.2-3.3 and Table 1,verified
 normalized hypervolume,results/generated/final_revision_frontier_metric_sensitivity.csv,zero-origin common bounds with 1.05 reference margin,Results 3.3 and Table 1,verified
 additive epsilon versus uniform,results/generated/final_revision_frontier_summary.csv,common-minmax normalized front comparison,Results 3.3 and Table 1,verified

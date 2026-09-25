@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "generated"
 OUTPUT = ROOT / "audit" / "FABRICATION_AUDIT.md"
 REFERENCE_OUTPUT = ROOT / "references" / "reference_audit.csv"
+FINAL_OUTPUT = ROOT / "audit" / "FABRICATION_AUDIT_FINAL.md"
+FINAL_REFERENCE_OUTPUT = ROOT / "references" / "REFERENCE_AUDIT_FINAL.csv"
 
 
 def expand_numbered_mentions(text: str, label: str) -> list[int]:
@@ -101,6 +103,10 @@ def main() -> None:
         ROOT / "references" / "final_revision_reference_audit.csv",
         REFERENCE_OUTPUT,
     )
+    shutil.copyfile(
+        ROOT / "references" / "final_revision_reference_audit.csv",
+        FINAL_REFERENCE_OUTPUT,
+    )
 
     frontier = pd.read_csv(
         RESULTS / "final_revision_frontier_summary.csv"
@@ -130,6 +136,9 @@ def main() -> None:
     timestep = pd.read_csv(
         RESULTS / "final_revision_selected_design_timestep_audit.csv"
     )
+    quarter_hour = pd.read_csv(
+        RESULTS / "final_revision_selected_design_0p25h_audit.csv"
+    )
     jma = pd.read_csv(RESULTS / "final_revision_jma_paired_tradeoffs.csv")
 
     expected_fragments = {
@@ -154,7 +163,7 @@ def main() -> None:
             joint_knee["s_max_kg_per_m"], 2
         ),
         "robustness Q95 Lmax lower bound": formatted(
-            largest_equivalent_group["q95_l_min_kg_per_m"], 1
+            largest_equivalent_group["q95_l_min_kg_per_m"], 2
         ),
         "robustness Q95 Lmax upper bound": formatted(
             largest_equivalent_group["q95_l_max_kg_per_m"], 1
@@ -179,7 +188,10 @@ def main() -> None:
         name: fragment in body for name, fragment in expected_fragments.items()
     }
 
-    production = timestep.loc[timestep["dt_hours"].eq(1.0)]
+    one_hour = timestep.loc[timestep["dt_hours"].eq(1.0)]
+    quarter_hour_production = quarter_hour.loc[
+        quarter_hour["dt_hours"].eq(0.5)
+    ]
     checks = {
         "figures 1-9 cited in order": (
             first_unique(figure_mentions) == list(range(1, 10))
@@ -234,8 +246,12 @@ def main() -> None:
         "number-provenance sources exist": all(
             path.exists() for path in provenance_paths
         ),
-        "all three production-timestep designs fail": (
-            len(production) == 3 and not production["within_tolerance"].any()
+        "all three 1-h selected designs fail versus 0.5 h": (
+            len(one_hour) == 3 and not one_hour["within_tolerance"].any()
+        ),
+        "all three 0.5-h selected designs fail targeted 0.25-h check": (
+            len(quarter_hour_production) == 3
+            and not quarter_hour_production["within_frozen_tolerance"].any()
         ),
         "Lmax is defined as modeled mass rather than structural load": (
             "modeled unit-width masses, not structural loads" in body
@@ -297,11 +313,15 @@ def main() -> None:
             "- Generic mapped surface classes are not commercial product claims.",
             "- Monte Carlo quantiles are conditional model outputs, not empirical "
             "confidence intervals.",
-            "- The 1-h production frontier remains explicitly qualified by the failed "
-            "four-metric convergence criterion.",
+            "- The 0.5-h frontier is the production numerical reference, not evidence "
+            "of convergence beyond 0.5 h.",
+            "- The failed 1-h comparison and targeted 0.25-h sensitivity are both "
+            "reported without changing Lmax or Smax definitions.",
         ]
     )
-    OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    content = "\n".join(lines) + "\n"
+    OUTPUT.write_text(content, encoding="utf-8")
+    FINAL_OUTPUT.write_text(content, encoding="utf-8")
     if not all(checks.values()):
         failed = [name for name, passed in checks.items() if not passed]
         raise SystemExit(f"fabrication audit failed: {failed}")

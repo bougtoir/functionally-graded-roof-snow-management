@@ -9,15 +9,15 @@
   },
   {
     "path": "manuscript/build/audits/final/reproducibility_audit.md",
-    "size_bytes": 1188
+    "size_bytes": 572
   },
   {
     "path": "manuscript/build/audits/final/reviewer_style_audit.md",
-    "size_bytes": 2206
+    "size_bytes": 2208
   },
   {
     "path": "manuscript/build/audits/final/scientific_audit.md",
-    "size_bytes": 689
+    "size_bytes": 1123
   },
   {
     "path": "manuscript/build/audits/final/validation_summary.md",
@@ -57,11 +57,11 @@
   },
   {
     "path": "manuscript/build/manuscript.docx",
-    "size_bytes": 49704
+    "size_bytes": 49988
   },
   {
     "path": "manuscript/build/reproducibility_readme.md",
-    "size_bytes": 726
+    "size_bytes": 843
   },
   {
     "path": "manuscript/build/scope_fit.md",

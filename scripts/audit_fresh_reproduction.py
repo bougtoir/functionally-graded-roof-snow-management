@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import json
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -17,6 +18,10 @@ def _sha256(path: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fresh-root", type=Path, required=True)
+    parser.add_argument("--duration-seconds", type=float, required=True)
+    parser.add_argument("--test-count", type=int, required=True)
+    parser.add_argument("--python-version", required=True)
+    parser.add_argument("--lint-passed", action="store_true")
     args = parser.parse_args()
     fresh_root = args.fresh_root.resolve()
 
@@ -47,12 +52,17 @@ def main() -> None:
         )
 
     comparison_path = (
-        ROOT / "audit" / "final_revision" / "fresh_reproduction_comparison.csv"
+        ROOT / "audit" / "0p5h_revision" / "fresh_reproduction_comparison.csv"
     )
+    comparison_path.parent.mkdir(parents=True, exist_ok=True)
     with comparison_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    legacy_comparison = (
+        ROOT / "audit" / "final_revision" / "fresh_reproduction_comparison.csv"
+    )
+    shutil.copyfile(comparison_path, legacy_comparison)
 
     validation = json.loads(
         (
@@ -61,6 +71,32 @@ def main() -> None:
     )
     identical = sum(row["status"] == "identical" for row in rows)
     mismatches = [row["path"] for row in rows if row["status"] != "identical"]
+    passed = (
+        not mismatches
+        and not validation["errors"]
+        and args.lint_passed
+    )
+    summary = {
+        "recorded_utc": datetime.now(UTC).isoformat(),
+        "passed": passed,
+        "fresh_root": str(fresh_root),
+        "python_version": args.python_version,
+        "duration_seconds": args.duration_seconds,
+        "test_count": args.test_count,
+        "lint_passed": args.lint_passed,
+        "compared_files": len(rows),
+        "identical_files": identical,
+        "mismatches": mismatches,
+        "validation_errors": validation["errors"],
+        "validation_warning_count": len(validation["warnings"]),
+    }
+    summary_path = (
+        ROOT / "audit" / "0p5h_revision" / "reproduction_summary.json"
+    )
+    summary_path.write_text(
+        json.dumps(summary, indent=2) + "\n",
+        encoding="utf-8",
+    )
     report = [
         "# Fresh reproducibility audit",
         "",
@@ -70,7 +106,7 @@ def main() -> None:
         "",
         (
             "- Quantitative reproduction: **PASS**."
-            if not mismatches and not validation["errors"]
+            if passed
             else "- Quantitative reproduction: **FAIL**."
         ),
         "- Complete local literature-evidence reproduction from the public checkout: "
@@ -80,14 +116,14 @@ def main() -> None:
         "",
         "## Clean execution",
         "",
-        "- A detached worktree was created from the Phase 13 commit.",
-        "- A new Python 3.11.10 virtual environment was created and the pinned project "
-        "plus development dependencies were installed.",
+        "- A detached worktree was created from the current 0.5-h revision commit.",
+        f"- A new Python {args.python_version} virtual environment was created and "
+        "the pinned project plus development dependencies were installed.",
         "- The production pipeline reran the data, baseline, convergence, exhaustive "
         "uniform, nine fresh heterogeneous optimization, JMA, sensitivity, robustness, "
         "tables, figures, manuscript, and validation stages.",
-        "- Full production computation took 70 minutes 2.652 seconds.",
-        "- Ruff passed and all 31 tests passed in the fresh environment.",
+        f"- Full production computation took {args.duration_seconds:.3f} seconds.",
+        f"- Ruff passed: {args.lint_passed}; {args.test_count} tests passed.",
         "",
         "## Output comparison",
         "",
@@ -104,34 +140,28 @@ def main() -> None:
         "- The proper minus sign used in font-superscript unit exponents is explicitly "
         "allowed; no unsupported non-ASCII character remains.",
         "",
-        "## Problems found and corrected",
+        "## Numerical-resolution interpretation",
         "",
-        "1. The first clean validation rejected the correct U+2212 minus sign used in "
-        "font-superscript unit exponents. Validation now allows that character while "
-        "continuing to reject other unsupported non-ASCII characters.",
-        "2. Validation regenerated the legacy project-state section and initially "
-        "dropped the final-revision phase history. The state updater now preserves the "
-        "final-revision section.",
-        "3. The literature-stage checksum audit cannot resolve the three intentionally "
-        "unpublished local source files from the public checkout. This does not affect "
-        "the 58 regenerated quantitative CSV files, but prevents a claim of complete "
-        "local archival reproduction from the public repository alone.",
+        "- The clean run used the canonical 0.5-h production configuration and fresh "
+        "timestep-isolated optimization checkpoints.",
+        "- The 1-h archive was not loaded as a production checkpoint.",
+        "- The targeted 0.25-h calculation remains a sensitivity analysis and does not "
+        "change the production resolution.",
         "",
         "## Evidence",
         "",
-        "- `audit/final_revision/fresh_reproduction_comparison.csv`",
-        "- `audit/final_revision/fresh_reproduction_run.log`",
-        "- `audit/final_revision/fresh_final_revision_analyses.log`",
+        "- `audit/0p5h_revision/fresh_reproduction_comparison.csv`",
+        "- `audit/0p5h_revision/reproduction_summary.json`",
         "- `manuscript/build/validation_report.json`",
     ]
     (ROOT / "audit" / "REPRODUCIBILITY_AUDIT.md").write_text(
         "\n".join(report) + "\n",
         encoding="utf-8",
     )
-    if mismatches or validation["errors"]:
+    if not passed:
         raise SystemExit(
             f"fresh reproduction failed: mismatches={mismatches}, "
-            f"errors={validation['errors']}"
+            f"errors={validation['errors']}, lint_passed={args.lint_passed}"
         )
 
 

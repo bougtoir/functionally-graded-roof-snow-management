@@ -1,6 +1,6 @@
 {
   "source": "deterministic synthetic scenarios defined in config/production.yaml",
   "scenario_count": 3,
-  "dt_hours": 1.0,
+  "dt_hours": 0.5,
   "seed": 1701
 }

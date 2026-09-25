@@ -1,0 +1,12 @@
+{
+  "checkpoint_sha256": "789e2e39711ce617c61418dcd55217aa70b60543004a84cd4c06a16d95d03e44",
+  "code_commit": "3a8993108283ee79c82aac9dc8e791188d7cc689",
+  "config_sha256": "4c0de3f5d635b58c78ea4001ca09cb82e912fa3c209020a79801dcbef802ab34",
+  "dt_hours": 0.5,
+  "generations": 45,
+  "mode": "joint",
+  "population": 48,
+  "seed": 1701,
+  "source_sha256": "7fb108ae2523abfd961ce616191d5e2b46f3c5205bbb469073c65fc50fbb78f4",
+  "weather_sha256": "4b8cb5f16933a571b3635023389b22a404f3b8b7b508efd11d74f9ed19cef5a0"
+}

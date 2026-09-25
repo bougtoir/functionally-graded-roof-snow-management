@@ -65,7 +65,7 @@ PHASES = [
         "Manuscript and submission files",
         [
             "manuscript/manuscript_CRST.docx",
-            "submission/CRST_submission_package.zip",
+            "submission/CRST_submission_package_final.zip",
         ],
     ),
     ("17", "Initial review", ["audit/INITIAL_REVIEW.md"]),

@@ -140,11 +140,41 @@ def main() -> None:
     source_text = "\n".join(
         path.read_text(encoding="utf-8") for path in source_paths
     )
-    embedded_results = [
-        value
-        for value in ("3210.6", "3913.3", "6417.0", "4200.4", "226.0")
-        if value in source_text
-    ]
+    old_knee = pd.read_csv(
+        ROOT / "results" / "reference_1h" / "final_revision_knee_audit.csv"
+    )
+    old_knee = old_knee.loc[
+        old_knee["design_class"].eq("joint")
+        & old_knee["normalization"].eq("front_specific_minmax")
+    ].iloc[0]
+    old_mapping = pd.read_csv(
+        ROOT
+        / "results"
+        / "reference_1h"
+        / "final_revision_discretization_loss.csv"
+    ).iloc[0]
+    old_metric = pd.read_csv(
+        ROOT
+        / "results"
+        / "reference_1h"
+        / "final_revision_frontier_metric_sensitivity.csv"
+    )
+    old_metric = old_metric.loc[
+        old_metric["design_class"].eq("joint")
+        & old_metric["normalization_origin"].eq("zero")
+        & old_metric["reference_margin"].eq(1.05)
+    ].iloc[0]
+    stale_tokens = {
+        f"{old_knee['l_max_kg_per_m']:.1f}",
+        f"{old_knee['s_max_kg_per_m']:.2f}",
+        f"{old_mapping['l_max_percent_change']:.2f}",
+        f"{old_mapping['s_max_percent_change']:.2f}",
+        f"{old_metric['normalized_hypervolume_fraction']:.3f}",
+    }
+    embedded_results = sorted(
+        value for value in stale_tokens if value in source_text
+    )
+    checkpoint_directory = ROOT / "checkpoints" / "dt_0p5h"
     checks = {
         "freeze_record_present": (ROOT / "analysis_freeze.yaml").exists(),
         "production_config_present": (ROOT / "config" / "production.yaml").exists(),
@@ -155,7 +185,8 @@ def main() -> None:
             len(jma) > 0 and jma["local_status"].eq("verified").all()
         ),
         "optimizer_checkpoint_count_is_nine": (
-            len(list((ROOT / "checkpoints").glob("*_seed_*.pkl"))) == 9
+            len(list(checkpoint_directory.glob("*_seed_*.pkl"))) == 9
+            and len(list(checkpoint_directory.glob("*_seed_*.pkl.json"))) == 9
         ),
         "generated_primary_results_present": all(
             (ROOT / "results" / "generated" / name).exists()
@@ -168,7 +199,7 @@ def main() -> None:
                 "jma_daily_evaluation.csv",
             ]
         ),
-        "no_primary_result_literals_in_python": not embedded_results,
+        "no_stale_1h_result_literals_in_python": not embedded_results,
     }
     report = {
         "status": "PASS" if all(checks.values()) else "FAIL",
@@ -179,8 +210,8 @@ def main() -> None:
         "embedded_result_literals": embedded_results,
         "note": (
             "Unavailable historical records are disclosed but are not quantitative "
-            "analysis inputs. Final-revision outputs supersede the current manuscript "
-            "and package only after Phase 16."
+            "analysis inputs. The canonical manuscript and package use 0.5-h "
+            "production outputs; the 1-h archive is retained only for comparison."
         ),
     }
     (OUTPUT / "provenance_checks.json").write_text(

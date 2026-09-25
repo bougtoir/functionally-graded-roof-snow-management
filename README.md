@@ -31,19 +31,23 @@ make all
 The Makefile exposes the repository's `src/` tree through `PYTHONPATH`, so an
 editable package install is not required for these targets.
 
-`make all` regenerates processed data, analyses, figures, tables, the manuscript,
-audits, and the CRST submission package. It fails if a critical validation gate
-fails.
+`make all` is the exact canonical reproduction command. It regenerates the
+0.5-h production analysis, final-revision comparisons, targeted 0.25-h
+numerical sensitivity, figures, tables, manuscript, audits, and CRST submission
+package. It fails if a critical validation gate fails.
 
 Production optimization evaluates 6,300 uniform designs and three independent
-NSGA-II seeds for each heterogeneous mode. Heterogeneous runs checkpoint under
-`checkpoints/` and resume after interruption.
+NSGA-II seeds for each heterogeneous mode at 0.5 h. Heterogeneous runs checkpoint
+under `checkpoints/dt_0p5h/`, validate configuration/source/weather hashes and
+checksums, and resume after interruption.
 
 ## Main targets
 
 ```text
 make data
 make baseline
+make convergence
+make uniform
 make optimize
 make jma
 make sensitivity
@@ -63,7 +67,7 @@ single-timestep shed mass (`S_max`). The Snow Shedding Concentration Index
 Submission-ready aliases are written under `manuscript/`, separate PNG, TIFF,
 SVG, PDF, and EPS figures under `figures/`, machine-readable tables under
 `tables/generated/`, and the curated archive at
-`submission/CRST_submission_package.zip`. Author affiliation, declarations,
+`submission/CRST_submission_package_final.zip`. Author affiliation, declarations,
 CRediT roles, originality, and approval remain explicit placeholders for local
 completion before submission.
 
@@ -89,7 +93,7 @@ Historical Weather Data Search for Kutchan, Aomori, Shinjo, and Takada over
 three winters. Original HTML, request parameters, response headers, and
 checksums are preserved. Daily aggregation limits event-timing interpretation;
 the primary optimization therefore remains based on the frozen synthetic
-hourly scenarios. The deviation from the initially planned JMA bulk-hourly
+0.5-h scenarios. The deviation from the initially planned JMA bulk-hourly
 route is documented in `analysis_deviations.md`.
 
 To create a new immutable JMA snapshot without overwriting the retained one:
