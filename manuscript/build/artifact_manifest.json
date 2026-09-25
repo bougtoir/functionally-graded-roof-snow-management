@@ -1,74 +1,74 @@
 [
   {
-    "path": "manuscript/build/audits/final/fabrication_audit.md",
-    "size_bytes": 870
-  },
-  {
-    "path": "manuscript/build/audits/final/formatting_language_consistency_audit.md",
-    "size_bytes": 584
-  },
-  {
-    "path": "manuscript/build/audits/final/reproducibility_audit.md",
-    "size_bytes": 701
-  },
-  {
-    "path": "manuscript/build/audits/final/reviewer_style_audit.md",
-    "size_bytes": 2206
-  },
-  {
-    "path": "manuscript/build/audits/final/scientific_audit.md",
-    "size_bytes": 689
-  },
-  {
-    "path": "manuscript/build/audits/final/validation_summary.md",
-    "size_bytes": 2481
-  },
-  {
-    "path": "manuscript/build/audits/initial/fabrication_audit.md",
-    "size_bytes": 476
-  },
-  {
-    "path": "manuscript/build/audits/initial/formatting_language_consistency_audit.md",
-    "size_bytes": 477
-  },
-  {
-    "path": "manuscript/build/audits/initial/reproducibility_audit.md",
-    "size_bytes": 422
+    "path": "manuscript/build/audits/initial/scientific_audit.md",
+    "size_bytes": 493
   },
   {
     "path": "manuscript/build/audits/initial/reviewer_style_audit.md",
     "size_bytes": 560
   },
   {
-    "path": "manuscript/build/audits/initial/scientific_audit.md",
-    "size_bytes": 493
+    "path": "manuscript/build/audits/initial/fabrication_audit.md",
+    "size_bytes": 476
   },
   {
-    "path": "manuscript/build/cover_letter.docx",
+    "path": "manuscript/build/audits/initial/reproducibility_audit.md",
+    "size_bytes": 422
+  },
+  {
+    "path": "manuscript/build/audits/initial/formatting_language_consistency_audit.md",
+    "size_bytes": 477
+  },
+  {
+    "path": "audit/INITIAL_REVIEW.md",
+    "size_bytes": 1119
+  },
+  {
+    "path": "manuscript/manuscript_CRST.docx",
+    "size_bytes": 49259
+  },
+  {
+    "path": "manuscript/manuscript_CRST_inline.docx",
+    "size_bytes": 1649418
+  },
+  {
+    "path": "manuscript/editable_tables_CRST.docx",
+    "size_bytes": 41515
+  },
+  {
+    "path": "manuscript/editable_figures_CRST.pptx",
+    "size_bytes": 1634971
+  },
+  {
+    "path": "manuscript/supplement_CRST.docx",
+    "size_bytes": 37721
+  },
+  {
+    "path": "manuscript/cover_letter_CRST.docx",
     "size_bytes": 37389
-  },
-  {
-    "path": "manuscript/build/crst_checklist.md",
-    "size_bytes": 739
   },
   {
     "path": "manuscript/build/highlights.txt",
     "size_bytes": 266
   },
   {
-    "path": "manuscript/build/manuscript.docx",
-    "size_bytes": 47546
-  },
-  {
     "path": "manuscript/build/scope_fit.md",
     "size_bytes": 405
   },
   {
-    "path": "manuscript/build/supplement.docx",
-    "size_bytes": 37721
+    "path": "manuscript/build/crst_checklist.md",
+    "size_bytes": 739
   },
   {
-    "path": "manuscript/build/validation_report.json",
-    "size_bytes": 2423
+    "path": "manuscript/highlights_CRST.txt",
+    "size_bytes": 266
+  },
+  {
+    "path": "manuscript/CRST_scope_fit.md",
+    "size_bytes": 405
+  },
+  {
+    "path": "manuscript/CRST_submission_checklist.md",
+    "size_bytes": 739
   }
 ]

@@ -28,13 +28,20 @@ TITLE = (
 FIGURE_CAPTIONS = [
     "Figure 1. Reduced-order model and comparative optimization workflow.",
     "Figure 2. Synthetic snowfall scenarios and JMA ground-snow contexts.",
-    "Figure 3. Primary modeled retained-mass and release-mass Pareto comparison.",
-    "Figure 4. Selected graded joint profile and generic mapped surface classes.",
-    "Figure 5. Geometry-only, surface-only, and joint heterogeneous Pareto fronts.",
-    "Figure 6. Numerical convergence relative to the finest tested resolution.",
-    "Figure 7. Prespecified one-at-a-time sensitivity of primary outcomes.",
-    "Figure 8. Monte Carlo perturbation distributions for frontier candidates.",
-    "Figure 9. Labor-scarcity selections and frozen strategy classifications.",
+    "Figure 3. Unique objective pairs for the exhaustive uniform and heuristic joint "
+    "sets, shown over the full range and the intermediate trade-off region.",
+    "Figure 4. Continuous joint-knee slope and friction profiles compared with the "
+    "post hoc segmented, generic-class mapping.",
+    "Figure 5. Unique objective pairs for the uniform, geometry-only, surface-only, "
+    "and joint sets.",
+    "Figure 6. Four-metric numerical convergence relative to the 48-cell, 0.5-h "
+    "reference; the dashed line is the frozen relative-error tolerance.",
+    "Figure 7. Prespecified one-at-a-time sensitivity. Labels state each low/high "
+    "factor or encoded alternative; bars are relative changes from baseline.",
+    "Figure 8. Candidate-specific Q95 retained-mass and release-mass outcomes under "
+    "250 paired perturbation draws. Symmetric-log axes include zero outcomes.",
+    "Figure 9. Frozen labor-scarcity selections in the base decision scenario and "
+    "phase-diagram objective pairs; bubble area reflects selection frequency.",
 ]
 
 FIGURE_FILENAMES = [
@@ -664,6 +671,7 @@ def build_manuscript(root: Path) -> Path:
             f"{jma_summary.loc['s_max_reduction_percent', 'minimum']:.2f}% to "
             f"{jma_summary.loc['s_max_reduction_percent', 'maximum']:.2f}%. "
             "These paired modeled trade-offs were strongly station-winter dependent. "
+            "Table 9 gives the paired station-winter results. "
             "Daily ground observations are supplementary forcing, not roof-scale "
             "validation, and daily Smax is not directly comparable with hourly Smax."
         )
@@ -779,24 +787,24 @@ def build_manuscript(root: Path) -> Path:
     _add_dataframe_table(
         document,
         table_1,
-        "Table 1. Pareto-front summary.",
+        "Table 1. Audited objective-set summary.",
         [
             "design_class",
-            "pareto_designs",
-            "knee_l_max_kg_per_m",
-            "knee_s_max_kg_per_m",
-            "normalized_hypervolume",
+            "nondominated_design_rows",
+            "unique_objective_pairs",
+            "descriptive_knee_l_max_kg_per_m",
+            "descriptive_knee_s_max_kg_per_m",
+            "normalized_hypervolume_fraction",
             "additive_epsilon_vs_uniform",
-            "dominated_fraction_in_combined_set",
         ],
         headers=[
             "Class",
-            "Pareto n",
-            "Knee Lmax",
-            "Knee Smax",
+            "Design rows",
+            "Objective pairs",
+            "Descriptive knee Lmax",
+            "Descriptive knee Smax",
             "Norm. HV",
             "Epsilon vs uniform",
-            "Dominated fraction",
         ],
     )
     _add_dataframe_table(
@@ -836,8 +844,10 @@ def build_manuscript(root: Path) -> Path:
             "mean_event_count",
             "slope_transition_count",
             "surface_transition_count",
-            "l_max_discretization_loss",
-            "s_max_discretization_loss",
+            "l_max_change_kg_per_m",
+            "l_max_change_percent",
+            "s_max_change_kg_per_m",
+            "s_max_change_percent",
         ],
         headers=[
             "Mapping",
@@ -847,8 +857,10 @@ def build_manuscript(root: Path) -> Path:
             "Event count",
             "Slope transitions",
             "Surface transitions",
-            "Lmax loss",
-            "Smax loss",
+            "Lmax change (kg m-1)",
+            "Lmax change (%)",
+            "Smax change (kg m-1)",
+            "Smax change (%)",
         ],
     )
     document.add_paragraph(
@@ -942,6 +954,7 @@ def build_manuscript(root: Path) -> Path:
             "quantile_s_max_kg_per_m",
             "probability_manual_intervention",
             "robust_selected",
+            "minimum_score_tie",
         ],
         maximum_rows=30,
         headers=[
@@ -953,6 +966,7 @@ def build_manuscript(root: Path) -> Path:
             "Q95 Smax",
             "P(manual)",
             "Robust selected",
+            "Minimum-score tie",
         ],
     )
     if jma_path.exists():
@@ -960,26 +974,28 @@ def build_manuscript(root: Path) -> Path:
         _add_dataframe_table(
             document,
             table_9,
-            "Table 9. Supplementary JMA daily station-winter evaluation.",
+            "Table 9. Supplementary paired JMA station-winter evaluation.",
             [
                 "station_id",
                 "winter",
-                "days",
-                "design_class",
-                "l_max_kg_per_m",
-                "s_max_kg_per_m",
-                "mean_event_count",
-                "mean_ssci",
+                "station_name",
+                "uniform_l_max_kg_per_m",
+                "joint_l_max_kg_per_m",
+                "joint_to_uniform_l_max_ratio",
+                "uniform_s_max_kg_per_m",
+                "joint_s_max_kg_per_m",
+                "s_max_reduction_percent",
             ],
             headers=[
                 "Station",
                 "Winter",
-                "Days",
-                "Design",
-                "Lmax",
-                "Smax",
-                "Events",
-                "Mean SSCI",
+                "Name",
+                "Uniform Lmax",
+                "Joint Lmax",
+                "Lmax ratio",
+                "Uniform Smax",
+                "Joint Smax",
+                "Smax reduction (%)",
             ],
         )
     document.add_heading("Figure captions", level=1)
@@ -1090,7 +1106,7 @@ def build_inline_manuscript(root: Path) -> Path:
     primary_anchor = _find_paragraph(document, "Figure 1 summarizes")
     convergence_anchor = _find_paragraph(document, "Figure 6 reports")
     robustness_anchor = _find_paragraph(document, "Figures 8-9 and Tables 4-8")
-    jma_anchor = _find_paragraph(document, "Table 9 reports")
+    jma_anchor = _find_paragraph(document, "Table 9 gives")
 
     figure_elements = {
         number: _figure_elements(

@@ -11,12 +11,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from graded_roof.complexity import design_complexity, manufacturable_mapping
-from graded_roof.metrics import (
-    additive_epsilon_indicator,
-    matched_objective_improvement,
-    nondominated_mask,
-    normalized_hypervolume_2d,
-)
 from graded_roof.study import (
     evaluate_design,
     heterogeneous_design,
@@ -112,75 +106,43 @@ def generate_tables(config: dict, root: Path) -> None:
         "surface": pd.read_csv(results / "surface_pareto.csv"),
         "joint": pd.read_csv(results / "joint_pareto.csv"),
     }
-    all_objectives = pd.concat(
-        [
-            frame[["l_max_kg_per_m", "s_max_kg_per_m"]]
-            for frame in fronts.values()
-        ],
-        ignore_index=True,
+    frontier_summary = pd.read_csv(
+        results / "final_revision_frontier_summary.csv"
     )
-    reference = (
-        float(all_objectives["l_max_kg_per_m"].max() * 1.05),
-        float(all_objectives["s_max_kg_per_m"].max() * 1.05),
+    hypervolume = pd.read_csv(
+        results / "final_revision_frontier_metric_sensitivity.csv"
     )
-    objective_minimum = all_objectives.min().to_numpy(float)
-    objective_span = np.ptp(all_objectives.to_numpy(float), axis=0)
-    objective_span = np.where(objective_span > 0, objective_span, 1.0)
-    normalized_uniform = (
-        fronts["uniform"][["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy()
-        - objective_minimum
-    ) / objective_span
-    labeled_fronts = pd.concat(
-        [
-            frame.assign(design_class=name)
-            for name, frame in fronts.items()
-        ],
-        ignore_index=True,
+    hypervolume = hypervolume.loc[
+        hypervolume["normalization_origin"].eq("zero")
+        & hypervolume["reference_margin"].eq(1.05),
+        ["design_class", "normalized_hypervolume_fraction"],
+    ]
+    knees = pd.read_csv(results / "final_revision_knee_audit.csv")
+    knees = knees.loc[
+        knees["normalization"].eq("front_specific_minmax"),
+        ["design_class", "l_max_kg_per_m", "s_max_kg_per_m"],
+    ].rename(
+        columns={
+            "l_max_kg_per_m": "descriptive_knee_l_max_kg_per_m",
+            "s_max_kg_per_m": "descriptive_knee_s_max_kg_per_m",
+        }
     )
-    globally_nondominated = nondominated_mask(
-        labeled_fronts[["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy()
+    frontier_table = frontier_summary.merge(
+        hypervolume,
+        on="design_class",
+        validate="one_to_one",
+    ).merge(
+        knees,
+        on="design_class",
+        validate="one_to_one",
+    ).rename(
+        columns={
+            "additive_epsilon_vs_uniform_common_minmax": (
+                "additive_epsilon_vs_uniform"
+            )
+        }
     )
-    labeled_fronts["globally_nondominated"] = globally_nondominated
-    summaries = []
-    for name, frame in fronts.items():
-        knee = select_knee(frame)
-        normalized_front = (
-            frame[["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy()
-            - objective_minimum
-        ) / objective_span
-        matched = matched_objective_improvement(
-            frame[["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy(),
-            fronts["uniform"][
-                ["l_max_kg_per_m", "s_max_kg_per_m"]
-            ].to_numpy(),
-        )
-        class_global = labeled_fronts.loc[
-            labeled_fronts["design_class"] == name,
-            "globally_nondominated",
-        ]
-        summaries.append(
-            {
-                "design_class": name,
-                "pareto_designs": len(frame),
-                "minimum_l_max_kg_per_m": frame["l_max_kg_per_m"].min(),
-                "minimum_s_max_kg_per_m": frame["s_max_kg_per_m"].min(),
-                "knee_l_max_kg_per_m": knee["l_max_kg_per_m"],
-                "knee_s_max_kg_per_m": knee["s_max_kg_per_m"],
-                "normalized_hypervolume": normalized_hypervolume_2d(
-                    frame[["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy(),
-                    reference,
-                ),
-                "additive_epsilon_vs_uniform": additive_epsilon_indicator(
-                    normalized_front,
-                    normalized_uniform,
-                ),
-                "dominated_fraction_in_combined_set": (
-                    1.0 - float(class_global.mean())
-                ),
-                **matched,
-            }
-        )
-    pd.DataFrame(summaries).to_csv(
+    frontier_table.to_csv(
         tables / "table_1_pareto_summary.csv",
         index=False,
     )
@@ -215,7 +177,7 @@ def generate_tables(config: dict, root: Path) -> None:
     weathers = synthetic_weather_set(config)
     continuous_metrics, _ = evaluate_design(continuous, weathers, settings)
     discrete_metrics, _ = evaluate_design(discrete, weathers, settings)
-    pd.DataFrame(
+    mapping_table = pd.DataFrame(
         [
             {
                 "mapping": "continuous",
@@ -236,7 +198,30 @@ def generate_tables(config: dict, root: Path) -> None:
                 ),
             },
         ]
-    ).to_csv(tables / "table_3_discretization.csv", index=False)
+    )
+    continuous_row = mapping_table.iloc[0]
+    mapping_table["l_max_change_kg_per_m"] = (
+        mapping_table["l_max_kg_per_m"]
+        - continuous_row["l_max_kg_per_m"]
+    )
+    mapping_table["s_max_change_kg_per_m"] = (
+        mapping_table["s_max_kg_per_m"]
+        - continuous_row["s_max_kg_per_m"]
+    )
+    mapping_table["l_max_change_percent"] = (
+        100.0
+        * mapping_table["l_max_change_kg_per_m"]
+        / max(abs(float(continuous_row["l_max_kg_per_m"])), 1e-12)
+    )
+    mapping_table["s_max_change_percent"] = (
+        100.0
+        * mapping_table["s_max_change_kg_per_m"]
+        / max(abs(float(continuous_row["s_max_kg_per_m"])), 1e-12)
+    )
+    mapping_table.to_csv(
+        tables / "table_3_discretization.csv",
+        index=False,
+    )
 
     complexity_rows = []
     for design_class, frame in fronts.items():
@@ -395,7 +380,9 @@ def generate_tables(config: dict, root: Path) -> None:
     )
     jma_path = results / "jma_daily_evaluation.csv"
     if jma_path.exists():
-        pd.read_csv(jma_path).to_csv(
+        pd.read_csv(
+            results / "final_revision_jma_paired_tradeoffs.csv"
+        ).to_csv(
             tables / "table_9_jma_daily_evaluation.csv",
             index=False,
         )
@@ -436,7 +423,9 @@ def generate_tables(config: dict, root: Path) -> None:
         tables / "table_7_complexity_penalty.csv",
         index=False,
     )
-    robustness_summary = results / "robustness_summary.csv"
+    robustness_summary = (
+        results / "final_revision_robustness_candidate_audit.csv"
+    )
     if robustness_summary.exists():
         pd.read_csv(robustness_summary).to_csv(
             tables / "table_8_robustness_summary.csv",
@@ -480,6 +469,11 @@ def generate_figures(config: dict, root: Path) -> None:
     surface = pd.read_csv(results / "surface_pareto.csv")
     joint = pd.read_csv(results / "joint_pareto.csv")
     profile = pd.read_csv(tables / "table_2_selected_profile.csv")
+
+    def objective_pairs(frame: pd.DataFrame) -> pd.DataFrame:
+        pair_columns = ["l_max_kg_per_m", "s_max_kg_per_m"]
+        rounded = frame[pair_columns].round(6)
+        return frame.loc[~rounded.duplicated()].sort_values(pair_columns)
 
     figure, axis = plt.subplots(figsize=(8.5, 4.0))
     axis.axis("off")
@@ -556,12 +550,16 @@ def generate_figures(config: dict, root: Path) -> None:
         .max()
         .dropna()
     )
+    station_names = {
+        station["id"]: station["name"]
+        for station in config["jma"]["stations"]
+    }
     for station_id, group in jma_maximum.groupby("station_id"):
         axes[1].plot(
             group["winter"].astype(str),
             group["ground_snow_depth_cm"],
             marker="o",
-            label=station_id,
+            label=station_names[station_id],
         )
     axes[1].set(
         xlabel="Winter starting year",
@@ -570,53 +568,104 @@ def generate_figures(config: dict, root: Path) -> None:
     axes[1].legend(frameon=False, fontsize=7)
     _save_figure(figure, root, "figure_2_weather_scenarios")
 
-    figure, axis_left = plt.subplots(figsize=(7.2, 4.5))
-    axis_right = axis_left.twinx()
-    axis_left.plot(
+    figure, axes = plt.subplots(3, 1, figsize=(7.5, 7.0), sharex=True)
+    axes[0].plot(
         profile["cell"],
         profile["continuous_slope_deg"],
         color="#1f77b4",
-        label="slope",
+        label="Continuous",
     )
-    axis_right.plot(
+    axes[0].step(
+        profile["cell"],
+        profile["discrete_slope_deg"],
+        where="mid",
+        color="#ff7f0e",
+        label="Mapped",
+    )
+    axes[1].plot(
         profile["cell"],
         profile["continuous_mu_static"],
         color="#d62728",
-        label="static friction",
+        label="Continuous",
     )
-    axis_left.set(xlabel="Ridge-to-eave cell", ylabel="Slope (degrees)")
-    axis_right.set_ylabel("Static friction coefficient")
-    figure.legend(loc="upper center", ncol=2, frameon=False)
+    axes[1].step(
+        profile["cell"],
+        profile["discrete_mu_static"],
+        where="mid",
+        color="#9467bd",
+        label="Mapped",
+    )
+    class_codes, class_labels = pd.factorize(
+        profile["discrete_material_class"],
+        sort=True,
+    )
+    axes[2].step(
+        profile["cell"],
+        class_codes,
+        where="mid",
+        color="#2ca02c",
+    )
+    axes[0].set_ylabel("Slope (degrees)")
+    axes[1].set_ylabel("Static friction")
+    axes[2].set(
+        xlabel="Ridge-to-eave cell",
+        ylabel="Mapped class",
+        yticks=np.arange(len(class_labels)),
+        yticklabels=class_labels,
+    )
+    axes[0].legend(frameon=False, ncol=2)
+    axes[1].legend(frameon=False, ncol=2)
+    figure.tight_layout()
     _save_figure(figure, root, "figure_4_selected_graded_profile")
 
-    figure, axis = plt.subplots(figsize=(6.5, 5.0))
-    axis.scatter(
-        uniform["l_max_kg_per_m"],
-        uniform["s_max_kg_per_m"],
-        s=12,
-        alpha=0.5,
-        label="optimized uniform",
+    uniform_pairs = objective_pairs(uniform)
+    joint_pairs = objective_pairs(joint)
+    figure, axes = plt.subplots(1, 2, figsize=(10.0, 4.4))
+    for axis in axes:
+        axis.plot(
+            uniform_pairs["l_max_kg_per_m"],
+            uniform_pairs["s_max_kg_per_m"],
+            marker="s",
+            linestyle="--",
+            color="#4c78a8",
+            label="Exhaustive uniform",
+        )
+        axis.plot(
+            joint_pairs["l_max_kg_per_m"],
+            joint_pairs["s_max_kg_per_m"],
+            marker="o",
+            color="#e45756",
+            label="Joint heterogeneous",
+        )
+        axis.scatter(
+            baselines["l_max_kg_per_m"],
+            baselines["s_max_kg_per_m"],
+            marker="x",
+            s=55,
+            color="black",
+            label="Baselines",
+        )
+        axis.set(
+            xlabel=r"Maximum modeled roof snow mass, $L_{\max}$ (kg m$^{-1}$)",
+            ylabel=r"Maximum one-step release mass, $S_{\max}$ (kg m$^{-1}$)",
+        )
+    axes[0].set_title("Full objective range")
+    axes[1].set_title("Intermediate trade-off region")
+    intermediate = joint_pairs.loc[
+        ~joint_pairs["l_max_kg_per_m"].isin(
+            uniform_pairs["l_max_kg_per_m"]
+        )
+    ]
+    axes[1].set_xlim(
+        max(0.0, float(intermediate["l_max_kg_per_m"].min()) * 0.8),
+        float(intermediate["l_max_kg_per_m"].max()) * 1.08,
     )
-    axis.scatter(
-        joint["l_max_kg_per_m"],
-        joint["s_max_kg_per_m"],
-        s=14,
-        alpha=0.7,
-        label="joint heterogeneous",
+    axes[1].set_ylim(
+        0.0,
+        float(intermediate["s_max_kg_per_m"].max()) * 1.25,
     )
-    axis.scatter(
-        baselines["l_max_kg_per_m"],
-        baselines["s_max_kg_per_m"],
-        marker="x",
-        s=65,
-        color="black",
-        label="baselines",
-    )
-    axis.set(
-        xlabel=r"Maximum modeled roof snow mass, $L_{\max}$ (kg m$^{-1}$)",
-        ylabel=r"Maximum one-step shed mass, $S_{\max}$ (kg m$^{-1}$)",
-    )
-    axis.legend(frameon=False)
+    axes[0].legend(frameon=False, fontsize=8)
+    figure.tight_layout()
     _save_figure(figure, root, "figure_3_primary_pareto_comparison")
 
     figure, axis = plt.subplots(figsize=(6.5, 5.0))
@@ -626,11 +675,13 @@ def generate_figures(config: dict, root: Path) -> None:
         ("joint", joint, "#9467bd"),
         ("uniform", uniform, "#7f7f7f"),
     ]:
-        axis.scatter(
-            frame["l_max_kg_per_m"],
-            frame["s_max_kg_per_m"],
-            s=12,
-            alpha=0.55,
+        pairs = objective_pairs(frame)
+        axis.plot(
+            pairs["l_max_kg_per_m"],
+            pairs["s_max_kg_per_m"],
+            marker="o",
+            markersize=4,
+            linewidth=1,
             color=color,
             label=label,
         )
@@ -642,10 +693,12 @@ def generate_figures(config: dict, root: Path) -> None:
     _save_figure(figure, root, "figure_5_ablation_pareto_fronts")
 
     convergence = pd.read_csv(results / "convergence.csv")
-    figure, axes = plt.subplots(1, 2, figsize=(9.0, 3.8), sharey=True)
+    figure, axes = plt.subplots(2, 2, figsize=(9.0, 7.0), sharex=True)
     for axis, objective, title in [
-        (axes[0], "l_max_kg_per_m_relative_error", r"$L_{\max}$"),
-        (axes[1], "s_max_kg_per_m_relative_error", r"$S_{\max}$"),
+        (axes[0, 0], "l_max_kg_per_m_relative_error", r"$L_{\max}$"),
+        (axes[0, 1], "s_max_kg_per_m_relative_error", r"$S_{\max}$"),
+        (axes[1, 0], "mean_event_count_relative_error", "Event count"),
+        (axes[1, 1], "mean_ssci_relative_error", "SSCI"),
     ]:
         for cells, group in convergence.groupby("cells"):
             axis.plot(
@@ -660,9 +713,23 @@ def generate_figures(config: dict, root: Path) -> None:
             linestyle="--",
             linewidth=1,
         )
-        axis.set(xlabel="Time step (h)", title=title)
-    axes[0].set_ylabel("Relative error versus 48-cell, 0.5-h reference")
-    axes[1].legend(frameon=False)
+        production = convergence.loc[
+            convergence["cells"].eq(config["roof"]["cells"])
+            & convergence["dt_hours"].eq(config["simulation"]["dt_hours"])
+        ].iloc[0]
+        axis.scatter(
+            production["dt_hours"],
+            production[objective],
+            marker="D",
+            s=45,
+            facecolor="white",
+            edgecolor="black",
+            zorder=5,
+        )
+        axis.set(xlabel="Time step (h)", ylabel="Relative error", title=title)
+    axes[0, 1].legend(frameon=False)
+    figure.suptitle("Error versus 48-cell, 0.5-h reference")
+    figure.tight_layout()
     _save_figure(figure, root, "figure_6_numerical_convergence")
 
     sensitivity = pd.read_csv(results / "sensitivity.csv")
@@ -674,89 +741,121 @@ def generate_figures(config: dict, root: Path) -> None:
         sensitivity["s_max_kg_per_m"]
         - sensitivity["baseline_s_max_kg_per_m"]
     ) / sensitivity["baseline_s_max_kg_per_m"]
-    high = sensitivity.loc[sensitivity["level"] == "high"].sort_values(
-        "relative_l_change"
+    sensitivity["axis_label"] = sensitivity.apply(
+        lambda row: f"{row['dimension']} ({row['level']}={row['factor']:g})",
+        axis=1,
     )
-    figure, axis = plt.subplots(figsize=(7.5, 6.0))
-    y = np.arange(len(high))
-    axis.barh(
-        y - 0.18,
-        high["relative_l_change"],
-        height=0.35,
-        label=r"$L_{\max}$",
+    plotted = sensitivity.sort_values(
+        ["dimension", "level"],
+        ascending=[True, False],
     )
-    axis.barh(
-        y + 0.18,
-        high["relative_s_change"],
-        height=0.35,
-        label=r"$S_{\max}$",
+    figure, axes = plt.subplots(1, 2, figsize=(10.0, 8.0), sharey=True)
+    y = np.arange(len(plotted))
+    for axis, column, title, color in [
+        (axes[0], "relative_l_change", r"$L_{\max}$", "#4c78a8"),
+        (axes[1], "relative_s_change", r"$S_{\max}$", "#e45756"),
+    ]:
+        axis.barh(y, plotted[column], color=color)
+        axis.axvline(0.0, color="black", linewidth=0.8)
+        axis.set(
+            xlabel="Relative change from baseline",
+            title=title,
+            yticks=y,
+            yticklabels=plotted["axis_label"],
+        )
+    axes[1].tick_params(labelleft=False)
+    figure.suptitle(
+        "Prespecified low/high factors or encoded alternatives"
     )
-    axis.set(
-        yticks=y,
-        yticklabels=high["dimension"],
-        xlabel="Relative change under high perturbation",
-    )
-    axis.axvline(0.0, color="black", linewidth=0.8)
-    axis.legend(frameon=False)
+    figure.tight_layout()
     _save_figure(figure, root, "figure_7_sensitivity")
 
-    robustness = pd.read_csv(results / "robustness.csv")
-    figure, axis = plt.subplots(figsize=(6.5, 5.0))
-    for design_class, group in robustness.groupby("design_class"):
-        axis.scatter(
-            group["l_max_kg_per_m"],
-            group["s_max_kg_per_m"],
-            s=12,
-            alpha=0.35,
-            label=design_class,
-        )
-    axis.set(
-        xlabel=r"Perturbed $L_{\max}$ (kg m$^{-1}$)",
-        ylabel=r"Perturbed $S_{\max}$ (kg m$^{-1}$)",
+    robustness = pd.read_csv(
+        results / "final_revision_robustness_candidate_audit.csv"
+    ).sort_values(["design_class", "quantile_l_max_kg_per_m"])
+    figure, axes = plt.subplots(1, 2, figsize=(10.5, 7.0), sharey=True)
+    y = np.arange(len(robustness))
+    colors = robustness["design_class"].map(
+        {"uniform": "#4c78a8", "joint": "#e45756"}
     )
-    axis.legend(frameon=False)
+    for axis, column, title in [
+        (axes[0], "quantile_l_max_kg_per_m", "Q95 Lmax"),
+        (axes[1], "quantile_s_max_kg_per_m", "Q95 Smax"),
+    ]:
+        axis.scatter(robustness[column], y, c=colors, s=30)
+        axis.set_xscale("symlog", linthresh=10)
+        axis.set(xlabel=f"{title} (kg m$^{{-1}}$)", yticks=y)
+    axes[0].set_yticklabels(robustness["candidate_id"])
+    axes[1].tick_params(labelleft=False)
+    axes[0].scatter([], [], color="#4c78a8", label="Uniform")
+    axes[0].scatter([], [], color="#e45756", label="Joint")
+    axes[0].legend(frameon=False)
+    figure.suptitle(
+        "Candidate upper-tail outcomes under paired perturbation draws"
+    )
+    figure.tight_layout()
     _save_figure(figure, root, "figure_8_monte_carlo_robustness")
 
     labor = pd.read_csv(tables / "table_5_labor_scarcity.csv")
     labor = labor.loc[labor["labor_scarcity"].isin(["low", "medium", "high"])]
     phase = pd.read_csv(tables / "table_4_strategy_phase_diagram.csv")
-    figure, axes = plt.subplots(1, 2, figsize=(10.0, 4.3))
+    figure, axes = plt.subplots(1, 2, figsize=(10.0, 4.5))
+    scarcity_order = ["low", "medium", "high"]
+    labor["labor_scarcity"] = pd.Categorical(
+        labor["labor_scarcity"],
+        categories=scarcity_order,
+        ordered=True,
+    )
+    labor = labor.sort_values("labor_scarcity")
+    x = np.arange(len(labor))
     axes[0].plot(
+        x,
         labor["l_max_kg_per_m"],
-        labor["s_max_kg_per_m"],
         marker="o",
+        label=r"$L_{\max}$",
     )
-    for _, row in labor.iterrows():
-        axes[0].annotate(
-            row["labor_scarcity"],
-            (row["l_max_kg_per_m"], row["s_max_kg_per_m"]),
-            xytext=(5, 5),
-            textcoords="offset points",
-        )
+    axes[0].plot(
+        x,
+        labor["s_max_kg_per_m"],
+        marker="s",
+        linestyle="--",
+        label=r"$S_{\max}$",
+    )
     axes[0].set(
-        xlabel=r"Selected $L_{\max}$ (kg m$^{-1}$)",
-        ylabel=r"Selected $S_{\max}$ (kg m$^{-1}$)",
-        title="Labor-scarcity choices",
+        xlabel="Labor-scarcity weight",
+        ylabel=r"Selected objective (kg m$^{-1}$)",
+        title="Frozen base decision scenario",
+        xticks=x,
+        xticklabels=labor["labor_scarcity"],
     )
+    axes[0].legend(frameon=False)
     colors = {
         "RETENTION": "#1f77b4",
         "UNIFORM_INTERMEDIATE": "#7f7f7f",
         "SHEDDING": "#d62728",
         "GRADED_HYBRID": "#9467bd",
     }
-    for strategy, group in phase.groupby("strategy"):
+    phase_counts = (
+        phase.groupby(
+            ["strategy", "l_max_kg_per_m", "s_max_kg_per_m"],
+            as_index=False,
+        )
+        .size()
+        .rename(columns={"size": "selection_count"})
+    )
+    for strategy, group in phase_counts.groupby("strategy"):
         axes[1].scatter(
             group["l_max_kg_per_m"],
             group["s_max_kg_per_m"],
-            s=14,
-            alpha=0.65,
+            s=20 + 8 * group["selection_count"],
+            alpha=0.75,
             color=colors[strategy],
             label=strategy.replace("_", " ").title(),
         )
     axes[1].set(
         xlabel=r"$L_{\max}$ (kg m$^{-1}$)",
         ylabel=r"$S_{\max}$ (kg m$^{-1}$)",
-        title="Strategy classification",
+        title="Phase-diagram selections",
     )
     axes[1].legend(frameon=False, fontsize=7)
     _save_figure(figure, root, "figure_9_decision_phase_diagram")
