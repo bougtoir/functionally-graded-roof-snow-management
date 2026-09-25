@@ -11,11 +11,11 @@
   },
   "acquisition_status_counts": {
     "not_recovered": 130,
-    "verified": 102,
+    "verified": 103,
     "no_path": 1
   },
   "jma_ledger_records": 72,
-  "canonical_checksum_records": 266,
+  "canonical_checksum_records": 286,
   "embedded_result_literals": [],
   "note": "Unavailable historical records are disclosed but are not quantitative analysis inputs. Final-revision outputs supersede the current manuscript and package only after Phase 16."
 }

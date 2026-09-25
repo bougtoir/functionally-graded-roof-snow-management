@@ -795,6 +795,14 @@ def stage_validate(config: dict) -> None:
     report = validate_submission(ROOT)
     write_validation_report(ROOT, report)
     generate_audits(ROOT, report)
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "audit_final_revision_fabrication.py"),
+        ],
+        cwd=ROOT,
+        check=True,
+    )
     build = ROOT / "manuscript" / "build"
     write_manifest(
         ROOT,
