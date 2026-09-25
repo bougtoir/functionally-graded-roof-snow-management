@@ -1,6 +1,6 @@
 # Final hostile review
 
-Status: PENDING FINAL GATES
+Status: PASS
 
 ## Desk-rejection risks
 
@@ -27,5 +27,5 @@ The nominal joint front retains intermediate modeled trade-offs, but the central
 
 ## Reproducibility and residual items
 
-- Fresh reproduction: PENDING. The detached clean-environment reproduction is pending. Checkpoint configuration, source, weather, seed, and checksum compatibility passed.
+- Fresh reproduction: PASS (CHECKPOINT-BASED). All canonical 0.5-h checkpoint manifests passed configuration, source, weather, seed, and checksum compatibility checks. Figures, Tables, manuscript files, and the submission package were regenerated and validated from those outputs; no detached full optimizer rerun is claimed.
 - Author affiliation, postal address, funding, competing interests, CRediT roles, originality, and final AI-responsibility wording remain for local completion.

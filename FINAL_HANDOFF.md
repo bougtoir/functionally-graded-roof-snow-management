@@ -1,73 +1,106 @@
-# Final handoff
+# Final CRST handoff
 
-## Targeted finalization completed
+## Status
 
-- Preserved the frozen 0.5-hour canonical analysis and archived 1-hour results.
-- Refreshed the literature audit after moving the five public source snapshots to
-  tracked `data/raw/published_sources/` paths.
-- Created and verified `manuscript_values.csv`: 65 important reported values,
-  65 PASS, 0 FAIL. Each row identifies the manuscript location, canonical source,
-  source locator, derivation, generating code, and matched manuscript fragment.
-- Regenerated all nine manuscript Tables and all nine Figures exactly once from
-  the canonical result files. All table CSV, PNG, and TIFF checksums agreed with
-  the pre-regeneration files. Vector files were regenerated and changed only at
-  the serialized-file level.
-- Regenerated the manuscript, inline review copy, supplement, cover letter,
-  editable tables, editable figures, and CRST package.
-- Verified manuscript-to-ledger-to-canonical-result consistency, table and figure
-  completeness, ordered citations, all 22 reference titles, local source status,
-  and local source-file existence.
-- Produced an author-anonymized IJPE manuscript and IJPE-targeted submission
-  files without changing the scientific analysis.
+**CRST decision: GO after author-supplied placeholders are completed.**
 
-## Verification status
+No unresolved critical scientific, numerical, citation, or file-integrity
+defect was found. Affiliation, postal address, funding, competing interests,
+CRediT roles, originality, author approval, and the final generative-AI
+responsibility statement remain for local author completion as requested.
 
-| Item | Status |
+## Attached-manuscript revision
+
+The supplied pre-revision inline manuscript was used as the comparison
+baseline. Its structure was preserved: 109 paragraphs, 9 editable Tables, and
+9 inline Figures. The canonical 0.5-hour manuscript updates the Abstract,
+Methods, Results, Discussion, Limitations, Conclusions, and all numerical
+Tables while retaining the prior literature positioning, notation corrections,
+claim limits, author placeholders, and CRST organization.
+
+The principal 1-hour to 0.5-hour changes are recorded in
+`audit/0p5h_revision/OLD_VS_NEW_PRIMARY_AUDIT.md`. The central conclusion
+changed in degree but not direction:
+
+- the uniform set still has 2 unique objective pairs;
+- the joint set has 6 unique pairs, including 4 intermediate pairs absent from
+  the uniform set under the same objective caps;
+- this does not establish front-wide superiority;
+- no joint nondominated row passed every frozen post hoc constructability
+  check;
+- mapping the selected continuous profile changed Lmax by -98.28% and Smax by
+  +537.47%, removing the nominal selected-profile advantage;
+- nominal objective equivalence still did not imply robustness equivalence;
+- JMA daily observations remain supplementary scenario forcing, not
+  validation;
+- the 0.5-hour production interval is the frozen numerical reference, while
+  the targeted 0.25-hour check confirms remaining interval sensitivity.
+
+## Analyses rerun or preserved
+
+- Preserved the frozen research question, outcomes, physical assumptions,
+  forcing, parameter ranges, optimizer effort, seeds, robustness
+  distributions, constraints, and decision rules.
+- Used the completed canonical 0.5-hour baseline, exhaustive uniform,
+  multi-seed heterogeneous, frontier, constructability, robustness, JMA, and
+  targeted 0.25-hour outputs.
+- Regenerated Figures 1-9, Tables 1-9, the CRST manuscript, inline review copy,
+  supplement, cover letter, editable Tables, editable Figures, and submission
+  package from the canonical outputs.
+- Preserved the archived 1-hour outputs only for the explicit old-versus-new
+  audit.
+- Did not start a new optimizer run or broaden the scientific analysis.
+
+## Verification
+
+| Check | Status |
 |---|---|
 | `manuscript_values.csv` | PASS: 65/65 rows |
-| Figures regenerated | PASS: 9/9 in PNG, TIFF, EPS, PDF, and SVG |
-| Tables regenerated | PASS: 9/9 |
 | Manuscript-number consistency | PASS |
+| Figures | PASS: 9/9 in PNG, TIFF, EPS, PDF, and SVG |
+| Tables | PASS: 9/9 |
 | References and citations | PASS |
+| Reviewer-style scientific audit | PASS with limitations retained |
+| Checkpoint integrity | PASS: 9/9 |
 | Ruff | PASS |
 | Pytest | PASS: 34 tests |
-| Existing pipeline validation | PASS: 0 errors |
-| Targeted finalization audit | PASS |
+| Pipeline validation | PASS: 0 errors |
+| CRST ZIP integrity | PASS |
 
-## Intentionally discontinued
+The checkpoint-based regeneration is the final reproducibility evidence for
+this finishing pass. A detached full optimizer rerun is not claimed.
 
-The interrupted fresh `make all` run was terminated and is not claimed as
-reproduction evidence. Repository-wide hash freezing, repeated clean builds,
-forensic hard-code searches, exhaustive traceability of non-manuscript
-intermediates, duplicate fabrication audits, checksums for every intermediate,
-release-level dependency certification, and new analysis were intentionally
-not performed.
+## Final CRST files
 
-## Final submission files
-
-- `manuscript/manuscript_IJPE_blinded_final.docx`
-- `manuscript/title_page_IJPE.docx`
-- `manuscript/supplementary_material_IJPE.docx`
-- `manuscript/cover_letter_IJPE_final.docx`
-- `manuscript/highlights_IJPE.docx`
-- `manuscript/highlights_IJPE.txt`
-- `manuscript/editable_tables_IJPE.docx`
-- `manuscript/editable_figures_IJPE.pptx`
-- `submission/IJPE_submission_package_final.zip`
+- `manuscript/manuscript_CRST_final_0p5h.docx`
+- `manuscript/manuscript_CRST_inline_final_0p5h.docx`
+- `manuscript/cover_letter_CRST_final.docx`
+- `manuscript/supplementary_material_CRST.docx`
+- `manuscript/editable_tables_CRST.docx`
+- `manuscript/editable_figures_CRST.pptx`
+- `manuscript/highlights_CRST.txt`
+- `manuscript/CRST_submission_checklist.md`
+- `manuscript/CRST_scope_fit.md`
+- `submission/CRST_submission_package_final.zip`
+- `submission/CRST_submission_manifest.csv`
 - `manuscript_values.csv`
-- `audit/TARGETED_FINALIZATION.md`
+- `audit/FINAL_AUDIT.md`
+- `audit/FINAL_CRST_REVIEW.md`
+- `audit/FABRICATION_AUDIT_FINAL.md`
+- `audit/NUMERICAL_CONSISTENCY_FINAL.md`
+- `references/REFERENCE_AUDIT_FINAL.csv`
 
-## Unresolved issue and submission decision
+## Reproduction command
 
-No unresolved critical scientific, numerical, citation, or file-integrity defect
-was found. Before submission, the author must complete the affiliation, postal
-address, funding, competing-interest, contribution, originality, exclusivity,
-and author-approval statements on the separate title page and cover letter.
+The complete pipeline entry point is:
 
-**IJPE decision: CONDITIONAL GO.** IJPE's stated scope emphasizes the
-engineering-management interface and economic or financial consequences. This
-manuscript includes multiobjective optimization and decision scenarios but no
-explicit economic or financial model. Confirm scope with the editor before
-submission, or select a journal whose scope directly covers computational roof
-engineering. The scope concern is editorial, not a defect in the canonical
-analysis.
+```bash
+make all PYTHON=.venv/bin/python
+```
+
+For this final manuscript-only finishing pass, the executed path was:
+
+```bash
+.venv/bin/python scripts/run_pipeline.py manuscript
+.venv/bin/python scripts/run_pipeline.py validate
+```

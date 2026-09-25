@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import shutil
-import zipfile
 from pathlib import Path
 
 import pandas as pd
@@ -15,10 +12,6 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "generated"
 TABLES = ROOT / "tables" / "generated"
 MANUSCRIPT = ROOT / "manuscript" / "manuscript_CRST_final_0p5h.docx"
-TITLE = (
-    "Functionally graded roofs for passive snow management: "
-    "a reduced-order multiobjective modeling study"
-)
 
 
 def _document_text(path: Path) -> str:
@@ -31,17 +24,6 @@ def _document_text(path: Path) -> str:
         for cell in row.cells
     )
     return "\n".join(parts)
-
-
-def _remove_paragraph(paragraph) -> None:
-    parent = paragraph._p.getparent()
-    if parent is not None:
-        parent.remove(paragraph._p)
-
-
-def _replace_paragraph(paragraph, text: str) -> None:
-    paragraph.clear()
-    paragraph.add_run(text)
 
 
 def _add_value(
@@ -812,147 +794,6 @@ def build_manuscript_values() -> Path:
     return output
 
 
-def build_ijpe_files() -> list[Path]:
-    metadata = yaml.safe_load(
-        (ROOT / "manuscript" / "author_metadata.yaml").read_text(
-            encoding="utf-8"
-        )
-    )
-    author = next(item for item in metadata["authors"] if item["corresponding"])
-    outputs: list[Path] = []
-
-    blinded = Document(MANUSCRIPT)
-    for paragraph in list(blinded.paragraphs):
-        text = paragraph.text.strip()
-        if text in {
-            author["name"] + "*",
-            author["affiliation"],
-        } or text.startswith("Corresponding author:"):
-            _remove_paragraph(paragraph)
-        elif text.startswith("Funding:"):
-            _replace_paragraph(paragraph, "Funding: Blinded for review.")
-        elif text.startswith("Declaration of competing interests:"):
-            _replace_paragraph(
-                paragraph,
-                "Declaration of competing interests: Blinded for review.",
-            )
-        elif text.startswith("Data and code availability:"):
-            _replace_paragraph(
-                paragraph,
-                "Data and code availability: A blinded reproducibility archive "
-                "containing code, quantitative inputs, generated result tables, "
-                "and reproduction instructions accompanies the submission. The "
-                "public repository URL will be restored after peer review.",
-            )
-        elif text.startswith("CRediT authorship contribution statement:"):
-            _replace_paragraph(
-                paragraph,
-                "CRediT authorship contribution statement: Blinded for review.",
-            )
-    blinded_path = (
-        ROOT / "manuscript" / "manuscript_IJPE_blinded_final.docx"
-    )
-    blinded.save(blinded_path)
-    outputs.append(blinded_path)
-
-    title_page = Document()
-    title_page.add_heading(TITLE, level=0)
-    title_page.add_paragraph(author["name"])
-    title_page.add_paragraph(
-        "[AFFILIATION TO BE COMPLETED BEFORE SUBMISSION]"
-    )
-    title_page.add_paragraph(
-        "[POSTAL ADDRESS TO BE COMPLETED BEFORE SUBMISSION]"
-    )
-    title_page.add_paragraph(f"Corresponding author email: {author['email']}")
-    title_page.add_heading("Declarations", level=1)
-    title_page.add_paragraph(
-        "Funding: [TO BE COMPLETED BEFORE SUBMISSION]"
-    )
-    title_page.add_paragraph(
-        "Declaration of competing interests: "
-        "[TO BE COMPLETED BEFORE SUBMISSION]"
-    )
-    title_page.add_paragraph(
-        "CRediT authorship contribution statement: "
-        "[TO BE CONFIRMED BEFORE SUBMISSION]"
-    )
-    title_page_path = ROOT / "manuscript" / "title_page_IJPE.docx"
-    title_page.save(title_page_path)
-    outputs.append(title_page_path)
-
-    cover = Document()
-    cover.add_paragraph("Editor-in-Chief")
-    cover.add_paragraph("International Journal of Production Economics")
-    cover.add_paragraph("Dear Editor,")
-    cover.add_paragraph(
-        f'Please consider the manuscript, "{TITLE}," as a research article.'
-    )
-    cover.add_paragraph(
-        "The study presents a reproducible reduced-order multiobjective comparison "
-        "of spatially uniform and functionally graded passive roof-snow strategies. "
-        "It reports design-space, robustness, constructability, and decision-scenario "
-        "results while explicitly limiting its claims to modeled evidence."
-    )
-    cover.add_paragraph(
-        "The current analysis does not monetize economic or financial consequences. "
-        "Journal-scope suitability should therefore be confirmed before submission."
-    )
-    cover.add_paragraph(
-        "[CORRESPONDING AUTHOR TO CONFIRM ORIGINALITY, EXCLUSIVE SUBMISSION, "
-        "AND AUTHOR APPROVAL BEFORE SUBMISSION]"
-    )
-    cover.add_paragraph("Sincerely,")
-    cover.add_paragraph(author["name"])
-    cover.add_paragraph("[AFFILIATION TO BE COMPLETED]")
-    cover.add_paragraph("[POSTAL ADDRESS TO BE COMPLETED]")
-    cover.add_paragraph(author["email"])
-    cover_path = ROOT / "manuscript" / "cover_letter_IJPE_final.docx"
-    cover.save(cover_path)
-    outputs.append(cover_path)
-
-    highlights = [
-        "Uniform and graded roof-snow trade-off sets were optimized.",
-        "Spatial slope, friction, and adhesion profiles were compared.",
-        "Constructability removed the selected nominal graded advantage.",
-        "Outputs are modeled evidence, not safety certification.",
-    ]
-    if any(len(item) > 85 for item in highlights):
-        raise SystemExit("IJPE highlight exceeds 85 characters")
-    highlights_text = ROOT / "manuscript" / "highlights_IJPE.txt"
-    highlights_text.write_text(
-        "".join(f"- {item}\n" for item in highlights),
-        encoding="utf-8",
-    )
-    outputs.append(highlights_text)
-    highlights_doc = Document()
-    highlights_doc.add_heading("Highlights", level=0)
-    for item in highlights:
-        highlights_doc.add_paragraph(item, style="List Bullet")
-    highlights_doc_path = ROOT / "manuscript" / "highlights_IJPE.docx"
-    highlights_doc.save(highlights_doc_path)
-    outputs.append(highlights_doc_path)
-
-    aliases = [
-        (
-            ROOT / "manuscript" / "supplementary_material_CRST.docx",
-            ROOT / "manuscript" / "supplementary_material_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "editable_tables_CRST.docx",
-            ROOT / "manuscript" / "editable_tables_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "editable_figures_CRST.pptx",
-            ROOT / "manuscript" / "editable_figures_IJPE.pptx",
-        ),
-    ]
-    for source, destination in aliases:
-        shutil.copyfile(source, destination)
-        outputs.append(destination)
-    return outputs
-
-
 def validate_finalization() -> Path:
     value_table = pd.read_csv(ROOT / "manuscript_values.csv")
     manuscript_text = _document_text(MANUSCRIPT)
@@ -1050,99 +891,18 @@ def validate_finalization() -> Path:
     return output
 
 
-def package_ijpe() -> Path:
-    output = ROOT / "submission" / "IJPE_submission_package_final.zip"
-    manifest = ROOT / "submission" / "IJPE_submission_manifest.csv"
-    entries: list[tuple[Path, str]] = [
-        (
-            ROOT / "manuscript" / "manuscript_IJPE_blinded_final.docx",
-            "manuscript_IJPE_blinded_final.docx",
-        ),
-        (
-            ROOT / "manuscript" / "title_page_IJPE.docx",
-            "title_page_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "cover_letter_IJPE_final.docx",
-            "cover_letter_IJPE_final.docx",
-        ),
-        (
-            ROOT / "manuscript" / "supplementary_material_IJPE.docx",
-            "supplementary_material_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "editable_tables_IJPE.docx",
-            "editable_tables_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "editable_figures_IJPE.pptx",
-            "editable_figures_IJPE.pptx",
-        ),
-        (
-            ROOT / "manuscript" / "highlights_IJPE.docx",
-            "highlights_IJPE.docx",
-        ),
-        (
-            ROOT / "manuscript" / "highlights_IJPE.txt",
-            "highlights_IJPE.txt",
-        ),
-        (ROOT / "manuscript_values.csv", "manuscript_values.csv"),
-        (
-            ROOT / "audit" / "TARGETED_FINALIZATION.md",
-            "audit/TARGETED_FINALIZATION.md",
-        ),
-        (
-            ROOT / "references" / "REFERENCE_AUDIT_FINAL.csv",
-            "audit/REFERENCE_AUDIT_FINAL.csv",
-        ),
-        (ROOT / "FINAL_HANDOFF.md", "FINAL_HANDOFF.md"),
-    ]
-    for directory in [
-        ROOT / "figures" / "tiff",
-        ROOT / "figures" / "vector",
-        ROOT / "tables" / "generated",
-    ]:
-        for path in sorted(directory.iterdir()):
-            if path.is_file():
-                entries.append((path, str(path.relative_to(ROOT))))
-    with manifest.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(
-            stream,
-            fieldnames=["archive_path", "size_bytes", "sha256"],
-            lineterminator="\n",
-        )
-        writer.writeheader()
-        for path, archive_path in entries:
-            writer.writerow(
-                {
-                    "archive_path": archive_path,
-                    "size_bytes": path.stat().st_size,
-                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-                }
-            )
-    entries.append((manifest, manifest.name))
-    with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
-        for path, archive_path in entries:
-            archive.write(path, archive_path)
-    return output
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=["values", "ijpe", "validate", "package", "all"],
+        choices=["values", "validate", "all"],
         default="all",
     )
     args = parser.parse_args()
     if args.stage in {"values", "all"}:
         build_manuscript_values()
-    if args.stage in {"ijpe", "all"}:
-        build_ijpe_files()
     if args.stage in {"validate", "all"}:
         validate_finalization()
-    if args.stage in {"package", "all"}:
-        package_ijpe()
 
 
 if __name__ == "__main__":

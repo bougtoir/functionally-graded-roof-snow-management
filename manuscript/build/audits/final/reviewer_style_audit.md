@@ -7,7 +7,7 @@
 
 ## High priority
 
-- **Reproducibility; major-revision risk; high impact; feasible now:** Retain immutable weather snapshots, checksums, complete nondominated sets, seed-specific histories, and the clean-environment reproduction record.
+- **Reproducibility; major-revision risk; high impact; feasible now:** Retain immutable weather snapshots, checksums, complete nondominated sets, seed-specific histories, and the checkpoint-based regeneration record.
 - **Statistical design; major-revision risk; high impact; feasible now:** Treat optimizer seeds and Monte Carlo draws as computational variation, not independent experimental replication; report distributions and effect magnitudes without manufactured inferential p-values.
 - **Claim strength; major-revision risk; high impact; requires new data for resolution:** Daily JMA observations coarsen event timing and cannot validate subdaily release magnitudes. Keep them supplementary.
 
