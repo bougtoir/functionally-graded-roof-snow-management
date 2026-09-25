@@ -345,11 +345,107 @@ def stage_knee() -> None:
     )
 
 
+def stage_robustness() -> None:
+    raw = pd.read_csv(RESULTS / "robustness.csv")
+    summary = pd.read_csv(RESULTS / "robustness_summary.csv")
+    sample_counts = raw.groupby("candidate_id")["sample"].nunique()
+    if not sample_counts.eq(250).all():
+        raise ValueError("every robustness candidate must have 250 draws")
+    perturbations = [
+        "friction_factor",
+        "adhesion_factor",
+        "density_factor",
+        "snowfall_factor",
+        "temperature_shift_c",
+    ]
+    for _, sample in raw.groupby("sample"):
+        if any(sample[column].nunique() != 1 for column in perturbations):
+            raise ValueError("candidates do not share common random draws")
+
+    robust_objectives = [
+        "quantile_l_max_kg_per_m",
+        "quantile_s_max_kg_per_m",
+        "probability_manual_intervention",
+    ]
+    robust_values = summary[robust_objectives].to_numpy(float)
+    robust_nondominated = nondominated(robust_values)
+    minimum_score = float(summary["robust_selection_score"].min())
+    score_tolerance = 1e-12
+    candidate_audit = summary.copy()
+    candidate_audit["robust_nondominated"] = robust_nondominated
+    candidate_audit["minimum_score_tie"] = np.isclose(
+        candidate_audit["robust_selection_score"],
+        minimum_score,
+        rtol=0.0,
+        atol=score_tolerance,
+    )
+    candidate_audit.to_csv(
+        RESULTS / "final_revision_robustness_candidate_audit.csv",
+        index=False,
+    )
+
+    grouped = summary.assign(
+        nominal_l_rounded=summary["nominal_l_max_kg_per_m"].round(
+            ROUND_DECIMALS
+        ),
+        nominal_s_rounded=summary["nominal_s_max_kg_per_m"].round(
+            ROUND_DECIMALS
+        ),
+    ).groupby(["nominal_l_rounded", "nominal_s_rounded"], as_index=False)
+    group_rows = []
+    for (nominal_l, nominal_s), group in grouped:
+        group_rows.append(
+            {
+                "nominal_l_max_kg_per_m": nominal_l,
+                "nominal_s_max_kg_per_m": nominal_s,
+                "candidate_count": len(group),
+                "design_classes": ";".join(
+                    sorted(group["design_class"].unique())
+                ),
+                "q95_l_min_kg_per_m": group[
+                    "quantile_l_max_kg_per_m"
+                ].min(),
+                "q95_l_max_kg_per_m": group[
+                    "quantile_l_max_kg_per_m"
+                ].max(),
+                "q95_s_min_kg_per_m": group[
+                    "quantile_s_max_kg_per_m"
+                ].min(),
+                "q95_s_max_kg_per_m": group[
+                    "quantile_s_max_kg_per_m"
+                ].max(),
+                "intervention_probability_min": group[
+                    "probability_manual_intervention"
+                ].min(),
+                "intervention_probability_max": group[
+                    "probability_manual_intervention"
+                ].max(),
+                "minimum_score_tie_count": int(
+                    candidate_audit.loc[
+                        candidate_audit["candidate_id"].isin(
+                            group["candidate_id"]
+                        ),
+                        "minimum_score_tie",
+                    ].sum()
+                ),
+            }
+        )
+    pd.DataFrame(group_rows).to_csv(
+        RESULTS / "final_revision_objective_equivalent_robustness.csv",
+        index=False,
+    )
+
+    candidate_audit.loc[candidate_audit["minimum_score_tie"]].to_csv(
+        RESULTS / "final_revision_robust_selection_ties.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=["frontier", "knee"],
+        choices=["frontier", "knee", "robustness"],
         required=True,
     )
     args = parser.parse_args()
@@ -358,6 +454,8 @@ def main() -> None:
         stage_frontier()
     elif args.stage == "knee":
         stage_knee()
+    elif args.stage == "robustness":
+        stage_robustness()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-09-25T04:23:48.988655+00:00",
+  "updated_utc": "2026-09-25T04:24:31.424109+00:00",
   "research_question": "How spatial variation in roof geometry and snow-surface interaction changes the modeled retained-load versus shedding-event trade-off.",
   "phases": [
     {
@@ -211,7 +211,7 @@
       {
         "phase": "05",
         "name": "Robustness",
-        "status": "pending",
+        "status": "completed",
         "evidence": [
           "handoffs/final_revision/PHASE_05_HANDOFF.md"
         ]
@@ -305,7 +305,7 @@
         ]
       }
     ],
-    "completed_phases": 5,
+    "completed_phases": 6,
     "total_phases": 17
   }
 }
