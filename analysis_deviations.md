@@ -32,3 +32,17 @@
   fronts and all comparative downstream analyses had not been viewed.
 - Regenerated outputs: uniform design space and frontier, JMA comparison,
   sensitivity, robustness, tables, figures, manuscript, audits, and package.
+
+## 2026-09-24: final-revision targeted secondary audits
+
+- Frozen primary analysis preserved: `L_max`, `S_max`, the reduced-order model,
+  production configuration, complete uniform map, and heterogeneous optimizer
+  runs are unchanged.
+- Added scope: common-normalization and reference-point sensitivity,
+  cross-front knee comparability, matched-objective and constrained-threshold
+  summaries, objective-equivalent robustness, constructability interpretation,
+  and paired JMA trade-off summaries.
+- Reason: these prespecified final-revision checks address reviewer-facing
+  interpretation vulnerabilities without searching for favorable results.
+- Reporting rule: all additions are secondary analyses and cannot be used to
+  claim universal superiority or roof-scale validation.
