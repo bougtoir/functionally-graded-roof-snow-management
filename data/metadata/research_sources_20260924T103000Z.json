@@ -409,7 +409,7 @@
       "Accept": "*/*"
     },
     "completeness": "complete response body",
-    "storage_path": "data/raw/external/20260924T103000Z/elsevier_ai.bin",
+    "storage_path": "data/raw/published_sources/20260924T103000Z/elsevier_ai.bin",
     "file_size_bytes": 345426,
     "sha256": "7373dbde2e2de4932eff94d16d5c2a29734f389232f5328c666c457bd0ab9b15",
     "http_status": 200,
@@ -430,7 +430,7 @@
       "Accept": "*/*"
     },
     "completeness": "complete response body",
-    "storage_path": "data/raw/external/20260924T103000Z/elsevier_cover.bin",
+    "storage_path": "data/raw/published_sources/20260924T103000Z/elsevier_cover.bin",
     "file_size_bytes": 125797,
     "sha256": "9f41d016df90fec623570319cd5c54067979e6ba86cc522723da8f5cfadfb63b",
     "http_status": 200,
@@ -598,7 +598,7 @@
       "Accept": "*/*"
     },
     "completeness": "complete response body",
-    "storage_path": "data/raw/external/20260924T103000Z/jp_hro.pdf",
+    "storage_path": "data/raw/published_sources/20260924T103000Z/jp_hro.pdf",
     "file_size_bytes": 1683557,
     "sha256": "5555aa6460fcfefb1d419a3998bc2dc70680977419aa7742bc9ffcbcdad66211",
     "http_status": 200,
@@ -619,7 +619,7 @@
       "Accept": "*/*"
     },
     "completeness": "complete response body",
-    "storage_path": "data/raw/external/20260924T103000Z/jp_niigata.pdf",
+    "storage_path": "data/raw/published_sources/20260924T103000Z/jp_niigata.pdf",
     "file_size_bytes": 430208,
     "sha256": "d4bb23309615cd12b7a8638aac53bf793f279288c18a2c440c753198989d29a5",
     "http_status": 200,
@@ -640,7 +640,7 @@
       "Accept": "*/*"
     },
     "completeness": "complete response body",
-    "storage_path": "data/raw/external/20260924T103000Z/jp_sapporo.html",
+    "storage_path": "data/raw/published_sources/20260924T103000Z/jp_sapporo.html",
     "file_size_bytes": 24783,
     "sha256": "a0b2cc59ecb908d50f017587dab1f5ef932bea4c1ce1beb0f2025135abc73de3",
     "http_status": 200,
