@@ -3,11 +3,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import yaml
+
+from graded_roof.complexity import manufacturable_mapping
+from graded_roof.study import (
+    evaluate_design,
+    heterogeneous_design,
+    simulation_config,
+    synthetic_weather_set,
+    uniform_design,
+)
+from graded_roof.weather import resample_weather
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "generated"
@@ -769,6 +780,111 @@ def stage_literature() -> None:
     )
 
 
+def stage_targeted() -> None:
+    config = yaml.safe_load(
+        (ROOT / "config" / "production.yaml").read_text(encoding="utf-8")
+    )
+    joint_front = pd.read_csv(RESULTS / "joint_pareto.csv")
+    joint_points = joint_front[OBJECTIVES]
+    joint_minimum = joint_points.min().to_numpy()
+    joint_maximum = joint_points.max().to_numpy()
+    joint_row, _ = knee_row(joint_front, joint_minimum, joint_maximum)
+    variables = joint_row[
+        sorted(
+            (column for column in joint_row.index if column.startswith("x_")),
+            key=lambda column: int(column.split("_", maxsplit=1)[1]),
+        )
+    ].to_numpy(dtype=float)
+    joint = heterogeneous_design(
+        variables,
+        config,
+        "joint",
+        label="joint_continuous_knee",
+    )
+    mapped, _ = manufacturable_mapping(
+        joint,
+        config["surface"]["discrete_classes"],
+        slope_rounding_deg=config["complexity"]["slope_rounding_deg"],
+        minimum_segment_cells=config["roof"]["minimum_segment_cells"],
+        maximum_transitions=config["roof"]["maximum_transitions"],
+        maximum_adjacent_slope_change_deg=config["roof"][
+            "adjacent_slope_limit_deg"
+        ],
+    )
+    mapped = replace(mapped, label="joint_mapped_knee")
+
+    uniform_front = pd.read_csv(RESULTS / "uniform_pareto.csv")
+    uniform_points = uniform_front[OBJECTIVES]
+    uniform_row, _ = knee_row(
+        uniform_front,
+        uniform_points.min().to_numpy(),
+        uniform_points.max().to_numpy(),
+    )
+    uniform = uniform_design(
+        config,
+        float(uniform_row["slope_deg"]),
+        float(uniform_row["mu_static"]),
+        float(uniform_row["adhesion_pa"]),
+        label="uniform_knee",
+    )
+
+    master_config = json.loads(json.dumps(config))
+    master_config["simulation"]["dt_hours"] = min(
+        config["convergence"]["dt_hours"]
+    )
+    master_weathers = synthetic_weather_set(master_config)
+    settings = simulation_config(config)
+    rows = []
+    for design in [uniform, joint, mapped]:
+        for dt_hours in config["convergence"]["dt_hours"]:
+            weathers = [
+                resample_weather(weather, dt_hours)
+                for weather in master_weathers
+            ]
+            aggregate, _ = evaluate_design(design, weathers, settings)
+            rows.append(
+                {
+                    "design": design.label,
+                    "cells": design.cells,
+                    "dt_hours": dt_hours,
+                    **{
+                        key: value
+                        for key, value in aggregate.items()
+                        if key != "design"
+                    },
+                }
+            )
+    frame = pd.DataFrame(rows)
+    metrics = [
+        "l_max_kg_per_m",
+        "s_max_kg_per_m",
+        "mean_event_count",
+        "mean_ssci",
+    ]
+    for _design, indices in frame.groupby("design").groups.items():
+        group = frame.loc[indices]
+        reference = group.loc[
+            group["dt_hours"] == min(config["convergence"]["dt_hours"])
+        ].iloc[0]
+        for metric in metrics:
+            denominator = max(abs(float(reference[metric])), 1e-12)
+            frame.loc[indices, f"{metric}_relative_error"] = (
+                frame.loc[indices, metric] - float(reference[metric])
+            ).abs() / denominator
+    relative_error_columns = [
+        f"{metric}_relative_error" for metric in metrics
+    ]
+    frame["maximum_relative_error"] = frame[relative_error_columns].max(axis=1)
+    frame["within_tolerance"] = (
+        frame["maximum_relative_error"]
+        <= config["convergence"]["relative_tolerance"]
+    )
+    frame.to_csv(
+        RESULTS / "final_revision_selected_design_timestep_audit.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -780,6 +896,7 @@ def main() -> None:
             "constructability",
             "jma",
             "literature",
+            "targeted",
         ],
         required=True,
     )
@@ -797,6 +914,8 @@ def main() -> None:
         stage_jma()
     elif args.stage == "literature":
         stage_literature()
+    elif args.stage == "targeted":
+        stage_targeted()
 
 
 if __name__ == "__main__":
