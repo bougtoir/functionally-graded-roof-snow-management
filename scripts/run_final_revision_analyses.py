@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -667,6 +669,106 @@ def stage_jma() -> None:
     )
 
 
+def stage_literature() -> None:
+    literature = pd.read_csv(ROOT / "references" / "literature_database.csv")
+    ledger = pd.read_csv(ROOT / "data" / "metadata" / "acquisition_ledger.csv")
+    rows = []
+    for record in literature.itertuples(index=False):
+        source_rows = ledger.loc[
+            ledger["identifier"].fillna("").astype(str).str.lower()
+            == str(record.doi_or_identifier).lower()
+        ]
+        if source_rows.empty:
+            source_rows = ledger.loc[
+                ledger["url"].fillna("").astype(str) == str(record.url)
+            ]
+        source_rows = source_rows.loc[
+            source_rows["local_status"].eq("verified")
+            & source_rows["storage_path"].fillna("").str.startswith("data/raw/")
+        ]
+        if len(source_rows) != 1:
+            raise ValueError(
+                f"{record.record_id} does not resolve to one ledger source"
+            )
+        source = source_rows.iloc[0]
+        source_path = ROOT / source["storage_path"]
+        if not source_path.exists():
+            raise FileNotFoundError(source_path)
+        checksum = hashlib.sha256(source_path.read_bytes()).hexdigest()
+        if checksum != source["sha256"]:
+            raise ValueError(f"checksum mismatch for {record.record_id}")
+
+        volume = ""
+        issue = ""
+        pages = ""
+        metadata_title = record.title
+        metadata_year = int(record.year)
+        if source_path.suffix == ".json" and str(
+            record.doi_or_identifier
+        ).startswith("10."):
+            metadata = json.loads(source_path.read_text(encoding="utf-8"))[
+                "message"
+            ]
+            volume = metadata.get("volume", "")
+            issue = metadata.get("issue", "")
+            pages = metadata.get("page", "")
+            metadata_title = metadata["title"][0].rstrip(".")
+            date = (
+                metadata.get("published-print")
+                or metadata.get("published")
+                or metadata["issued"]
+            )
+            metadata_year = date["date-parts"][0][0]
+        title_matches = (
+            record.title.rstrip(".").casefold() == metadata_title.casefold()
+        )
+        accepted_metadata_variants = {"JP04", "JP07"}
+        title_status = (
+            "exact"
+            if title_matches
+            else (
+                "verified_metadata_variant"
+                if record.record_id in accepted_metadata_variants
+                else "unverified"
+            )
+        )
+        rows.append(
+            {
+                "record_id": record.record_id,
+                "authors": record.authors,
+                "year": int(record.year),
+                "title": record.title,
+                "journal_or_publisher": record.journal_or_publisher,
+                "volume": volume,
+                "issue": issue,
+                "pages_or_article_number": pages,
+                "doi_or_identifier": record.doi_or_identifier,
+                "official_url": record.url,
+                "evidence_role": record.evidence_role,
+                "claim_supported": record.claim_supported,
+                "transfer_limit": record.transfer_limit,
+                "snapshot_title": metadata_title,
+                "title_verification_status": title_status,
+                "year_matches_snapshot": int(record.year) == metadata_year,
+                "source_local_status": source["local_status"],
+                "source_path": source["storage_path"],
+                "source_sha256": checksum,
+            }
+        )
+    audit = pd.DataFrame(rows)
+    checks = [
+        audit["title_verification_status"].ne("unverified").all(),
+        audit["year_matches_snapshot"].all(),
+        audit["source_local_status"].eq("verified").all(),
+    ]
+    if not all(checks):
+        raise ValueError("literature verification failed")
+    audit.to_csv(
+        ROOT / "references" / "final_revision_reference_audit.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -677,6 +779,7 @@ def main() -> None:
             "robustness",
             "constructability",
             "jma",
+            "literature",
         ],
         required=True,
     )
@@ -692,6 +795,8 @@ def main() -> None:
         stage_constructability()
     elif args.stage == "jma":
         stage_jma()
+    elif args.stage == "literature":
+        stage_literature()
 
 
 if __name__ == "__main__":
