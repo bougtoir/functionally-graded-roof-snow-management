@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "generated"
@@ -571,11 +572,112 @@ def stage_constructability() -> None:
     )
 
 
+def stage_jma() -> None:
+    evaluation = pd.read_csv(RESULTS / "jma_daily_evaluation.csv")
+    config = yaml.safe_load(
+        (ROOT / "config" / "production.yaml").read_text(encoding="utf-8")
+    )
+    station_names = {
+        station["id"]: station["name"] for station in config["jma"]["stations"]
+    }
+    required_classes = {"uniform_knee", "joint_knee"}
+    paired_rows = []
+    for (station_id, winter), group in evaluation.groupby(
+        ["station_id", "winter"]
+    ):
+        classes = set(group["design_class"])
+        if classes != required_classes:
+            raise ValueError(
+                f"{station_id}/{winter} does not have the required pair"
+            )
+        uniform = group.loc[group["design_class"] == "uniform_knee"].iloc[0]
+        joint = group.loc[group["design_class"] == "joint_knee"].iloc[0]
+        paired_rows.append(
+            {
+                "station_id": station_id,
+                "station_name": station_names[station_id],
+                "winter": winter,
+                "days": int(uniform["days"]),
+                "missing_temperature_days": int(
+                    uniform["missing_temperature_days"]
+                ),
+                "missing_snowfall_days": int(
+                    uniform["missing_snowfall_days"]
+                ),
+                "uniform_l_max_kg_per_m": uniform["l_max_kg_per_m"],
+                "joint_l_max_kg_per_m": joint["l_max_kg_per_m"],
+                "joint_minus_uniform_l_max_kg_per_m": (
+                    joint["l_max_kg_per_m"] - uniform["l_max_kg_per_m"]
+                ),
+                "joint_to_uniform_l_max_ratio": (
+                    joint["l_max_kg_per_m"] / uniform["l_max_kg_per_m"]
+                ),
+                "uniform_s_max_kg_per_m": uniform["s_max_kg_per_m"],
+                "joint_s_max_kg_per_m": joint["s_max_kg_per_m"],
+                "joint_minus_uniform_s_max_kg_per_m": (
+                    joint["s_max_kg_per_m"] - uniform["s_max_kg_per_m"]
+                ),
+                "joint_to_uniform_s_max_ratio": (
+                    joint["s_max_kg_per_m"] / uniform["s_max_kg_per_m"]
+                ),
+                "s_max_reduction_percent": 100
+                * (
+                    uniform["s_max_kg_per_m"] - joint["s_max_kg_per_m"]
+                )
+                / uniform["s_max_kg_per_m"],
+                "l_max_increase_percent": 100
+                * (
+                    joint["l_max_kg_per_m"] - uniform["l_max_kg_per_m"]
+                )
+                / uniform["l_max_kg_per_m"],
+            }
+        )
+    paired = pd.DataFrame(paired_rows).sort_values(
+        ["station_id", "winter"]
+    )
+    expected_pairs = len(config["jma"]["stations"]) * len(
+        config["jma"]["winters"]
+    )
+    if len(paired) != expected_pairs:
+        raise ValueError("JMA station-winter pair count is incomplete")
+    paired.to_csv(
+        RESULTS / "final_revision_jma_paired_tradeoffs.csv",
+        index=False,
+    )
+
+    metrics = [
+        "joint_to_uniform_l_max_ratio",
+        "joint_to_uniform_s_max_ratio",
+        "l_max_increase_percent",
+        "s_max_reduction_percent",
+    ]
+    summary_rows = []
+    for metric in metrics:
+        summary_rows.append(
+            {
+                "metric": metric,
+                "minimum": paired[metric].min(),
+                "median": paired[metric].median(),
+                "maximum": paired[metric].max(),
+            }
+        )
+    pd.DataFrame(summary_rows).to_csv(
+        RESULTS / "final_revision_jma_paired_summary.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=["frontier", "knee", "robustness", "constructability"],
+        choices=[
+            "frontier",
+            "knee",
+            "robustness",
+            "constructability",
+            "jma",
+        ],
         required=True,
     )
     args = parser.parse_args()
@@ -588,6 +690,8 @@ def main() -> None:
         stage_robustness()
     elif args.stage == "constructability":
         stage_constructability()
+    elif args.stage == "jma":
+        stage_jma()
 
 
 if __name__ == "__main__":
