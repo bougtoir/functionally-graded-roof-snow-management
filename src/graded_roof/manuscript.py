@@ -202,34 +202,39 @@ def _reference_text(row: pd.Series) -> str:
         if str(identifier).startswith("10.")
         else f" {identifier}."
     )
+    volume = str(row.get("volume", "")).removesuffix(".0")
+    issue = str(row.get("issue", "")).removesuffix(".0")
+    pages = str(row.get("pages_or_article_number", "")).removesuffix(".0")
+    bibliographic = ""
+    if volume and volume.lower() != "nan":
+        bibliographic += f" {volume}"
+        if issue and issue.lower() != "nan":
+            bibliographic += f"({issue})"
+    if pages and pages.lower() != "nan":
+        bibliographic += f":{pages}"
+    year_and_details = str(int(row["year"]))
+    if bibliographic:
+        year_and_details += f";{bibliographic.strip()}"
     return (
         f"{authors}. {row['title']}. {row['journal_or_publisher']}. "
-        f"{int(row['year'])}.{doi}"
+        f"{year_and_details}.{doi}"
     )
 
 
-def _result_sentence(
-    uniform: pd.Series,
-    joint: pd.Series,
+def _frontier_result_sentence(
+    frontier_summary: pd.DataFrame,
 ) -> str:
-    l_change = (
-        100.0
-        * (joint["l_max_kg_per_m"] - uniform["l_max_kg_per_m"])
-        / max(abs(float(uniform["l_max_kg_per_m"])), 1e-12)
-    )
-    s_change = (
-        100.0
-        * (joint["s_max_kg_per_m"] - uniform["s_max_kg_per_m"])
-        / max(abs(float(uniform["s_max_kg_per_m"])), 1e-12)
-    )
+    uniform = frontier_summary.set_index("design_class").loc["uniform"]
+    joint = frontier_summary.set_index("design_class").loc["joint"]
     return (
-        "At the normalized-distance knee, the selected joint profile had "
-        f"Lmax={_format_number(joint['l_max_kg_per_m'])} kg m−1 and "
-        f"Smax={_format_number(joint['s_max_kg_per_m'])} kg m−1. "
-        "Relative to the selected uniform knee, these values changed by "
-        f"{l_change:+.1f}% and {s_change:+.1f}%, respectively. "
-        "This knee comparison is illustrative and does not establish front-wide "
-        "superiority."
+        f"The uniform set contained {int(uniform['unique_objective_pairs'])} "
+        "unique objective pairs, whereas the joint set contained "
+        f"{int(joint['unique_objective_pairs'])}, including the uniform endpoints "
+        "and additional intermediate trade-offs. Under the frozen common reference, "
+        "their normalized hypervolumes were "
+        f"{_format_number(uniform['normalized_hypervolume'])} and "
+        f"{_format_number(joint['normalized_hypervolume'])}; joint additive epsilon "
+        f"versus uniform was {_format_number(joint['additive_epsilon_vs_uniform'])}."
     )
 
 
@@ -244,8 +249,58 @@ def build_manuscript(root: Path) -> Path:
     )
     baseline = pd.read_csv(results / "baseline_aggregate.csv")
     convergence = pd.read_csv(results / "convergence.csv")
-    uniform_front = pd.read_csv(results / "uniform_pareto.csv")
-    joint_front = pd.read_csv(results / "joint_pareto.csv")
+    frontier_summary = pd.read_csv(
+        results / "final_revision_frontier_summary.csv"
+    )
+    frontier_hypervolume = pd.read_csv(
+        results / "final_revision_frontier_metric_sensitivity.csv"
+    )
+    frontier_hypervolume = frontier_hypervolume.loc[
+        frontier_hypervolume["normalization_origin"].eq("zero")
+        & frontier_hypervolume["reference_margin"].eq(1.05),
+        ["design_class", "normalized_hypervolume_fraction"],
+    ].rename(
+        columns={
+            "normalized_hypervolume_fraction": "normalized_hypervolume"
+        }
+    )
+    frontier_summary = frontier_summary.merge(
+        frontier_hypervolume, on="design_class", validate="one_to_one"
+    ).rename(
+        columns={
+            "additive_epsilon_vs_uniform_common_minmax": (
+                "additive_epsilon_vs_uniform"
+            )
+        }
+    )
+    knee_audit = pd.read_csv(results / "final_revision_knee_audit.csv")
+    unique_regions = pd.read_csv(
+        results / "final_revision_joint_unique_regions.csv"
+    )
+    robust_equivalent = pd.read_csv(
+        results / "final_revision_objective_equivalent_robustness.csv"
+    )
+    robust_ties = pd.read_csv(
+        results / "final_revision_robust_selection_ties.csv"
+    )
+    discretization_loss = pd.read_csv(
+        results / "final_revision_discretization_loss.csv"
+    ).iloc[0]
+    constructability = pd.read_csv(
+        results / "final_revision_constructability_by_objective.csv"
+    )
+    timestep_audit = pd.read_csv(
+        results / "final_revision_selected_design_timestep_audit.csv"
+    )
+    constraints = pd.read_csv(
+        results / "final_revision_prespecified_constraints.csv"
+    )
+    jma_pairs = pd.read_csv(
+        results / "final_revision_jma_paired_tradeoffs.csv"
+    )
+    jma_summary = pd.read_csv(
+        results / "final_revision_jma_paired_summary.csv"
+    ).set_index("metric")
     table_1 = pd.read_csv(tables / "table_1_pareto_summary.csv")
     table_2 = pd.read_csv(tables / "table_2_selected_profile.csv")
     table_3 = pd.read_csv(tables / "table_3_discretization.csv")
@@ -253,21 +308,38 @@ def build_manuscript(root: Path) -> Path:
     table_6 = pd.read_csv(tables / "table_6_complexity_analysis.csv")
     table_7 = pd.read_csv(tables / "table_7_complexity_penalty.csv")
     table_8 = pd.read_csv(tables / "table_8_robustness_summary.csv")
-    references = pd.read_csv(root / "references" / "literature_database.csv")
-
-    def knee(frame: pd.DataFrame) -> pd.Series:
-        objectives = frame[["l_max_kg_per_m", "s_max_kg_per_m"]].to_numpy(float)
-        spans = objectives.max(axis=0) - objectives.min(axis=0)
-        normalized = (objectives - objectives.min(axis=0)) / spans.clip(min=1e-12)
-        return frame.iloc[int((normalized**2).sum(axis=1).argmin())]
-
-    uniform_knee = knee(uniform_front)
-    joint_knee = knee(joint_front)
+    references = pd.read_csv(
+        root / "references" / "final_revision_reference_audit.csv"
+    )
     accepted = convergence[convergence["within_tolerance"]]
     convergence_text = (
         f"The frozen {100 * config['convergence']['relative_tolerance']:.0f}% "
         "four-metric convergence tolerance was met by "
         f"{len(accepted)} of {len(convergence)} tested resolution combinations."
+    )
+    production_timestep = timestep_audit.loc[
+        timestep_audit["dt_hours"].eq(config["simulation"]["dt_hours"])
+    ]
+    uniform_pairs = unique_regions.loc[
+        unique_regions["attainable_by_uniform_under_same_caps"]
+    ]
+    uniform_pair_text = " and ".join(
+        f"{_format_number(row.l_max_kg_per_m)}/"
+        f"{_format_number(row.s_max_kg_per_m)} kg m-1"
+        for row in uniform_pairs.itertuples(index=False)
+    )
+    joint_unique_count = int(
+        (~unique_regions["attainable_by_uniform_under_same_caps"]).sum()
+    )
+    joint_design_rows = int(
+        frontier_summary.set_index("design_class").loc[
+            "joint", "nondominated_design_rows"
+        ]
+    )
+    uniform_unique_count = int(
+        frontier_summary.set_index("design_class").loc[
+            "uniform", "unique_objective_pairs"
+        ]
     )
     retention = baseline.loc[
         baseline["design"] == "retention_non_shedding"
@@ -281,24 +353,27 @@ def build_manuscript(root: Path) -> Path:
     _add_title_page(document, metadata)
     document.add_heading("Abstract", level=1)
     abstract = (
-        "Passive roof-snow strategies face a modeled trade-off between retaining "
-        "snow mass and releasing large discrete snow-shedding events. This study "
-        "tests whether spatial variation in roof slope and snow-surface interaction "
-        "changes that trade-off relative to optimized spatially uniform roofs. A "
-        "unit-width roof was discretized into cells with slope, static and kinetic "
-        "friction, adhesion, snow mass, age, volume, and density states. Synthetic "
-        "weather scenarios were used for primary optimization; official Japanese "
-        "Meteorological Agency daily observations provided supplementary scenario "
-        "evaluation rather than validation. Uniform designs were mapped before "
-        "checkpointed, multi-seed NSGA-II optimization of geometry-only, surface-only, "
-        "and joint heterogeneous profiles. Primary outcomes were maximum modeled roof "
-        "snow mass per metre and maximum eave-release mass per timestep. Convergence, "
-        "ablation, parameter sensitivity, Monte Carlo perturbation, continuous-to-"
-        "discrete surface mapping, and labor-scarcity decision weights were evaluated. "
-        + _result_sentence(uniform_knee, joint_knee)
-        + " The results define conditional modeled trade-offs, not structural or "
-        "pedestrian safety. The reduced-order model omits wind redistribution and "
-        "requires calibration against roof-scale observations before design use."
+        "Passive roof-snow strategies trade retained modeled snow mass against "
+        "discrete eave-release mass. We tested whether spatial variation in slope, "
+        "friction, and adhesion changed that trade-off relative to an exhaustively "
+        "mapped uniform design space. A unit-width, cell-based threshold-release model "
+        "was evaluated under synthetic weather, with Japanese Meteorological Agency "
+        "daily observations used only as supplementary forcing. Multi-seed NSGA-II "
+        "generated geometry-only, surface-only, and joint heterogeneous sets. "
+        + _frontier_result_sentence(frontier_summary)
+        + f" The joint set had {joint_unique_count} "
+        "intermediate objective pairs unavailable to the uniform set under the same "
+        f"objective caps. {len(robust_ties)} candidates tied the minimum robustness "
+        "score. Mapping the "
+        "continuous joint knee to feasible generic segments changed modeled retained "
+        "mass by "
+        f"{discretization_loss['l_max_percent_change']:.2f}% and release mass by "
+        f"{discretization_loss['s_max_percent_change']:.2f}%. "
+        f"All {len(production_timestep)} selected designs failed the frozen composite "
+        f"timestep criterion at {config['simulation']['dt_hours']:.0f} h. Spatial "
+        "grading therefore expanded modeled "
+        "intermediate trade-off regions, but no front-wide superiority, structural "
+        "safety, or validated roof performance is established."
     )
     document.add_paragraph(abstract)
     _add_keywords(document)
@@ -317,9 +392,12 @@ def build_manuscript(root: Path) -> Path:
         "Japanese technical and administrative sources distinguish retention, "
         "shedding, melting, and load-resisting strategies and document the importance "
         "of surface condition, aging, snow guards, drainage, cornices, and site context "
-        "[13–21]. These sources do not establish universal material coefficients or "
-        "safety thresholds. They instead motivate the present comparison of generic "
-        "spatially uniform and graded design spaces."
+        "[13-22]. Retention can reduce required snow-fall space at dense sites, whereas "
+        "shedding requires a suitable receiving zone; retained snow instead imposes "
+        "long-duration load and drainage obligations. These sources do not establish "
+        "universal material coefficients, safety thresholds, or one preferable strategy. "
+        "They motivate a conditional comparison of generic uniform and graded design "
+        "spaces."
     )
     document.add_paragraph(
         "The research question was frozen before production analysis: under identical "
@@ -400,10 +478,16 @@ def build_manuscript(root: Path) -> Path:
         f"{config['optimizer']['generations']} generations, and seeds "
         + ", ".join(str(seed) for seed in config["optimizer"]["seeds"])
         + ". Feasible historical evaluations from every seed were combined "
-        "and filtered to complete nondominated sets. Normalized hypervolume, additive "
-        "epsilon versus the uniform front, combined-set dominance, and matched-objective "
-        "improvement were calculated. Per-seed hypervolume and additive epsilon "
-        "summarized optimizer stochasticity in a machine-readable supplement. "
+        "and filtered to approximate nondominated heterogeneous sets; only the uniform "
+        "grid was exhaustively enumerated. Objective pairs were deduplicated at six "
+        "decimal places for frontier metrics while design rows remained available for "
+        "robustness and constructability analyses. Normalized hypervolume used common "
+        "bounds and a reference at 105% of the joint objective maxima. Additive epsilon "
+        "versus uniform, combined-set dominance, matched-objective constraints, and "
+        "reference-point sensitivity were calculated. A normalized-distance knee was "
+        "reported only as a within-front descriptive selection; common and front-specific "
+        "normalizations were audited separately. Per-seed metrics summarized optimizer "
+        "stochasticity in a machine-readable supplement. "
         "Figure 6 reports numerical "
         "convergence; Figure 7 reports prespecified one-at-a-time sensitivity."
     )
@@ -411,12 +495,18 @@ def build_manuscript(root: Path) -> Path:
         f"Monte Carlo robustness used {config['robustness']['samples']} deterministic "
         "draws perturbing friction, adhesion, fresh-snow density, snowfall, and "
         "temperature for prespecified candidates sampled across the uniform and joint "
-        "fronts. Continuous joint profiles were mapped to "
+        "fronts. Every candidate received the same factor vector within each draw, "
+        "permitting paired comparisons; Monte Carlo quantiles were not interpreted as "
+        "empirical confidence intervals. Continuous optimization enforced only maximum "
+        "adjacent slope change. Minimum segment length, maximum transition count, and "
+        "generic surface classes were audited after optimization. Continuous joint "
+        "profiles were mapped to "
         f"{len(config['surface']['discrete_classes'])} generic "
         "surface classes and piecewise roof segments of at least "
         f"{config['roof']['minimum_segment_cells']} cells, with at most "
         f"{config['roof']['maximum_transitions']} transitions, without claiming "
-        "proprietary material performance. Frozen "
+        "that the mapped design was a constrained optimum or represented proprietary "
+        "material performance. Frozen "
         "manual-intervention weights generated low, medium, and high labor-scarcity "
         "choices across configured snowfall, shedding-penalty, and allowable-release "
         "scenarios. Figures 8-9 and Tables 4-8 summarize these analyses."
@@ -433,91 +523,189 @@ def build_manuscript(root: Path) -> Path:
         f"Smax={_format_number(shedding['s_max_kg_per_m'])} kg m−1. "
         "These are modeled unit-width masses, not structural loads. "
         + convergence_text
-        + " The kinetic-energy proxy was invariant to cell count for the uniform "
-        "regression case."
+        + f" At the production {config['simulation']['dt_hours']:.0f} h interval, all "
+        f"{len(production_timestep)} selected "
+        "uniform, continuous-joint, and mapped-joint designs failed the same composite "
+        "criterion. Smax is release mass in one model interval and therefore must be "
+        "interpreted with the stated timestep."
     )
-    document.add_heading("3.2 Uniform and heterogeneous Pareto sets", level=2)
-    document.add_paragraph(_result_sentence(uniform_knee, joint_knee))
+    document.add_heading("3.2 Optimized uniform reference", level=2)
+    uniform_summary = frontier_summary.set_index("design_class").loc["uniform"]
+    document.add_paragraph(
+        f"The exhaustive uniform grid produced "
+        f"{int(uniform_summary['nondominated_design_rows'])} nondominated design rows "
+        "but only "
+        f"{int(uniform_summary['unique_objective_pairs'])} objective pairs: "
+        f"{uniform_pair_text} for Lmax/Smax. "
+        "The multiplicity reflects objective-equivalent profiles rather than a dense "
+        "uniform trade-off curve. Surface-only optimization reproduced the same two "
+        "objective pairs."
+    )
+    document.add_heading("3.3 Heterogeneous Pareto comparisons", level=2)
+    document.add_paragraph(_frontier_result_sentence(frontier_summary))
     summary_parts = []
-    for row in table_1.itertuples(index=False):
+    for row in frontier_summary.itertuples(index=False):
         summary_parts.append(
-            f"{row.design_class}: {int(row.pareto_designs)} points, "
+            f"{row.design_class}: {int(row.unique_objective_pairs)} objective pairs, "
             f"normalized hypervolume {_format_number(row.normalized_hypervolume)}, "
             "additive epsilon versus uniform "
             f"{_format_number(row.additive_epsilon_vs_uniform)}"
         )
     document.add_paragraph(
         "The complete frontier summary was " + "; ".join(summary_parts) + ". "
-        "Because repeated objective pairs can correspond to distinct design profiles, "
-        "all nondominated design rows were retained in machine-readable results."
+        "Joint hypervolume exceeded uniform because the joint set included the uniform "
+        f"objective pairs and {joint_unique_count} additional intermediate pairs. "
+        "Joint additive "
+        "epsilon versus uniform was nevertheless zero because every uniform reference "
+        "point was weakly matched; this does not imply front-wide superiority. "
+        "Hypervolume ordering was unchanged under the audited origin and reference-margin "
+        "choices."
     )
-    document.add_heading("3.3 Robustness, complexity, and decision scenarios", level=2)
-    robustness = pd.read_csv(results / "robustness.csv")
-    robustness_summary = pd.read_csv(results / "robustness_summary.csv")
-    robust_text = []
-    for design_class, group in robustness.groupby("design_class"):
-        robust_text.append(
-            f"{design_class}: median Lmax "
-            f"{_format_number(group['l_max_kg_per_m'].median())} kg m−1 and median "
-            f"Smax {_format_number(group['s_max_kg_per_m'].median())} kg m−1"
+    joint_knees = knee_audit.loc[
+        (knee_audit["design_class"] == "joint")
+    ].set_index("normalization")
+    smax_limit = constraints.loc[
+        constraints["s_max_limit_kg_per_m"].eq(
+            constraints["s_max_limit_kg_per_m"].min()
         )
+    ].set_index("design_class")
     document.add_paragraph(
-        "Under the prespecified perturbation model, " + "; ".join(robust_text) + ". "
-        "These distributions quantify parameter perturbations around selected designs "
-        "and are not empirical confidence intervals."
+        "The front-specific joint knee was "
+        f"{_format_number(joint_knees.loc['front_specific_minmax', 'l_max_kg_per_m'])}/"
+        f"{_format_number(joint_knees.loc['front_specific_minmax', 's_max_kg_per_m'])} "
+        "kg m-1, whereas common normalization selected "
+        f"{_format_number(joint_knees.loc['common_combined_minmax', 'l_max_kg_per_m'])}/"
+        f"{_format_number(joint_knees.loc['common_combined_minmax', 's_max_kg_per_m'])} "
+        "kg m-1. The normalization dependence precludes a cross-front percentage "
+        "headline. At the strictest prespecified Smax limit of "
+        f"{smax_limit['s_max_limit_kg_per_m'].iloc[0]:.0f} kg m-1, the minimum observed "
+        "Lmax was "
+        f"{_format_number(smax_limit.loc['joint', 'minimum_l_max_kg_per_m'])} kg m-1 "
+        "for joint and "
+        f"{_format_number(smax_limit.loc['uniform', 'minimum_l_max_kg_per_m'])} kg m-1 "
+        "for uniform."
     )
-    robust_selected = robustness_summary.loc[
-        robustness_summary["robust_selected"]
+    document.add_heading("3.4 Robustness", level=2)
+    equivalent_80 = robust_equivalent.sort_values(
+        "candidate_count", ascending=False
+    ).iloc[0]
+    equivalent_pair_text = (
+        f"{_format_number(equivalent_80['nominal_l_max_kg_per_m'])}/"
+        f"{_format_number(equivalent_80['nominal_s_max_kg_per_m'])} kg m-1"
+    )
+    document.add_paragraph(
+        f"Among {int(equivalent_80['candidate_count'])} candidates with the nominal "
+        f"{equivalent_pair_text} objective pair, Q95 Lmax ranged from "
+        f"{_format_number(equivalent_80['q95_l_min_kg_per_m'])} to "
+        f"{_format_number(equivalent_80['q95_l_max_kg_per_m'])} kg m-1, Q95 Smax "
+        "ranged from "
+        f"{_format_number(equivalent_80['q95_s_min_kg_per_m'])} to "
+        f"{_format_number(equivalent_80['q95_s_max_kg_per_m'])} kg m-1, and manual-"
+        "intervention probability ranged from "
+        f"{equivalent_80['intervention_probability_min']:.3f} to "
+        f"{equivalent_80['intervention_probability_max']:.3f}. "
+        f"The minimum scalar robustness score was shared by {len(robust_ties)} "
+        "candidates, so the retained selected flag is only a deterministic row-order "
+        "tie-break. Monte Carlo quantiles describe the configured perturbation model, "
+        "not empirical confidence intervals."
+    )
+    document.add_heading("3.5 Constructability and decision scenarios", level=2)
+    feasible_joint = constructability.loc[
+        (constructability["design_class"] == "joint")
+        & constructability["feasible_design_rows"].gt(0)
+    ]
+    feasible_pair_text = (
+        f"{_format_number(feasible_joint.iloc[0]['l_max_kg_per_m'])}/"
+        f"{_format_number(feasible_joint.iloc[0]['s_max_kg_per_m'])} kg m-1"
+    )
+    continuous_knee_constructability = constructability.loc[
+        (constructability["design_class"] == "joint")
+        & constructability["l_max_kg_per_m"].round(6).eq(
+            joint_knees.loc["front_specific_minmax", "l_max_kg_per_m"]
+        )
+        & constructability["s_max_kg_per_m"].round(6).eq(
+            joint_knees.loc["front_specific_minmax", "s_max_kg_per_m"]
+        )
     ].iloc[0]
-    nominal_knees = robustness_summary.loc[robustness_summary["nominal_knee"]]
     document.add_paragraph(
-        "Among the prespecified frontier candidates, the robust selection was "
-        f"{robust_selected['candidate_id']} "
-        f"({robust_selected['design_class']}); its configured upper-quantile Lmax and "
-        f"Smax were {_format_number(robust_selected['quantile_l_max_kg_per_m'])} and "
-        f"{_format_number(robust_selected['quantile_s_max_kg_per_m'])} kg m-1. "
-        f"Table 8 compares this result with {len(nominal_knees)} nominal knees and the "
-        "remaining candidate set."
-    )
-    document.add_paragraph(
-        "Manufacturable segment mapping, generic surface mapping, and slope rounding "
-        "changed the primary outcomes by the amounts reported in Table 3. "
-        "Frontier-wide complexity and "
-        "manufacturing-screen metrics are reported in Table 6; Table 7 reports choices "
-        "under no, base, and high transition penalties. Labor-scarcity scenarios weight "
-        "manual intervention directly (Table 5) and were not assigned to actual "
-        "communities. Table 4 varies snowfall severity, shedding penalties, allowable "
-        "release, and labor scarcity. Strategy classifications are model-derived labels "
-        "rather than building-code recommendations."
+        f"Only {int(feasible_joint['feasible_design_rows'].sum())} of the "
+        f"{joint_design_rows} "
+        "joint design rows met all post hoc constructability checks, and all belonged "
+        f"to the {feasible_pair_text} objective pair. The selected "
+        "continuous joint knee had "
+        f"{int(discretization_loss['continuous_slope_transitions'])} slope and "
+        f"{int(discretization_loss['continuous_surface_transitions'])} surface "
+        "transitions and minimum segment length "
+        f"{int(continuous_knee_constructability['maximum_minimum_segment_cells'])} cell. "
+        "Generic mapping reduced these to "
+        f"{int(discretization_loss['mapped_slope_transitions'])} and "
+        f"{int(discretization_loss['mapped_surface_transitions'])} transitions; "
+        "Lmax changed by "
+        f"{discretization_loss['l_max_absolute_change_kg_per_m']:.2f} kg m-1 "
+        f"({discretization_loss['l_max_percent_change']:.2f}%) and Smax by "
+        f"{discretization_loss['s_max_absolute_change_kg_per_m']:.2f} kg m-1 "
+        f"({discretization_loss['s_max_percent_change']:.2f}%). The mapped profile is "
+        "a feasible translation, not a constrained optimum. Every frozen transition-"
+        "penalty setting selected a uniform design. Labor-scarcity and phase-diagram "
+        "classifications remain illustrative decision weights, not community or "
+        "building-code recommendations."
     )
     jma_path = results / "jma_daily_evaluation.csv"
     if jma_path.exists():
         jma = pd.read_csv(jma_path)
-        document.add_heading("3.4 JMA station-winter scenarios", level=2)
+        document.add_heading("3.6 JMA station-winter scenarios", level=2)
         document.add_paragraph(
             f"Daily forcing covered {jma['station_id'].nunique()} stations and "
-            f"{jma[['station_id', 'winter']].drop_duplicates().shape[0]} "
-            "station-winters. Table 9 reports the selected uniform and joint profiles "
-            "under these observations. Daily aggregation coarsens event timing, "
-            "so these outputs are supplementary scenario checks and not comparable to "
-            "hourly shedding observations."
+            f"{len(jma_pairs)} station-winters without missing temperature or snowfall "
+            "days. Joint-to-uniform Lmax ratios ranged from "
+            f"{jma_summary.loc['joint_to_uniform_l_max_ratio', 'minimum']:.2f} to "
+            f"{jma_summary.loc['joint_to_uniform_l_max_ratio', 'maximum']:.2f}, while "
+            "Smax reductions ranged from "
+            f"{jma_summary.loc['s_max_reduction_percent', 'minimum']:.2f}% to "
+            f"{jma_summary.loc['s_max_reduction_percent', 'maximum']:.2f}%. "
+            "These paired modeled trade-offs were strongly station-winter dependent. "
+            "Daily ground observations are supplementary forcing, not roof-scale "
+            "validation, and daily Smax is not directly comparable with hourly Smax."
         )
 
     document.add_heading("4. Discussion", level=1)
     document.add_paragraph(
-        "The analysis demonstrates how spatial grading can be evaluated against a fully "
-        "optimized uniform reference rather than a single hand-picked roof. The computed "
-        "fronts support only conditional statements within the reduced-order model. A "
-        "larger normalized hypervolume or a favorable selected knee does not imply that "
-        "every heterogeneous design is better, nor that the same relation persists under "
-        "unmodeled wind, geometry, or material behavior."
+        "The frozen research question can be answered narrowly: under identical modeled "
+        f"forcing, spatial variation did not improve the {uniform_unique_count} uniform "
+        "objective regimes, "
+        "but it introduced "
+        f"{joint_unique_count} "
+        "observed intermediate Lmax-Smax combinations that the exhaustive uniform grid "
+        "did not attain under the same objective caps. This is "
+        "an expansion of the modeled trade-off set, not universal superiority. The "
+        "joint front's larger hypervolume and zero additive epsilon are compatible "
+        "because it contains the uniform endpoints while filling intermediate regions."
     )
     document.add_paragraph(
-        "The main design implication is methodological: passive snow-management concepts "
-        "should be compared as trade-off sets, with manufacturability and operational "
-        "preferences included explicitly. The generic surface mapping shows how a smooth "
-        "continuous optimum can be translated into a small material-class vocabulary "
-        "while measuring the resulting objective loss."
+        "Knee selection is unsuitable as the primary cross-front claim: front-specific "
+        "normalization and common normalization selected different joint designs. "
+        "Matched objective caps provide a clearer interpretation. Robustness also cannot "
+        "be inferred from nominal objectives, because nominally equivalent profiles had "
+        "widely different upper-tail outcomes and the best scalar score was tied."
+    )
+    document.add_paragraph(
+        "Constructability materially changes the interpretation. The intermediate joint "
+        "trade-offs were found in continuous profiles that did not directly satisfy all "
+        "segment and transition limits. Post hoc mapping incurred modest Lmax change but "
+        f"an {discretization_loss['s_max_percent_change']:.2f}% Smax increase, and every "
+        "frozen transition penalty selected a uniform "
+        "regime. Graded concepts therefore require constrained reoptimization and "
+        "physical testing before practical comparison."
+    )
+    document.add_paragraph(
+        "Retention, shedding, active melting, manual removal, and hybrid systems solve "
+        "different site problems. Retention can limit routine eave release and reduce "
+        "snow-fall-space demand, but requires verified structural capacity, drainage, "
+        "waterproofing, inspection, and maintenance. Shedding can reduce retained mass "
+        "but requires a controlled receiving area and falling-snow measures. The model "
+        "does not invalidate either strategy, and Japanese guidance cannot be generalized "
+        "to other climates, building traditions, or regulatory systems without local "
+        "evidence [13-22]."
     )
     document.add_heading("4.1 Limitations", level=2)
     document.add_paragraph(
@@ -526,27 +714,37 @@ def build_manuscript(root: Path) -> Path:
         "fracture and slab mechanics, cornices, local roof details, heat transfer through "
         "the assembly, impact trajectories, drainage blockage, structural response, and "
         "pedestrian exposure. Friction, adhesion, compaction, melt, and aging parameters "
-        "include explicit assumptions. Daily JMA observations do not resolve subdaily "
-        "events, and ground snowfall or snow depth is not roof snow mass. Accordingly, "
-        "the study does not establish structural safety, pedestrian safety, code "
-        "compliance, injury reduction, lifecycle cost, or universal effectiveness."
+        "include explicit assumptions. The "
+        f"{config['simulation']['dt_hours']:.0f} h production setting failed the frozen "
+        "composite timestep criterion for all selected designs; event mass, event count, "
+        "and SSCI were particularly interval sensitive. The heterogeneous sets are "
+        "multi-seed heuristic results rather than guaranteed complete fronts. Daily JMA "
+        "observations do not resolve subdaily events, and ground snowfall or snow depth "
+        "is not roof snow mass. Accordingly, the study does not establish structural "
+        "safety, pedestrian safety, code compliance, injury reduction, lifecycle cost, "
+        "or universal effectiveness."
     )
     document.add_heading("4.2 Future validation", level=2)
     document.add_paragraph(
         "Future work should calibrate interface parameters across temperature, liquid-"
         "water content, roughness, aging, and load; validate mass and release timing "
         "against instrumented roofs; add wind redistribution and three-dimensional edge "
-        "effects; and predefine external-validation metrics before fitting."
+        "effects; reoptimize at finer timesteps with explicitly constrained segments and "
+        "surface classes; and predefine external-validation metrics before fitting."
     )
 
     document.add_heading("5. Conclusions", level=1)
     document.add_paragraph(
-        "A reproducible reduced-order workflow compared complete optimized uniform and "
-        "spatially heterogeneous passive roof-snow trade-off sets. The results quantify "
-        "how grading changes modeled retained-mass and discrete-release objectives under "
-        "synthetic and supplementary JMA forcing, with explicit convergence, ablation, "
-        "sensitivity, robustness, and complexity analyses. The outputs are hypotheses "
-        "and design-space evidence for future roof-scale validation, not design approval "
+        f"An exhaustive uniform reference had {uniform_unique_count} modeled objective "
+        "regimes. Heuristic joint spatial grading preserved those regimes and added "
+        f"{joint_unique_count} intermediate "
+        "trade-off combinations, but the intermediate continuous profiles were not "
+        "directly constructable under all frozen checks, nominal objectives did not "
+        "determine robustness, and the "
+        f"{config['simulation']['dt_hours']:.0f} h production timestep was not converged "
+        "under "
+        "the composite criterion. The findings are reproducible design-space hypotheses "
+        "for constrained reoptimization and roof-scale validation, not design approval "
         "or safety certification."
     )
 
