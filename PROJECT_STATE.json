@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-09-25T06:25:37.456345+00:00",
+  "updated_utc": "2026-09-25T06:26:14.615953+00:00",
   "research_question": "How spatial variation in roof geometry and snow-surface interaction changes the modeled retained-load versus shedding-event trade-off.",
   "phases": [
     {
@@ -164,5 +164,148 @@
     }
   ],
   "completed_phases": 19,
-  "total_phases": 19
+  "total_phases": 19,
+  "final_revision": {
+    "source_prompt": "Devin_CRST_final_revision_hostile_review_one_shot.txt",
+    "phases": [
+      {
+        "phase": "00",
+        "name": "Inventory and freeze",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_00_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "01",
+        "name": "Hostile CRST review",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_01_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "02",
+        "name": "Reproducibility and provenance",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_02_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "03",
+        "name": "Primary Pareto audit",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_03_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "04",
+        "name": "Knee and matched trade-offs",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_04_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "05",
+        "name": "Robustness",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_05_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "06",
+        "name": "Complexity and constructability",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_06_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "07",
+        "name": "JMA scenarios",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_07_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "08",
+        "name": "Non-shedding roofs and literature",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_08_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "09",
+        "name": "Targeted corrective analysis",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_09_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "10",
+        "name": "Manuscript revision",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_10_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "11",
+        "name": "Figures and tables",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_11_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "12",
+        "name": "Fabrication, numerical, and reference audit",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_12_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "13",
+        "name": "Format and language",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_13_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "14",
+        "name": "Fresh reproducibility",
+        "status": "pending",
+        "evidence": [
+          "handoffs/final_revision/PHASE_14_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "15",
+        "name": "Final hostile review",
+        "status": "pending",
+        "evidence": [
+          "handoffs/final_revision/PHASE_15_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "16",
+        "name": "CRST package",
+        "status": "pending",
+        "evidence": [
+          "handoffs/final_revision/PHASE_16_HANDOFF.md"
+        ]
+      }
+    ],
+    "completed_phases": 14,
+    "total_phases": 17
+  }
 }

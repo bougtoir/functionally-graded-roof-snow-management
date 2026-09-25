@@ -7,11 +7,14 @@
     "CRST checklist has unresolved manual items"
   ],
   "checks": {
-    "abstract_words": 201,
+    "abstract_words": 187,
     "continuous_line_numbering": true,
     "native_word_equations": 6,
-    "non_ascii_characters": [],
-    "reference_count": 21,
+    "non_ascii_characters": [
+      "\u2212"
+    ],
+    "unsupported_non_ascii_characters": [],
+    "reference_count": 22,
     "highlight_lengths": [
       59,
       61,
@@ -39,8 +42,8 @@
       },
       {
         "name": "figure_3_primary_pareto_comparison.tiff",
-        "width_px": 5813,
-        "height_px": 4495,
+        "width_px": 9843,
+        "height_px": 4224,
         "dpi": [
           1000,
           1000
@@ -48,8 +51,8 @@
       },
       {
         "name": "figure_4_selected_graded_profile.tiff",
-        "width_px": 6841,
-        "height_px": 4558,
+        "width_px": 7391,
+        "height_px": 6890,
         "dpi": [
           1000,
           1000
@@ -66,8 +69,8 @@
       },
       {
         "name": "figure_6_numerical_convergence.tiff",
-        "width_px": 7870,
-        "height_px": 3760,
+        "width_px": 8976,
+        "height_px": 6900,
         "dpi": [
           1000,
           1000
@@ -75,8 +78,8 @@
       },
       {
         "name": "figure_7_sensitivity.tiff",
-        "width_px": 7544,
-        "height_px": 5242,
+        "width_px": 9895,
+        "height_px": 7880,
         "dpi": [
           1000,
           1000
@@ -84,8 +87,8 @@
       },
       {
         "name": "figure_8_monte_carlo_robustness.tiff",
-        "width_px": 6182,
-        "height_px": 4526,
+        "width_px": 10398,
+        "height_px": 6800,
         "dpi": [
           1000,
           1000
@@ -94,7 +97,7 @@
       {
         "name": "figure_9_decision_phase_diagram.tiff",
         "width_px": 8437,
-        "height_px": 4167,
+        "height_px": 4321,
         "dpi": [
           1000,
           1000

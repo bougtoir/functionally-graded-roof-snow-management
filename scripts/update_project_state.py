@@ -74,6 +74,12 @@ PHASES = [
 
 
 def main() -> None:
+    state_path = ROOT / "PROJECT_STATE.json"
+    previous_state = (
+        json.loads(state_path.read_text(encoding="utf-8"))
+        if state_path.exists()
+        else {}
+    )
     handoff_directory = ROOT / "handoffs"
     handoff_directory.mkdir(parents=True, exist_ok=True)
     phases = []
@@ -125,7 +131,9 @@ def main() -> None:
         "completed_phases": sum(phase["status"] == "completed" for phase in phases),
         "total_phases": len(phases),
     }
-    (ROOT / "PROJECT_STATE.json").write_text(
+    if "final_revision" in previous_state:
+        state["final_revision"] = previous_state["final_revision"]
+    state_path.write_text(
         json.dumps(state, indent=2) + "\n",
         encoding="utf-8",
     )
