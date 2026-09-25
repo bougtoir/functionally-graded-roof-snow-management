@@ -441,11 +441,141 @@ def stage_robustness() -> None:
     )
 
 
+def stage_constructability() -> None:
+    complexity = pd.read_csv(
+        ROOT / "tables" / "generated" / "table_6_complexity_analysis.csv"
+    )
+    feasibility_columns = [
+        "meets_adjacent_slope_limit",
+        "meets_minimum_segment_length",
+        "meets_maximum_transitions",
+    ]
+    complexity["meets_all_constraints"] = complexity[
+        feasibility_columns
+    ].all(axis=1)
+    complexity["l_rounded"] = complexity["l_max_kg_per_m"].round(
+        ROUND_DECIMALS
+    )
+    complexity["s_rounded"] = complexity["s_max_kg_per_m"].round(
+        ROUND_DECIMALS
+    )
+    rows = []
+    for keys, group in complexity.groupby(
+        ["design_class", "l_rounded", "s_rounded"]
+    ):
+        design_class, l_value, s_value = keys
+        rows.append(
+            {
+                "design_class": design_class,
+                "l_max_kg_per_m": l_value,
+                "s_max_kg_per_m": s_value,
+                "design_rows": len(group),
+                "feasible_design_rows": int(
+                    group["meets_all_constraints"].sum()
+                ),
+                "feasible_fraction": group[
+                    "meets_all_constraints"
+                ].mean(),
+                "minimum_transition_count": group[
+                    "transition_count"
+                ].min(),
+                "maximum_minimum_segment_cells": group[
+                    "minimum_segment_cells"
+                ].max(),
+                "maximum_adjacent_slope_change_deg": group[
+                    "maximum_adjacent_slope_change_deg"
+                ].max(),
+            }
+        )
+    pd.DataFrame(rows).to_csv(
+        RESULTS / "final_revision_constructability_by_objective.csv",
+        index=False,
+    )
+
+    discretization = pd.read_csv(
+        ROOT / "tables" / "generated" / "table_3_discretization.csv"
+    )
+    continuous = discretization.iloc[0]
+    mapped = discretization.iloc[1]
+    losses = pd.DataFrame(
+        [
+            {
+                "mapping": mapped["mapping"],
+                "l_max_absolute_change_kg_per_m": (
+                    mapped["l_max_kg_per_m"]
+                    - continuous["l_max_kg_per_m"]
+                ),
+                "l_max_percent_change": 100
+                * (
+                    mapped["l_max_kg_per_m"]
+                    - continuous["l_max_kg_per_m"]
+                )
+                / continuous["l_max_kg_per_m"],
+                "s_max_absolute_change_kg_per_m": (
+                    mapped["s_max_kg_per_m"]
+                    - continuous["s_max_kg_per_m"]
+                ),
+                "s_max_percent_change": 100
+                * (
+                    mapped["s_max_kg_per_m"]
+                    - continuous["s_max_kg_per_m"]
+                )
+                / continuous["s_max_kg_per_m"],
+                "continuous_slope_transitions": continuous[
+                    "slope_transition_count"
+                ],
+                "mapped_slope_transitions": mapped[
+                    "slope_transition_count"
+                ],
+                "continuous_surface_transitions": continuous[
+                    "surface_transition_count"
+                ],
+                "mapped_surface_transitions": mapped[
+                    "surface_transition_count"
+                ],
+            }
+        ]
+    )
+    losses.to_csv(
+        RESULTS / "final_revision_discretization_loss.csv",
+        index=False,
+    )
+
+    enforcement = pd.DataFrame(
+        [
+            {
+                "constraint": "maximum adjacent slope change",
+                "continuous_optimization": True,
+                "post_hoc_mapping": True,
+            },
+            {
+                "constraint": "minimum segment length",
+                "continuous_optimization": False,
+                "post_hoc_mapping": True,
+            },
+            {
+                "constraint": "maximum transition count",
+                "continuous_optimization": False,
+                "post_hoc_mapping": True,
+            },
+            {
+                "constraint": "discrete generic surface classes",
+                "continuous_optimization": False,
+                "post_hoc_mapping": True,
+            },
+        ]
+    )
+    enforcement.to_csv(
+        RESULTS / "final_revision_constraint_enforcement.csv",
+        index=False,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--stage",
-        choices=["frontier", "knee", "robustness"],
+        choices=["frontier", "knee", "robustness", "constructability"],
         required=True,
     )
     args = parser.parse_args()
@@ -456,6 +586,8 @@ def main() -> None:
         stage_knee()
     elif args.stage == "robustness":
         stage_robustness()
+    elif args.stage == "constructability":
+        stage_constructability()
 
 
 if __name__ == "__main__":
