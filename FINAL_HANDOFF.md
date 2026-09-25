@@ -103,4 +103,4 @@ this frozen-analysis finishing pass.
 
 ## Git
 
-Finishing implementation commit: `TO_BE_RECORDED_AFTER_COMMIT`.
+Finishing implementation commit: `7a283c7`.
