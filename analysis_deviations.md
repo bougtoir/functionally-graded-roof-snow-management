@@ -1,5 +1,24 @@
 # Analysis deviations
 
+## 2026-09-25: production timestep correction after frozen convergence audit
+
+- Old production resolution: 24 cells and a 1.0-h timestep.
+- Corrected production resolution: 24 cells and a 0.5-h timestep, the finest
+  resolution in the frozen convergence grid.
+- Reason: the selected uniform, continuous-joint, and mapped-joint designs
+  failed the frozen four-metric 8% criterion at 1 h relative to 0.5 h.
+- Preserved decisions: research question, outcomes and their definitions,
+  weather totals, model equations, uniform grid, parameter ranges, constraints,
+  population, generations, seeds, robustness distributions, and decision
+  rules.
+- Checkpoint rule: 1-h checkpoints are retained as historical evidence but are
+  not reused. New 0.5-h checkpoints are isolated by timestep and carry
+  configuration, weather-input, source-code, seed, Git-commit, and file-integrity
+  metadata.
+- Additional numerical sensitivity: representative selected designs are
+  evaluated at 0.25 h after the 0.5-h production rerun. This post-freeze check
+  does not recursively change production resolution.
+
 ## 2026-09-24: supplementary JMA temporal resolution and acquisition route
 
 - Old rule: acquire hourly JMA observations through the bulk-download table

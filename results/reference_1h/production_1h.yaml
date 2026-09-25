@@ -60,7 +60,7 @@ baselines:
     adhesion_pa: 80.0
 
 simulation:
-  dt_hours: 0.5
+  dt_hours: 1.0
   friction_model: dynamic
   transport_fraction_limit: 1.0
   event_threshold_kg_per_m: 0.1
@@ -94,13 +94,11 @@ convergence:
   cells: [12, 24, 48]
   dt_hours: [2.0, 1.0, 0.5]
   relative_tolerance: 0.08
-  post_freeze_reference_dt_hours: 0.25
 
 optimizer:
   population: 48
   generations: 45
   seeds: [1701, 2903, 4517]
-  parallel_workers: 2
   uniform_slope_grid: 30
   uniform_friction_grid: 30
   uniform_adhesion_grid: 7

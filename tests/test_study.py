@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 from pymoo.algorithms.moo.nsga2 import NSGA2
 
 from graded_roof.config import load_config
@@ -75,16 +76,66 @@ def test_joint_variable_bounds_cover_all_profile_properties() -> None:
 def test_optimization_checkpoint_restores_random_state(tmp_path) -> None:
     checkpoint_path = tmp_path / "optimization.pkl"
     algorithm = NSGA2(pop_size=4)
+    metadata = {
+        "mode": "joint",
+        "seed": 1701,
+        "dt_hours": 0.5,
+        "population": 4,
+        "generations": 2,
+        "config_sha256": "config",
+        "weather_sha256": "weather",
+        "source_sha256": "source",
+        "code_commit": "commit",
+    }
     np.random.seed(1701)
     np.random.random()
-    _save_checkpoint(checkpoint_path, algorithm)
+    _save_checkpoint(checkpoint_path, algorithm, metadata)
     expected = np.random.random()
     np.random.seed(2903)
 
-    loaded = _load_checkpoint(checkpoint_path)
+    loaded = _load_checkpoint(checkpoint_path, metadata)
 
     assert isinstance(loaded, NSGA2)
     assert np.random.random() == expected
+
+
+def test_optimization_checkpoint_rejects_metadata_mismatch(tmp_path) -> None:
+    checkpoint_path = tmp_path / "optimization.pkl"
+    metadata = {
+        "mode": "joint",
+        "seed": 1701,
+        "dt_hours": 0.5,
+        "population": 4,
+        "generations": 2,
+        "config_sha256": "config",
+        "weather_sha256": "weather",
+        "source_sha256": "source",
+        "code_commit": "commit",
+    }
+    _save_checkpoint(checkpoint_path, NSGA2(pop_size=4), metadata)
+
+    with pytest.raises(ValueError, match="seed"):
+        _load_checkpoint(checkpoint_path, {**metadata, "seed": 2903})
+
+
+def test_optimization_checkpoint_rejects_checksum_mismatch(tmp_path) -> None:
+    checkpoint_path = tmp_path / "optimization.pkl"
+    metadata = {
+        "mode": "joint",
+        "seed": 1701,
+        "dt_hours": 0.5,
+        "population": 4,
+        "generations": 2,
+        "config_sha256": "config",
+        "weather_sha256": "weather",
+        "source_sha256": "source",
+        "code_commit": "commit",
+    }
+    _save_checkpoint(checkpoint_path, NSGA2(pop_size=4), metadata)
+    checkpoint_path.write_bytes(checkpoint_path.read_bytes() + b"corrupt")
+
+    with pytest.raises(ValueError, match="checksum"):
+        _load_checkpoint(checkpoint_path, metadata)
 
 
 def test_front_variables_are_reconstructed_in_numeric_order() -> None:

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import csv
+import hashlib
+import json
 import pickle
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -21,6 +24,7 @@ from graded_roof.study import evaluate_design, heterogeneous_design
 class OptimizationCheckpoint:
     algorithm: Algorithm
     numpy_random_state: tuple[str, np.ndarray, int, int, float]
+    metadata: dict[str, str | int | float]
 
 
 def variable_bounds(config: dict, mode: str) -> tuple[np.ndarray, np.ndarray]:
@@ -174,27 +178,145 @@ def _front_from_history(history_path: Path, output_path: Path) -> pd.DataFrame:
     return front
 
 
-def _load_checkpoint(path: Path) -> Algorithm:
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _source_sha256() -> str:
+    source_root = Path(__file__).resolve().parent
+    digest = hashlib.sha256()
+    for name in [
+        "metrics.py",
+        "models.py",
+        "optimization.py",
+        "simulation.py",
+        "study.py",
+        "weather.py",
+    ]:
+        path = source_root / name
+        digest.update(name.encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def _weather_sha256(weathers: list[WeatherSeries]) -> str:
+    digest = hashlib.sha256()
+    for weather in weathers:
+        digest.update(weather.name.encode("utf-8"))
+        digest.update(np.asarray([weather.dt_hours], dtype=np.float64).tobytes())
+        for values in [
+            weather.temperature_c,
+            weather.snowfall_kg_m2,
+            weather.rain_mm,
+        ]:
+            digest.update(np.asarray(values, dtype=np.float64).tobytes())
+    return digest.hexdigest()
+
+
+def _git_commit() -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=Path(__file__).resolve().parents[2],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return completed.stdout.strip()
+
+
+def _checkpoint_metadata(
+    config: dict,
+    weathers: list[WeatherSeries],
+    mode: str,
+    seed: int,
+) -> dict[str, str | int | float]:
+    encoded_config = json.dumps(
+        config,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return {
+        "mode": mode,
+        "seed": seed,
+        "dt_hours": float(config["simulation"]["dt_hours"]),
+        "population": int(config["optimizer"]["population"]),
+        "generations": int(config["optimizer"]["generations"]),
+        "config_sha256": hashlib.sha256(encoded_config).hexdigest(),
+        "weather_sha256": _weather_sha256(weathers),
+        "source_sha256": _source_sha256(),
+        "code_commit": _git_commit(),
+    }
+
+
+def _load_checkpoint(
+    path: Path,
+    expected_metadata: dict[str, str | int | float],
+) -> Algorithm:
+    manifest_path = path.with_suffix(f"{path.suffix}.json")
+    if not manifest_path.exists():
+        raise ValueError(f"checkpoint manifest is missing: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if _sha256(path) != manifest["checkpoint_sha256"]:
+        raise ValueError(f"checkpoint checksum mismatch: {path}")
     with path.open("rb") as handle:
         checkpoint = pickle.load(handle)
     if isinstance(checkpoint, OptimizationCheckpoint):
+        compatibility_keys = [
+            "mode",
+            "seed",
+            "dt_hours",
+            "population",
+            "generations",
+            "config_sha256",
+            "weather_sha256",
+            "source_sha256",
+        ]
+        mismatches = [
+            key
+            for key in compatibility_keys
+            if checkpoint.metadata.get(key) != expected_metadata.get(key)
+        ]
+        if mismatches:
+            raise ValueError(
+                "checkpoint metadata mismatch: " + ", ".join(mismatches)
+            )
         np.random.set_state(checkpoint.numpy_random_state)
         return checkpoint.algorithm
-    if isinstance(checkpoint, Algorithm):
-        return checkpoint
     raise TypeError(f"unsupported optimization checkpoint: {type(checkpoint)}")
 
 
-def _save_checkpoint(path: Path, algorithm: Algorithm) -> None:
+def _save_checkpoint(
+    path: Path,
+    algorithm: Algorithm,
+    metadata: dict[str, str | int | float],
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path = path.with_suffix(f"{path.suffix}.tmp")
     checkpoint = OptimizationCheckpoint(
         algorithm=algorithm,
         numpy_random_state=np.random.get_state(),
+        metadata=metadata,
     )
     with temporary_path.open("wb") as handle:
         pickle.dump(checkpoint, handle)
     temporary_path.replace(path)
+    manifest_path = path.with_suffix(f"{path.suffix}.json")
+    temporary_manifest = manifest_path.with_suffix(
+        f"{manifest_path.suffix}.tmp"
+    )
+    temporary_manifest.write_text(
+        json.dumps(
+            {
+                **metadata,
+                "checkpoint_sha256": _sha256(path),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    temporary_manifest.replace(manifest_path)
 
 
 def run_optimization(
@@ -213,9 +335,10 @@ def run_optimization(
     front_path = results_dir / f"{mode}_seed_{seed}_pareto.csv"
     checkpoint_path = checkpoint_dir / f"{mode}_seed_{seed}.pkl"
     problem = GradedRoofProblem(config, weathers, simulation_settings, mode)
+    metadata = _checkpoint_metadata(config, weathers, mode, seed)
 
     if checkpoint_path.exists():
-        algorithm = _load_checkpoint(checkpoint_path)
+        algorithm = _load_checkpoint(checkpoint_path, metadata)
     else:
         history_path.unlink(missing_ok=True)
         front_path.unlink(missing_ok=True)
@@ -239,7 +362,7 @@ def run_optimization(
             objectives,
             constraints,
         )
-        _save_checkpoint(checkpoint_path, algorithm)
+        _save_checkpoint(checkpoint_path, algorithm, metadata)
 
     _front_from_history(history_path, front_path)
     return front_path

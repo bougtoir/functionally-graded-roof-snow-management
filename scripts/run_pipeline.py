@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import json
 import subprocess
 import sys
@@ -232,11 +233,24 @@ def stage_optimize(config: dict) -> None:
     weathers = synthetic_weather_set(config)
     settings = simulation_config(config)
     results = ROOT / config["project"]["results_dir"]
-    checkpoints = ROOT / "checkpoints"
-    stochasticity_rows = []
-    for mode in ["geometry", "surface", "joint"]:
-        paths = [
-            run_optimization(
+    dt_token = str(config["simulation"]["dt_hours"]).replace(".", "p")
+    checkpoints = ROOT / "checkpoints" / f"dt_{dt_token}h"
+    jobs = [
+        (mode, seed)
+        for mode in ["geometry", "surface", "joint"]
+        for seed in config["optimizer"]["seeds"]
+    ]
+    completed_paths: dict[tuple[str, int], Path] = {}
+    workers = min(
+        int(config["optimizer"].get("parallel_workers", 1)),
+        len(jobs),
+    )
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=workers
+    ) as executor:
+        futures = {
+            executor.submit(
+                run_optimization,
                 config,
                 weathers,
                 settings,
@@ -244,7 +258,17 @@ def stage_optimize(config: dict) -> None:
                 seed,
                 results_dir=results,
                 checkpoint_dir=checkpoints,
-            )
+            ): (mode, seed)
+            for mode, seed in jobs
+        }
+        for future in concurrent.futures.as_completed(futures):
+            mode, seed = futures[future]
+            completed_paths[(mode, seed)] = future.result()
+
+    stochasticity_rows = []
+    for mode in ["geometry", "surface", "joint"]:
+        paths = [
+            completed_paths[(mode, seed)]
             for seed in config["optimizer"]["seeds"]
         ]
         output_path = results / f"{mode}_pareto.csv"

@@ -22,7 +22,9 @@ optimizer:
   seeds: [1701, 2903, 4517]
 resolution:
   N: 24
-  dt_hours: 1.0
+  original_dt_hours: 1.0
+  dt_hours: 0.5
+  post_freeze_reference_dt_hours: 0.25
 parameter_sources: "references/parameter_sources.csv"
 sensitivity_ranges: "config/production.yaml"
 weather_endpoints:
