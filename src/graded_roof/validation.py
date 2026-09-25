@@ -47,6 +47,24 @@ def _abstract_word_count(document: Document) -> int:
     )
 
 
+def _unsupported_non_ascii(text: str) -> list[str]:
+    allowed = {"−"}
+    return sorted(
+        {
+            character
+            for character in text
+            if ord(character) > 127 and character not in allowed
+        }
+    )
+
+
+def _reference_entries(document: Document) -> list[str]:
+    paragraphs = _paragraph_text(document)
+    start = paragraphs.index("References") + 1
+    end = paragraphs.index("Editable tables", start)
+    return [text for text in paragraphs[start:end] if text]
+
+
 def validate_submission(root: Path) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -83,24 +101,20 @@ def validate_submission(root: Path) -> dict[str, object]:
     non_ascii = sorted(
         {character for character in text + table_text if ord(character) > 127}
     )
+    unsupported_non_ascii = _unsupported_non_ascii(text + table_text)
     checks["non_ascii_characters"] = non_ascii
-    if non_ascii:
-        errors.append(f"English manuscript contains non-ASCII characters: {non_ascii}")
-    reference_section = text.split("References", maxsplit=1)[-1].split(
-        "Editable tables",
-        maxsplit=1,
-    )[0]
-    reference_numbers = [
-        int(match)
-        for match in re.findall(
-            r"^(\d+)\.",
-            reference_section,
-            flags=re.MULTILINE,
+    checks["unsupported_non_ascii_characters"] = unsupported_non_ascii
+    if unsupported_non_ascii:
+        errors.append(
+            "English manuscript contains unsupported non-ASCII characters: "
+            f"{unsupported_non_ascii}"
         )
-    ]
-    checks["reference_count"] = len(reference_numbers)
-    if reference_numbers != list(range(1, len(reference_numbers) + 1)):
-        errors.append("reference list is not sequential")
+    reference_entries = _reference_entries(manuscript)
+    checks["reference_count"] = len(reference_entries)
+    if len(reference_entries) == 0:
+        errors.append("reference list is empty")
+    if any(re.match(r"^\d+\.", entry) for entry in reference_entries):
+        errors.append("reference list uses obsolete numeric prefixes")
     expected_figure_count = (
         9
         if (root / "results" / "generated" / "jma_daily_evaluation.csv").exists()
