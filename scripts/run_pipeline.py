@@ -803,6 +803,14 @@ def stage_validate(config: dict) -> None:
         cwd=ROOT,
         check=True,
     )
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "audit_crst_format.py"),
+        ],
+        cwd=ROOT,
+        check=True,
+    )
     build = ROOT / "manuscript" / "build"
     write_manifest(
         ROOT,

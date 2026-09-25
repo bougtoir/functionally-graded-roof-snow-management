@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import zipfile
 from copy import deepcopy
 from pathlib import Path
@@ -134,6 +135,57 @@ def _enforce_ascii(document: Document) -> None:
                         text.encode("ascii")
                         if text != run.text:
                             run.text = text
+    _apply_unit_superscripts(document)
+
+
+def _apply_unit_superscripts(document: Document) -> None:
+    unit_exponent = re.compile(r"\b([mhs])(-[123])\b")
+
+    def transform_paragraph(paragraph) -> None:
+        for run in list(paragraph.runs):
+            matches = list(unit_exponent.finditer(run.text))
+            if not matches:
+                continue
+            parent = run._r.getparent()
+            insertion_index = parent.index(run._r)
+            run_properties = run._r.find(qn("w:rPr"))
+            cursor = 0
+            pieces: list[tuple[str, bool]] = []
+            for match in matches:
+                pieces.append((run.text[cursor : match.start(2)], False))
+                pieces.append((match.group(2).replace("-", "−"), True))
+                cursor = match.end(2)
+            pieces.append((run.text[cursor:], False))
+            for text, superscript in pieces:
+                if not text:
+                    continue
+                new_run = OxmlElement("w:r")
+                if run_properties is not None:
+                    new_run.append(deepcopy(run_properties))
+                if superscript:
+                    properties = new_run.find(qn("w:rPr"))
+                    if properties is None:
+                        properties = OxmlElement("w:rPr")
+                        new_run.insert(0, properties)
+                    vertical_alignment = OxmlElement("w:vertAlign")
+                    vertical_alignment.set(qn("w:val"), "superscript")
+                    properties.append(vertical_alignment)
+                new_text = OxmlElement("w:t")
+                if text[:1].isspace() or text[-1:].isspace():
+                    new_text.set(qn("xml:space"), "preserve")
+                new_text.text = text
+                new_run.append(new_text)
+                parent.insert(insertion_index, new_run)
+                insertion_index += 1
+            parent.remove(run._r)
+
+    for paragraph in document.paragraphs:
+        transform_paragraph(paragraph)
+    for table in document.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    transform_paragraph(paragraph)
 
 
 def _add_title_page(document: Document, metadata: dict) -> None:
@@ -202,7 +254,21 @@ def _add_dataframe_table(
 
 
 def _reference_text(row: pd.Series) -> str:
-    authors = str(row["authors"]).replace(";", ",")
+    author_entries = [
+        entry.strip() for entry in str(row["authors"]).split(";")
+    ]
+    formatted_authors: list[str] = []
+    for entry in author_entries:
+        if " et al." in entry:
+            formatted_authors.append(entry)
+            continue
+        parts = entry.split()
+        if len(parts) == 2 and parts[1].isupper():
+            initials = ".".join(parts[1]) + "."
+            formatted_authors.append(f"{parts[0]}, {initials}")
+        else:
+            formatted_authors.append(entry)
+    authors = ", ".join(formatted_authors)
     identifier = row["doi_or_identifier"]
     doi = (
         f" https://doi.org/{identifier}."
@@ -218,14 +284,45 @@ def _reference_text(row: pd.Series) -> str:
         if issue and issue.lower() != "nan":
             bibliographic += f"({issue})"
     if pages and pages.lower() != "nan":
-        bibliographic += f":{pages}"
-    year_and_details = str(int(row["year"]))
+        bibliographic += f", {pages}"
+    year_and_details = f"{int(row['year'])}."
     if bibliographic:
-        year_and_details += f";{bibliographic.strip()}"
+        year_and_details += bibliographic
     return (
-        f"{authors}. {row['title']}. {row['journal_or_publisher']}. "
-        f"{year_and_details}.{doi}"
+        f"{authors}, {year_and_details} {row['title']}. "
+        f"{row['journal_or_publisher']}.{doi}"
     )
+
+
+def _citation_author(entry: str) -> str:
+    if " et al." in entry:
+        return entry.split()[0] + " et al."
+    parts = entry.split()
+    if len(parts) == 2 and parts[1].isupper():
+        return parts[0]
+    return entry
+
+
+def _citation_label(row: pd.Series) -> str:
+    authors = [
+        _citation_author(entry.strip())
+        for entry in str(row["authors"]).split(";")
+    ]
+    if len(authors) == 1:
+        author_text = authors[0]
+    elif len(authors) == 2:
+        author_text = f"{authors[0]} and {authors[1]}"
+    else:
+        author_text = f"{authors[0]} et al."
+    return f"{author_text}, {int(row['year'])}"
+
+
+def _citation_group(references: pd.DataFrame, record_ids: list[str]) -> str:
+    selected = references.loc[references["record_id"].isin(record_ids)].copy()
+    selected["citation_label"] = selected.apply(_citation_label, axis=1)
+    selected["sort_author"] = selected["authors"].str.casefold()
+    selected = selected.sort_values(["sort_author", "year", "record_id"])
+    return "(" + "; ".join(selected["citation_label"]) + ")"
 
 
 def _frontier_result_sentence(
@@ -318,6 +415,18 @@ def build_manuscript(root: Path) -> Path:
     references = pd.read_csv(
         root / "references" / "final_revision_reference_audit.csv"
     )
+    roof_model_citations = _citation_group(
+        references,
+        [f"CRST{index:02d}" for index in range(1, 7)],
+    )
+    adjacent_study_citations = _citation_group(
+        references,
+        [f"CRST{index:02d}" for index in range(7, 13)],
+    )
+    japanese_citations = _citation_group(
+        references,
+        [f"JP{index:02d}" for index in range(1, 11)],
+    )
     accepted = convergence[convergence["within_tolerance"]]
     convergence_text = (
         f"The frozen {100 * config['convergence']['relative_tolerance']:.0f}% "
@@ -391,15 +500,17 @@ def build_manuscript(root: Path) -> Path:
         "on the roof or leave in discrete releases. Roof-scale experiments and "
         "deposition studies show that geometry, wind, and scale influence snow "
         "distributions, while validation remains essential for computational models "
-        "[1–6]. Adjacent photovoltaic, membrane-roof, meteorological, and field studies "
+        f"{roof_model_citations}. Adjacent photovoltaic, membrane-roof, "
+        "meteorological, and field studies "
         "further motivate explicit sensitivity analysis and independent validation "
-        "[7–12]."
+        f"{adjacent_study_citations}."
     )
     document.add_paragraph(
         "Japanese technical and administrative sources distinguish retention, "
         "shedding, melting, and load-resisting strategies and document the importance "
         "of surface condition, aging, snow guards, drainage, cornices, and site context "
-        "[13-22]. Retention can reduce required snow-fall space at dense sites, whereas "
+        f"{japanese_citations}. Retention can reduce required snow-fall space at dense "
+        "sites, whereas "
         "shedding requires a suitable receiving zone; retained snow instead imposes "
         "long-duration load and drainage obligations. These sources do not establish "
         "universal material coefficients, safety thresholds, or one preferable strategy. "
@@ -713,7 +824,7 @@ def build_manuscript(root: Path) -> Path:
         "but requires a controlled receiving area and falling-snow measures. The model "
         "does not invalidate either strategy, and Japanese guidance cannot be generalized "
         "to other climates, building traditions, or regulatory systems without local "
-        "evidence [13-22]."
+        f"evidence {japanese_citations}."
     )
     document.add_heading("4.1 Limitations", level=2)
     document.add_paragraph(
@@ -767,11 +878,17 @@ def build_manuscript(root: Path) -> Path:
         "are available at https://github.com/bougtoir/"
         "functionally-graded-roof-snow-management."
     )
+    document.add_heading(
+        "Declaration of generative AI and AI-assisted technologies in the manuscript "
+        "preparation process",
+        level=2,
+    )
     document.add_paragraph(
-        "Generative AI statement: During preparation, the author used Devin "
+        "During the preparation of this work, the author used Devin "
         "(Cognition AI) to support coding, public-data acquisition, analysis scripting, "
-        "and drafting. The author must review and edit the final submission and remains "
-        "responsible for its content."
+        "and drafting. Before submission, the author must review and edit the content as "
+        "needed and replace this sentence with confirmation that the author takes full "
+        "responsibility for the content of the published article."
     )
     document.add_paragraph(
         "CRediT authorship contribution statement: REQUIRED—author confirmation of "
@@ -779,8 +896,11 @@ def build_manuscript(root: Path) -> Path:
     )
 
     document.add_heading("References", level=1)
-    for index, row in references.iterrows():
-        document.add_paragraph(f"{index + 1}. {_reference_text(row)}")
+    references = references.assign(
+        sort_author=references["authors"].str.casefold()
+    ).sort_values(["sort_author", "year", "record_id"])
+    for _, row in references.iterrows():
+        document.add_paragraph(_reference_text(row))
 
     document.add_page_break()
     document.add_heading("Editable tables", level=1)

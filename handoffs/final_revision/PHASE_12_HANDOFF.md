@@ -6,7 +6,9 @@ Status: complete
 
 - Verified that Figures 1-9 and Tables 1-9 are cited in numerical first-appearance
   order and have one manuscript caption each.
-- Verified that all 22 references are cited in Vancouver first-appearance order.
+- Verified that all 22 references were cited under the then-frozen numeric citation
+  plan. Phase 13 subsequently applied the current official CRST author-year style and
+  reran the fabrication audit.
 - Verified all 22 reference records against retained local snapshots, including the two
   documented metadata-title variants.
 - Verified headline frontier, knee, robustness, mapping, JMA, convergence, unit, and

@@ -35,6 +35,29 @@ def formatted(value: float, digits: int) -> str:
     return f"{value:.{digits}f}"
 
 
+def citation_author(entry: str) -> str:
+    if " et al." in entry:
+        return entry.split()[0] + " et al."
+    parts = entry.split()
+    if len(parts) == 2 and parts[1].isupper():
+        return parts[0]
+    return entry
+
+
+def citation_label(row: pd.Series) -> str:
+    authors = [
+        citation_author(entry.strip())
+        for entry in str(row["authors"]).split(";")
+    ]
+    if len(authors) == 1:
+        author_text = authors[0]
+    elif len(authors) == 2:
+        author_text = f"{authors[0]} and {authors[1]}"
+    else:
+        author_text = f"{authors[0]} et al."
+    return f"{author_text}, {int(row['year'])}"
+
+
 def main() -> None:
     manuscript = Document(ROOT / "manuscript" / "manuscript_CRST.docx")
     paragraphs = [paragraph.text for paragraph in manuscript.paragraphs]
@@ -45,19 +68,27 @@ def main() -> None:
 
     figure_mentions = expand_numbered_mentions(body, "Figure")
     table_mentions = expand_numbered_mentions(body, "Table")
-    reference_numbers = [
-        int(value)
-        for value in re.findall(r"^(\d+)\.", reference_text, flags=re.MULTILINE)
-    ]
-    cited_references: list[int] = []
-    for start, end in re.findall(r"\[(\d+)(?:-(\d+))?\]", body):
-        first = int(start)
-        last = int(end or start)
-        cited_references.extend(range(first, last + 1))
-
     reference_audit = pd.read_csv(
         ROOT / "references" / "final_revision_reference_audit.csv"
     )
+    reference_audit["citation_label"] = reference_audit.apply(
+        citation_label,
+        axis=1,
+    )
+    alphabetical_references = reference_audit.assign(
+        sort_author=reference_audit["authors"].str.casefold()
+    ).sort_values(["sort_author", "year", "record_id"])
+    manuscript_title_order = sorted(
+        (
+            reference_text.index(row.title),
+            row.record_id,
+        )
+        for row in reference_audit.itertuples(index=False)
+    )
+    manuscript_reference_ids = [
+        record_id for _, record_id in manuscript_title_order
+    ]
+    expected_reference_ids = alphabetical_references["record_id"].tolist()
     number_provenance = pd.read_csv(
         ROOT / "audit" / "final_revision" / "number_provenance.csv"
     )
@@ -165,17 +196,21 @@ def main() -> None:
             for text in paragraphs
         )
         == 9,
-        "references numbered sequentially": (
-            reference_numbers == list(range(1, len(reference_numbers) + 1))
+        "references use CRST author-year style": (
+            not re.search(r"^\d+\.", reference_text, flags=re.MULTILINE)
+            and not re.search(r"\[\d+(?:[-–,]\d+)*\]", body)
         ),
         "all listed references cited": (
-            sorted(set(cited_references)) == reference_numbers
+            reference_audit["citation_label"].map(
+                lambda label: label in body
+            ).all()
         ),
-        "reference citations first appear in Vancouver order": (
-            first_unique(cited_references) == reference_numbers
+        "reference list is alphabetical": (
+            manuscript_reference_ids == expected_reference_ids
         ),
         "reference audit rows match manuscript references": (
-            len(reference_audit) == len(reference_numbers)
+            len(reference_audit) == len(manuscript_reference_ids)
+            and len(set(manuscript_reference_ids)) == len(reference_audit)
         ),
         "reference snapshots verified": (
             reference_audit["source_local_status"].eq("verified").all()
@@ -248,7 +283,7 @@ def main() -> None:
             "",
             "## Reference audit",
             "",
-            f"- Manuscript references: {len(reference_numbers)}.",
+            f"- Manuscript references: {len(manuscript_reference_ids)}.",
             f"- Verified reference snapshots: {len(reference_audit)}.",
             "- Each audited record contains its supported claim, transfer limit, "
             "local snapshot path, and SHA-256.",

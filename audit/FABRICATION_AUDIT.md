@@ -10,9 +10,9 @@ Overall status: PASS
 | tables 1-9 cited in order | PASS |
 | nine figure captions present | PASS |
 | nine table captions present | PASS |
-| references numbered sequentially | PASS |
+| references use CRST author-year style | PASS |
 | all listed references cited | PASS |
-| reference citations first appear in Vancouver order | PASS |
+| reference list is alphabetical | PASS |
 | reference audit rows match manuscript references | PASS |
 | reference snapshots verified | PASS |
 | reference titles verified | PASS |
