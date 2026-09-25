@@ -1,0 +1,311 @@
+{
+  "updated_utc": "2026-09-25T12:50:30.576047+00:00",
+  "research_question": "How spatial variation in roof geometry and snow-surface interaction changes the modeled retained-load versus shedding-event trade-off.",
+  "phases": [
+    {
+      "phase": "00",
+      "name": "Bootstrap and target journal",
+      "status": "completed",
+      "evidence": [
+        "README.md",
+        "analysis_plan.md"
+      ]
+    },
+    {
+      "phase": "01",
+      "name": "Literature and parameter provenance",
+      "status": "completed",
+      "evidence": [
+        "references/literature_database.csv",
+        "references/parameter_sources.csv"
+      ]
+    },
+    {
+      "phase": "02",
+      "name": "Physics and unit tests",
+      "status": "completed",
+      "evidence": [
+        "src/graded_roof/simulation.py",
+        "tests"
+      ]
+    },
+    {
+      "phase": "03",
+      "name": "Synthetic weather and fair baselines",
+      "status": "completed",
+      "evidence": [
+        "results/generated/baseline_aggregate.csv"
+      ]
+    },
+    {
+      "phase": "04",
+      "name": "Numerical convergence",
+      "status": "completed",
+      "evidence": [
+        "results/generated/convergence.csv"
+      ]
+    },
+    {
+      "phase": "05",
+      "name": "Optimized uniform space",
+      "status": "completed",
+      "evidence": [
+        "results/generated/uniform_pareto.csv"
+      ]
+    },
+    {
+      "phase": "06",
+      "name": "Heterogeneous optimization",
+      "status": "completed",
+      "evidence": [
+        "results/generated/joint_pareto.csv"
+      ]
+    },
+    {
+      "phase": "07",
+      "name": "Ablation",
+      "status": "completed",
+      "evidence": [
+        "results/generated/geometry_pareto.csv",
+        "results/generated/surface_pareto.csv"
+      ]
+    },
+    {
+      "phase": "08",
+      "name": "Complexity and discrete materials",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_6_complexity_analysis.csv",
+        "tables/generated/table_7_complexity_penalty.csv"
+      ]
+    },
+    {
+      "phase": "09",
+      "name": "Sensitivity",
+      "status": "completed",
+      "evidence": [
+        "results/generated/sensitivity.csv"
+      ]
+    },
+    {
+      "phase": "10",
+      "name": "Robustness",
+      "status": "completed",
+      "evidence": [
+        "results/generated/robustness.csv",
+        "results/generated/robustness_summary.csv"
+      ]
+    },
+    {
+      "phase": "11",
+      "name": "Japanese weather",
+      "status": "completed",
+      "evidence": [
+        "results/generated/jma_daily_evaluation.csv"
+      ]
+    },
+    {
+      "phase": "12",
+      "name": "Strategy phase diagram",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_4_strategy_phase_diagram.csv"
+      ]
+    },
+    {
+      "phase": "13",
+      "name": "Labor scarcity",
+      "status": "completed",
+      "evidence": [
+        "tables/generated/table_5_labor_scarcity.csv"
+      ]
+    },
+    {
+      "phase": "14",
+      "name": "Secondary outcomes",
+      "status": "completed",
+      "evidence": [
+        "results/generated/baseline_scenarios.csv"
+      ]
+    },
+    {
+      "phase": "15",
+      "name": "Figures and tables",
+      "status": "completed",
+      "evidence": [
+        "figures/png",
+        "tables/generated"
+      ]
+    },
+    {
+      "phase": "16",
+      "name": "Manuscript and submission files",
+      "status": "completed",
+      "evidence": [
+        "manuscript/manuscript_CRST_submission_final.docx",
+        "submission/CRST_submission_package_FINAL.zip"
+      ]
+    },
+    {
+      "phase": "17",
+      "name": "Initial review",
+      "status": "completed",
+      "evidence": [
+        "audit/INITIAL_REVIEW.md"
+      ]
+    },
+    {
+      "phase": "18",
+      "name": "Mandatory final QC",
+      "status": "completed",
+      "evidence": [
+        "audit/FINAL_AUDIT.md"
+      ]
+    }
+  ],
+  "completed_phases": 19,
+  "total_phases": 19,
+  "final_revision": {
+    "source_prompt": "Devin_CRST_final_revision_hostile_review_one_shot.txt",
+    "phases": [
+      {
+        "phase": "00",
+        "name": "Inventory and freeze",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_00_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "01",
+        "name": "Hostile CRST review",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_01_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "02",
+        "name": "Reproducibility and provenance",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_02_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "03",
+        "name": "Primary Pareto audit",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_03_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "04",
+        "name": "Knee and matched trade-offs",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_04_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "05",
+        "name": "Robustness",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_05_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "06",
+        "name": "Complexity and constructability",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_06_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "07",
+        "name": "JMA scenarios",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_07_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "08",
+        "name": "Non-shedding roofs and literature",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_08_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "09",
+        "name": "Targeted corrective analysis",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_09_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "10",
+        "name": "Manuscript revision",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_10_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "11",
+        "name": "Figures and tables",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_11_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "12",
+        "name": "Fabrication, numerical, and reference audit",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_12_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "13",
+        "name": "Format and language",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_13_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "14",
+        "name": "Fresh reproducibility",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_14_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "15",
+        "name": "Final hostile review",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_15_HANDOFF.md"
+        ]
+      },
+      {
+        "phase": "16",
+        "name": "CRST package",
+        "status": "completed",
+        "evidence": [
+          "handoffs/final_revision/PHASE_16_HANDOFF.md"
+        ]
+      }
+    ],
+    "completed_phases": 17,
+    "total_phases": 17
+  }
+}

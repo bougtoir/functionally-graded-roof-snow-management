@@ -1,0 +1,102 @@
+[
+  {
+    "source_id": "CRST_GUIDE_CURL_BLOCKED",
+    "category": "journal_submission_guidance",
+    "title": "Cold Regions Science and Technology Guide for Authors (blocked curl response)",
+    "url": "https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors",
+    "identifier": "CRST Guide for Authors; shell retrieval attempt",
+    "usage_conditions": "Elsevier website terms; retained only as evidence of the HTTP 403 shell-access limitation",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T05:00:25Z",
+    "request_method": "GET via curl",
+    "request_headers": {
+      "User-Agent": "curl"
+    },
+    "completeness": "Cloudflare HTTP 403 response, not guide content",
+    "storage_path": "data/raw/published_sources/20260924T232000Z/crst_guide_for_authors_response.html",
+    "file_size_bytes": 832803,
+    "sha256": "e588b468ff87d69829c86932151dbeee65245c8112d424e7a9b023f1672abbb0",
+    "http_status": 403,
+    "content_type": "text/html; charset=UTF-8"
+  },
+  {
+    "source_id": "CRST_GUIDE_CURL_HEADERS",
+    "category": "journal_submission_guidance",
+    "title": "Cold Regions Science and Technology Guide for Authors (blocked curl response headers)",
+    "url": "https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors",
+    "identifier": "CRST Guide for Authors; shell retrieval headers",
+    "usage_conditions": "Elsevier website terms; retained as request-status evidence",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T05:00:25Z",
+    "request_method": "GET via curl",
+    "request_headers": {
+      "User-Agent": "curl"
+    },
+    "completeness": "complete HTTP response headers",
+    "storage_path": "data/raw/published_sources/20260924T232000Z/crst_guide_for_authors_headers.txt",
+    "file_size_bytes": 833,
+    "sha256": "4168fd967f01afd799e0797f0b67995172801b8c6dd9d41da6d2c1702a071037",
+    "http_status": 403,
+    "content_type": "text/plain"
+  },
+  {
+    "source_id": "ELSEVIER_ARTWORK_FORMATS",
+    "category": "publisher_submission_guidance",
+    "title": "Artwork formats checklist",
+    "url": "https://www.elsevier.com/about/policies-and-standards/author/artwork-and-media-instructions/artwork-formats-checklist",
+    "identifier": "Elsevier artwork formats checklist",
+    "usage_conditions": "Elsevier website terms; public author guidance",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T05:00:25Z",
+    "request_method": "GET",
+    "request_headers": {
+      "User-Agent": "graded-roof-snow-research/0.1"
+    },
+    "completeness": "complete rendered response",
+    "storage_path": "data/raw/published_sources/20260924T232000Z/elsevier_artwork_formats_checklist.html",
+    "file_size_bytes": 211161,
+    "sha256": "593a9dcf10873b4c412a9239de74dced8b40068b28e1241b78637513c3e3ed6e",
+    "http_status": 200,
+    "content_type": "text/html"
+  },
+  {
+    "source_id": "ELSEVIER_GENERATIVE_AI",
+    "category": "publisher_submission_guidance",
+    "title": "Generative AI policies for journals",
+    "url": "https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals",
+    "identifier": "Elsevier generative AI policy; updated June 2026",
+    "usage_conditions": "Elsevier website terms; public author guidance",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T05:00:25Z",
+    "request_method": "GET",
+    "request_headers": {
+      "User-Agent": "graded-roof-snow-research/0.1"
+    },
+    "completeness": "complete rendered response",
+    "storage_path": "data/raw/published_sources/20260924T232000Z/elsevier_generative_ai_policy.html",
+    "file_size_bytes": 345450,
+    "sha256": "69140ab37821603b55cef49cac10a92c5fdf72ea7a93119ae19a8c489fc0e26b",
+    "http_status": 200,
+    "content_type": "text/html"
+  },
+  {
+    "source_id": "CRST_GUIDE_BROWSER",
+    "category": "journal_submission_guidance",
+    "title": "Cold Regions Science and Technology Guide for Authors",
+    "url": "https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors",
+    "identifier": "CRST Guide for Authors; rendered 2026-09-25",
+    "usage_conditions": "Elsevier website terms; public journal author guidance",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T05:09:31Z",
+    "request_method": "browser-rendered GET",
+    "request_headers": {
+      "User-Agent": "Chrome browser session"
+    },
+    "completeness": "complete rendered page DOM snapshot",
+    "storage_path": "data/raw/published_sources/20260925T050931Z/crst_guide_for_authors.html",
+    "file_size_bytes": 504166,
+    "sha256": "e36acdacab8f7e0639aea11d8ea3ba9e97aeff6936e2f4670d2968bf389e139b",
+    "http_status": 200,
+    "content_type": "text/html"
+  }
+]

@@ -1,0 +1,13 @@
+s_max_limit_kg_per_m,design_class,feasible,minimum_l_max_kg_per_m
+20.0,uniform,True,6416.968067
+20.0,geometry,True,6416.968067
+20.0,surface,True,6416.968067
+20.0,joint,True,4545.933018
+80.0,uniform,True,39.9995
+80.0,geometry,True,157.092754
+80.0,surface,True,39.9995
+80.0,joint,True,39.9995
+200.0,uniform,True,39.9995
+200.0,geometry,True,152.448552
+200.0,surface,True,39.9995
+200.0,joint,True,39.9995

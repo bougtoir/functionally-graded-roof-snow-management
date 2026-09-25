@@ -1,0 +1,181 @@
+project:
+  seed: 1701
+  results_dir: results/generated
+  figures_dir: figures
+  tables_dir: tables/generated
+
+roof:
+  length_m: 8.0
+  width_m: 1.0
+  cells: 24
+  slope_bounds_deg: [2.0, 45.0]
+  adjacent_slope_limit_deg: 12.0
+  minimum_segment_cells: 3
+  maximum_transitions: 6
+
+snow:
+  initial_density_kg_m3: 120.0
+  maximum_density_kg_m3: 420.0
+  compaction_rate_per_day: 0.035
+  melt_factor_kg_m2_c_h: 0.12
+  rain_heat_factor_kg_m2_mm: 0.02
+  gravity_m_s2: 9.80665
+  dynamic_friction_age_scale_days: 5.0
+  friction_age_gain: 0.18
+  near_melt_friction_loss: 0.22
+  near_melt_center_c: -0.5
+  near_melt_width_c: 1.8
+  intervention_mass_kg_per_m: 800.0
+
+surface:
+  static_friction_bounds: [0.08, 0.65]
+  kinetic_ratio: 0.78
+  adhesion_bounds_pa: [0.0, 250.0]
+  discrete_classes:
+    smooth_metal:
+      mu_static: 0.12
+      mu_kinetic: 0.09
+      adhesion_pa: 25.0
+    aged_coated_metal:
+      mu_static: 0.28
+      mu_kinetic: 0.21
+      adhesion_pa: 80.0
+    rough_retention:
+      mu_static: 0.55
+      mu_kinetic: 0.42
+      adhesion_pa: 180.0
+
+baselines:
+  retention_non_shedding:
+    slope_deg: 5.0
+    mu_static: 0.65
+    adhesion_pa: 250.0
+  conventional_shedding:
+    slope_deg: 45.0
+    mu_static: 0.08
+    adhesion_pa: 0.0
+  uniform_intermediate:
+    slope_deg: 25.0
+    mu_static: 0.28
+    adhesion_pa: 80.0
+
+simulation:
+  dt_hours: 1.0
+  friction_model: dynamic
+  transport_fraction_limit: 1.0
+  event_threshold_kg_per_m: 0.1
+
+synthetic_weather:
+  duration_h: 336
+  scenarios:
+    - name: cold_persistent
+      snowfall_peak_kg_m2_h: 5.0
+      snowfall_hours: 72
+      base_temperature_c: -7.0
+      warming_c_per_day: 0.15
+      repeated_events: 3
+      rain_on_snow_mm: 0.0
+    - name: maritime_warming
+      snowfall_peak_kg_m2_h: 7.0
+      snowfall_hours: 48
+      base_temperature_c: -2.0
+      warming_c_per_day: 0.35
+      repeated_events: 3
+      rain_on_snow_mm: 12.0
+    - name: severe_inland
+      snowfall_peak_kg_m2_h: 10.0
+      snowfall_hours: 96
+      base_temperature_c: -5.0
+      warming_c_per_day: 0.20
+      repeated_events: 4
+      rain_on_snow_mm: 3.0
+
+convergence:
+  cells: [12, 24, 48]
+  dt_hours: [2.0, 1.0, 0.5]
+  relative_tolerance: 0.08
+
+optimizer:
+  population: 48
+  generations: 45
+  seeds: [1701, 2903, 4517]
+  uniform_slope_grid: 30
+  uniform_friction_grid: 30
+  uniform_adhesion_grid: 7
+  profile_control_points: 4
+
+robustness:
+  samples: 250
+  seed: 7021
+  candidate_count_per_class: 12
+  robust_quantile: 0.95
+  coefficient_of_variation:
+    friction: 0.15
+    adhesion: 0.25
+    fresh_snow_density: 0.15
+    snowfall: 0.20
+    temperature_sd_c: 1.5
+
+sensitivity:
+  relative_perturbation: 0.20
+  dimensions:
+    - static_friction
+    - kinetic_friction
+    - adhesion
+    - fresh_snow_density
+    - aging_rate
+    - temperature
+    - snowfall
+    - roof_length
+    - cells
+    - dt
+    - slope_limits
+    - adjacent_slope_limit
+    - transition_penalty
+    - rain_on_snow
+    - friction_model
+
+classification:
+  heterogeneity_sd_threshold: 0.03
+  retention_shed_fraction_threshold: 0.05
+  shedding_residual_fraction_threshold: 0.20
+  intermediate_shed_fraction_threshold: 0.20
+
+complexity:
+  slope_rounding_deg: 1.0
+  transition_penalty_base: 0.10
+  transition_penalty_high: 0.25
+  transition_penalties: [0.0, 0.10, 0.25]
+
+phase_diagram:
+  snowfall_factors: [0.5, 1.0, 1.5]
+
+decision:
+  shedding_penalty_weights: [0.25, 1.0, 4.0]
+  allowable_shed_kg_per_m: [20.0, 80.0, 200.0]
+  labor_scarcity_weights:
+    low: 0.25
+    medium: 1.0
+    high: 4.0
+
+jma:
+  season_start_month: 11
+  season_end_month: 4
+  winters: [2021, 2022, 2023]
+  stations:
+    - id: s47433
+      name: Kutchan
+      prec_no: "16"
+      block_no: "47433"
+    - id: s47575
+      name: Aomori
+      prec_no: "31"
+      block_no: "47575"
+    - id: s47520
+      name: Shinjo
+      prec_no: "35"
+      block_no: "47520"
+    - id: s47612
+      name: Takada
+      prec_no: "54"
+      block_no: "47612"

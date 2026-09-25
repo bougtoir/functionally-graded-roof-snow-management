@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="Author" content="気象庁 Japan Meteorological Agency">
+<meta name="keywords" content="気象庁 Japan Meteorological Agency">
+<meta name="description" content="description">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<script src="/jma/cms/lib/jquery.min.js"></script>
+<link rel="stylesheet" href="/jma/cms/css/reset.css">
+<link rel="stylesheet" href="/jma/cms/lib/fontawesome/css/all.min.css">
+<link rel="stylesheet" href="/jma/cms/css/common.css">
+<title>地域気象観測システム（アメダス） | 気象庁</title>
+</head>
+<body>
+<div class="jma-wrapper">
+<header class="jma-header">
+<div class="jma-header-slide">
+<div class="jma-header-main jma-container">
+<p class="jma-header-hmenu"><button class="fas fa-bars"></button></p>
+<p class="jma-header-logo"><a href="/jma/index.html"><img src="/jma/jma_top/image/logo.gif" alt="気象庁"></a></p>
+<ul class="jma-header-utility">
+<li>
+<ul class="jma-header-lang">
+<li><a href="/jma/indexe.html">ENGLISH</a></li>
+<li><a href="/jma/kokusai/multi.html">Other Languages</a></li>
+</ul>
+<ul class="jma-header-media">
+<li><a href="https://x.com/JMA_bousai" target="_blank" rel="noopener noreferrer" title="別ウィンドウで開きます"><img src="https://www.jma.go.jp/jma/jma_top/image/twitter_bousai.png" alt="気象庁防災情報X"></a></li>
+<li><a href="https://x.com/JMA_kishou" target="_blank" rel="noopener noreferrer" title="別ウィンドウで開きます"><img src="https://www.jma.go.jp/jma/jma_top/image/twitter_kishou.png" alt="気象庁X"></a></li>
+<li><a href="https://www.youtube.com/channel/UCODH6XDH1lL618u3pOoFd-A" target="_blank" rel="noopener noreferrer" title="別ウィンドウで開きます"><img src="https://www.jma.go.jp/jma/jma_top/image/youtube2_kishou.png" alt="気象庁/JMA - YouTube"></a></li>
+<li><a href="https://www.youtube.com/channel/UCajQ4ZQJrgwSxkF6xaCfrRw" target="_blank" rel="noopener noreferrer" title="別ウィンドウで開きます"><img src="https://www.jma.go.jp/jma/jma_top/image/youtube1_kishou.png" alt="気象庁/JMA - YouTube"></a></li>
+</ul>
+</li>
+<li>
+<div class="jma-header-size">
+<p>文字サイズ変更</p>
+<form id="size-group">
+<input type="radio" name="d-s-btn" id="m-size" checked="checked"><label for="m-size">標準</label>
+<input type="radio" name="d-s-btn" id="l-size"><label for="l-size">&nbsp;大&nbsp;</label>
+</form>
+</div>
+<div class="jma-header-search">
+<form id="cse-search-box" action="https://cse.google.com/cse">
+<input type="hidden" name="cx" value="009950868052057056798:0yrbmp7chwi">
+<input type="hidden" name="ie" value="UTF-8">
+<input type="hidden" name="lr" value="lang_ja">
+<input type="text" name="q" id="cse-search-text" style="width: 200px!important"><button type="submit">検索</button>
+</form>
+<script src="https://www.gstatic.com/prose/brand.js" targetid="cse-search-text" hl="ja"></script>
+</div>
+</li>
+</ul>
+</div>
+<div class="jma-header-nav">
+<ul class="jma-container">
+<li><a href="/jma/index.html">ホーム</a></li>
+<li><a href="/jma/menu/menuflash.html">防災情報</a></li>
+<li><a href="/jma/menu/menureport.html">各種データ・資料</a></li>
+<li><a href="/jma/menu/areas.html">地域の情報</a></li>
+<li><a href="/jma/menu/menuknowledge.html">知識・解説</a></li>
+<li><a href="/jma/menu/menuappli.html">各種申請・ご案内</a></li>
+</ul>
+</div>
+</div>
+</header>
+
+<main class="jma-main jma-container">
+<div class="jma-cms">
+<ul class="breadcrumb">
+  <li><a href="/">ホーム</a></li>
+  <li><a href="/jma/menu/menuknowledge.html" class="parent">知識・解説</a></li>
+  <li><a href="/jma/kishou/know/kansoku.html">気象衛星・気象観測</a></li>
+  <li>地域気象観測システム（アメダス）</li>
+</ul>
+
+<h1>地域気象観測システム（アメダス）</h1>
+
+<ul class="submenu">
+  <li><a href="../kansoku/weather_obs.html">気象観測について</a><br />
+〔 地上・地域気象観測 〕
+    <ul>
+      <li><a href="../chijyou/surf.html">地上気象観測所について</a></li>
+      <li>地域気象観測システム（アメダス）について</li>
+    </ul>
+  </li>
+  <li><a href="../radar/kaisetsu.html">気象レーダー観測</a><br />
+〔 高層気象観測 〕
+    <ul>
+      <li><a href="../upper/kaisetsu.html">ラジオゾンデについて</a></li>
+      <li><a href="../windpro/kaisetsu.html">ウィンドプロファイラについて</a></li>
+    </ul>
+  </li>
+  <li><a href="../hq_gengyo/hq_gengyo.html">本庁観測現業</a></li>
+</ul>
+
+<h2>アメダスの概要</h2>
+
+<p>アメダス（AMeDAS）とは「Automated Meteorological Data Acquisition System」の略で、「地域気象観測システム」といいます。
+雨、風、雪などの気象状況を時間的、地域的に細かく監視するために、降水量、風向・風速、気温、湿度の観測を自動的におこない、気象災害の防止・軽減に重要な役割を果たしています。</p>
+
+<div class="__JMAMARKDOWN_FLEX__">
+
+  <div class="w-40">
+    <p class="center"><img src="amedas_photo%2B%2B.png" alt="アメダス観測所の写真" /></p>
+
+    <p class="caption center caption left">アメダス観測所の例</p>
+    <p>四要素（降水量、風向・風速、気温、湿度）と積雪深を観測</p>
+  </div>
+
+  <div class="w-60">
+    <p class="left">アメダスは1974年11月1日に運用を開始して、現在、降水量を観測する観測所は全国に<a href="amedas_map.png">約1,300か所</a>（約17km間隔）あります。
+このうち、約840か所（約21km間隔）では降水量に加えて、風向・風速、気温、湿度を観測しているほか、雪の多い地方の約330か所では積雪の深さも観測しています。</p>
+
+    <p><strong>観測所一覧</strong></p>
+    <hr />
+
+    <p>最新ファイル（適用日：2026年3月24日）<br />
+* <a href="ame_master.pdf">地域気象観測所一覧 [PDF形式]</a><br />
+* <a href="ame_master.zip">地域気象観測所一覧 [ZIP圧縮形式]</a><br />
+* <a href="snow_master.zip">地域気象観測所一覧（雪） [ZIP圧縮形式]</a></p>
+    <hr />
+
+    <p>過去ファイル（適用日：2026年2月5日）<br />
+* <a href="ame_master_20260205.pdf">地域気象観測所一覧 [PDF形式]</a><br />
+* <a href="ame_master_20260205.zip">地域気象観測所一覧 [ZIP圧縮形式]</a><br />
+* <a href="snow_master_20260205.zip">地域気象観測所一覧（雪） [ZIP圧縮形式]</a></p>
+    <hr />
+
+    <p><strong>※2023年3月2日適用日分から「気象情報等に表記する名称」の欄を追加しました。</strong></p>
+    <hr />
+
+    <p><strong>観測所地点情報履歴</strong><br />
+* <a href="//www.data.jma.go.jp/obd/stats/data/mdrr/man/kansoku_gaiyou.html">アメダス地点情報履歴ファイル</a>（掲載ページへのリンク）</p>
+
+  </div>
+
+</div>
+
+<h3>ホームページでのデータ表示方法　　　（<a href="//www.jma.go.jp/bosai/map.html#5/34.5/137/&amp;elem=temp&amp;contents=amedas&amp;interval=60">最新データ表示</a>）</h3>
+
+<table>
+  <tr>
+    <th>
+種類
+</th>
+
+    <th>
+内容
+</th>
+
+    <th>
+単位
+</th>
+
+  </tr>
+
+  <tr>
+    <th>
+気温
+</th>
+
+    <td>
+空気の温度
+</td>
+
+    <td>
+0.1℃（摂氏）単位で表します。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+降水量
+</th>
+
+    <td>
+降った雨や雪の量
+</td>
+
+    <td>
+0.5mm単位で表します。雪やあられなどは、溶かして水にしてから観測します。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+風向
+</th>
+
+    <td>
+風の吹いてくる方向
+</td>
+
+    <td>
+北、北北東、北東、東北東、東、東南東、南東、南南東、南、南南西、南西、西南西、西、西北西、北西、北北西の16方向で表します。観測前10分間の平均値です。北東の風とは、北東から吹いてくる風を言います。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+風速
+</th>
+
+    <td>
+風の速さ
+</td>
+
+    <td>
+0.1m/s単位で表します（アメダス地図形式は1m/s単位）。観測前10分間の平均値です。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+日照時間※
+</th>
+
+    <td>
+太陽が照らした時間
+</td>
+
+    <td>
+0.1時間（6分）単位で表します。例えば、11時から12時の1時間にすべて太陽が照っていたら1時間と表します。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+積雪の深さ
+</th>
+
+    <td>
+積っている雪の地面からの高さ
+</td>
+
+    <td>
+1cm単位で表します。また、x時間前の積雪の深さとの差を「前ｘ時間降雪量」と表します。
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+湿度
+</th>
+
+    <td>
+空気の相対湿度
+</td>
+
+    <td>
+1％単位で表します。
+
+</td>
+
+  </tr>
+
+</table>
+
+<h3>ホームページでのデータ表示例</h3>
+
+<table>
+  <tr>
+    <th>
+種類
+</th>
+
+    <th>
+地図形式
+</th>
+
+    <th>
+表形式
+</th>
+
+  </tr>
+
+  <tr>
+    <th>
+気温
+</th>
+
+    <td>
+<img src="amedasnew-T.png" alt="ホームページでのデータ表示例　地図形式　気温" />
+</td>
+
+    <td rowspan="6">
+<img src="amedasnew_table.png" alt="ホームページでのデータ表示例　表形式" />
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+降水量
+</th>
+
+    <td>
+<img src="amedasnew-R.png" alt="ホームページでのデータ表示例　地図形式　降水量" />
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+風向・風速
+</th>
+
+    <td>
+<img src="amedasnew-W.png" alt="ホームページでのデータ表示例　地図形式　風向・風速" />
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+日照時間※
+</th>
+
+    <td>
+<img src="amedasnew-D.png" alt="ホームページでのデータ表示例　地図形式　日照時間" />
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+積雪の深さ
+</th>
+
+    <td>
+<img src="amedasnew-S.png" alt="ホームページでのデータ表示例　地図形式　積雪の深さ" />
+</td>
+
+  </tr>
+
+  <tr>
+    <th>
+湿度
+</th>
+
+    <td>
+<img src="amedasnew-H.png" alt="ホームページでのデータ表示例　地図形式　湿度" />
+
+</td>
+
+  </tr>
+
+</table>
+
+<p>※気象官署・特別地域気象観測所を除く地域気象観測所では、令和3年3月2日から、気象衛星等のデータを基に日照時間の面的データを推計した「<a href="/jma/kishou/know/suikei_kishou/kaisetsu.html">推計気象分布</a>（日照時間）」から得る推計値を提供します。</p>
+
+<h2>地域気象観測システム（アメダス）観測網</h2>
+
+<div class="__JMAMARKDOWN_FLEX__">
+
+  <div class="w-70">
+<img src="amedas_map.png" alt="地域気象システム（アメダス）観測網" />
+
+</div>
+
+  <div class="w-30">
+<img src="amedas4.png" alt="アメダス4要素観測所の模式図" />
+
+</div>
+
+</div>
+
+<div style="text-align: center;">
+ 
+    地域気象観測システム（アメダス）観測網（令和8年4月1日現在）
+
+</div>
+
+<h2>アメダス観測所の移設関連情報</h2>
+
+<ul>
+  <li><a href="/jma/kishou/know/amedas/tatebayashi.html">館林地域気象観測所</a></li>
+</ul>
+
+
+</div>
+</main>
+<footer class="jma-footer">
+<div class="jma-footer-wrap jma-container">
+<nav class="jma-footer-nav">
+</nav>
+<div class="jma-footer-info">
+
+<p class="jma-footer-coment"><span><a href="/jma/kishou/info/coment.html">気象庁ホームページについて</a></span></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="/jma/cms/js/components.js"></script>
+<script src="/jma/cms/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+transition_penalty,design_class,front_row,l_max_kg_per_m,s_max_kg_per_m,slope_total_variation_deg,surface_total_variation,maximum_adjacent_slope_change_deg,transition_count,minimum_segment_cells,meets_adjacent_slope_limit,meets_minimum_segment_length,meets_maximum_transitions,complexity_penalized_score,selection_score
+0.0,uniform,0,39.99950000321371,39.99950000321371,0.0,0.0,0.0,0,24,True,True,True,0.32499816914769064,0.32499816914769064
+0.1,uniform,0,39.99950000321371,39.99950000321371,0.0,0.0,0.0,0,24,True,True,True,0.32499816914769064,0.32499816914769064
+0.25,uniform,0,39.99950000321371,39.99950000321371,0.0,0.0,0.0,0,24,True,True,True,0.32499816914769064,0.32499816914769064

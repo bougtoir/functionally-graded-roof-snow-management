@@ -1,0 +1,29 @@
+parameter,configured_value,unit,status,source_record,source_or_rationale,required_analysis
+gravity_m_s2,9.80665,m/s2,standard_constant,SI,"Conventional standard acceleration used for reproducible calculation.",none
+roof_length_m,8.0,m,explicit_assumption,NA,"Representative unit-width proof-of-concept roof length; not a code-prescribed geometry.",roof_length sensitivity
+roof_width_m,1.0,m,normalization_choice,NA,"Unit-width normalization for reporting kg per metre of eave.",none
+cells,24,count,numerical_choice,CRST04,"Base resolution subject to spatial convergence; not a physical parameter.",N=12/24/48 convergence
+slope_bounds_deg,2-45,degree,design_space_assumption,JP02|JP03,"Broad proof-of-concept bounds that span retention and shedding regimes without claiming a universal pitch.",slope-bound sensitivity
+adjacent_slope_limit_deg,12,degree,manufacturing_assumption,NA,"Regularity constraint selected before optimization.",constraint sensitivity
+minimum_segment_cells,3,count,manufacturing_assumption,NA,"Prevents single-cell material or geometry oscillations.",segment-length sensitivity
+maximum_transitions,6,count,manufacturing_assumption,NA,"Caps profile complexity before optimization.",complexity sensitivity
+initial_density_kg_m3,120,kg/m3,explicit_assumption,NA,"Fresh-snow density controls diagnostic depth and JMA snowfall-depth-to-mass conversion; it does not alter basal sliding at fixed mass.",depth and JMA forcing sensitivity
+maximum_density_kg_m3,420,kg/m3,explicit_assumption,NA,"Upper compaction bound controls diagnostic snow depth but not basal sliding at fixed mass.",depth sensitivity
+compaction_rate_per_day,0.035,1/day,explicit_assumption,NA,"Uncalibrated reduced-order exponential compaction parameter.",aging sensitivity
+melt_factor_kg_m2_c_h,0.12,kg/m2/C/hour,explicit_assumption,CRST11,"Degree-hour melt coefficient used for proof-of-concept; field calibration is required.",melt-factor sensitivity
+rain_heat_factor_kg_m2_mm,0.02,kg/m2/mm,explicit_assumption,NA,"Reduced-order rain-on-snow melt increment; not a validated energy-balance coefficient.",rain-on-snow sensitivity
+dynamic_friction_age_scale_days,5,day,explicit_assumption,JP06,"Characteristic aging timescale chosen for scenario analysis; Japanese aging evidence supports direction only.",aging-law and constant-friction ablation
+friction_age_gain,0.18,fraction,explicit_assumption,JP05|JP06,"Dimensionless aging modifier fixed before optimization and treated as model-form uncertainty.",friction-model ablation
+near_melt_friction_loss,0.22,fraction,explicit_assumption,JP05|CRST12,"Dimensionless near-melt friction reduction fixed before optimization; direction is evidence-supported but magnitude is not calibrated.",friction-model ablation
+near_melt_center_c,-0.5,C,explicit_assumption,JP05|CRST12,"Center of a smooth near-melt modifier; not a phase-transition calibration.",temperature sensitivity
+near_melt_width_c,1.8,C,explicit_assumption,JP05|CRST12,"Width of a smooth near-melt modifier; not calibrated.",temperature sensitivity
+static_friction_bounds,0.08-0.65,dimensionless,design_space_assumption,JP04|JP05|CRST12,"Generic broad design interval; values are not assigned to named commercial materials.",bounds and discrete-class sensitivity
+kinetic_ratio,0.78,dimensionless,explicit_assumption,NA,"Kinetic/static ratio used to reduce optimization dimension; no universal source claimed.",ratio sensitivity
+adhesion_bounds_pa,0-250,Pa,design_space_assumption,CRST12,"Generic scenario bounds motivated by interface-mechanics evidence but not calibrated as a universal range.",adhesion sensitivity and robustness
+transport_fraction_limit,1.0,fraction,numerical_choice,NA,"Upper cap on one-step mobile mass; event outcomes require time-step convergence.",dt convergence and transport sensitivity
+event_threshold_kg_per_m,0.1,kg/m,analysis_definition,NA,"Preregistered numerical threshold separating recorded shedding from floating-point traces.",threshold sensitivity
+intervention_mass_kg_per_m,800,kg/m,scenario_assumption,NA,"Illustrative operational threshold only; not a structural capacity or safety limit.",threshold sensitivity
+optimizer_population,48,count,numerical_choice,NA,"NSGA-II population fixed before production.",multi-seed convergence
+optimizer_generations,45,count,numerical_choice,NA,"NSGA-II generation budget fixed before production.",checkpoint and convergence diagnostics
+robustness_samples,250,count,numerical_choice,NA,"Monte Carlo budget fixed before production; uncertainty intervals must be reported.",Monte Carlo stability check
+jma_daily_rain_rule,"precipitation when mean temperature >1 C and snowfall depth=0",rule,analysis_assumption,NA,"Daily precipitation is assigned to rain only on warm days with no reported snowfall; raw precipitation and snowfall strings remain retained.",JMA scenario limitation

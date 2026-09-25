@@ -1,0 +1,4 @@
+nominal_l_max_kg_per_m,nominal_s_max_kg_per_m,candidate_count,design_classes,q95_l_min_kg_per_m,q95_l_max_kg_per_m,q95_s_min_kg_per_m,q95_s_max_kg_per_m,intervention_probability_min,intervention_probability_max,minimum_score_tie_count
+39.9995,39.9995,12,joint;uniform,51.893126877381135,5816.684154853886,51.89312687738114,2726.631100607224,0.0,0.216,6
+4547.373336,12.279773,1,joint,5929.191636486115,5929.191636486115,997.2421922789866,997.2421922789866,0.972,0.972,0
+6416.968067,0.0,12,joint;uniform,8324.495847931476,8324.495847931477,0.0,382.0871866587878,0.992,1.0,0
