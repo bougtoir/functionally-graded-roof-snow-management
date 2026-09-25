@@ -248,12 +248,24 @@ def validate_submission(root: Path) -> dict[str, object]:
         with zipfile.ZipFile(package) as archive:
             names = set(archive.namelist())
         required_members = {
-            "manuscript_CRST.docx",
-            "cover_letter_CRST.docx",
-            "supplement_CRST.docx",
+            "manuscript_CRST_final.docx",
+            "review_copy/manuscript_CRST_inline_final.docx",
+            "cover_letter_CRST_final.docx",
+            "supplement_CRST_final.docx",
+            "editable_tables_CRST.docx",
+            "editable_figures_CRST.pptx",
             "highlights_CRST.txt",
             "CRST_submission_checklist.md",
             "CRST_scope_fit.md",
+            "REPRODUCIBILITY_README.md",
+            "audit/reference_audit.csv",
+            "audit/FINAL_AUDIT.md",
+            "audit/REPRODUCIBILITY_AUDIT.md",
+            "audit/FABRICATION_AUDIT.md",
+            "audit/CRST_FORMAT_LANGUAGE_AUDIT.md",
+            "audit/FINAL_HOSTILE_REVIEW.md",
+            "audit/fresh_reproduction_comparison.csv",
+            "CRST_submission_manifest.csv",
         }
         missing_members = sorted(required_members - names)
         if missing_members:

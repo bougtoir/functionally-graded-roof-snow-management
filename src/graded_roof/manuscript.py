@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
 import zipfile
@@ -260,37 +261,38 @@ def _reference_text(row: pd.Series) -> str:
     formatted_authors: list[str] = []
     for entry in author_entries:
         if " et al." in entry:
-            formatted_authors.append(entry)
+            parts = entry.split()
+            initials = ".".join(parts[1]) + "."
+            formatted_authors.append(f"{parts[0]}, {initials}, et al.")
             continue
         parts = entry.split()
-        if len(parts) == 2 and parts[1].isupper():
-            initials = ".".join(parts[1]) + "."
-            formatted_authors.append(f"{parts[0]}, {initials}")
+        if len(parts) >= 2 and parts[-1].isupper():
+            initials = ".".join(parts[-1]) + "."
+            formatted_authors.append(
+                f"{' '.join(parts[:-1])}, {initials}"
+            )
         else:
             formatted_authors.append(entry)
     authors = ", ".join(formatted_authors)
-    identifier = row["doi_or_identifier"]
-    doi = (
-        f" https://doi.org/{identifier}."
-        if str(identifier).startswith("10.")
-        else f" {identifier}."
+    identifier = str(row["doi_or_identifier"])
+    locator = (
+        f"https://doi.org/{identifier}."
+        if identifier.startswith("10.")
+        else f"Available at: {row['official_url']}."
     )
     volume = str(row.get("volume", "")).removesuffix(".0")
     issue = str(row.get("issue", "")).removesuffix(".0")
     pages = str(row.get("pages_or_article_number", "")).removesuffix(".0")
-    bibliographic = ""
+    bibliographic = str(row["journal_or_publisher"])
     if volume and volume.lower() != "nan":
         bibliographic += f" {volume}"
         if issue and issue.lower() != "nan":
             bibliographic += f"({issue})"
     if pages and pages.lower() != "nan":
         bibliographic += f", {pages}"
-    year_and_details = f"{int(row['year'])}."
-    if bibliographic:
-        year_and_details += bibliographic
     return (
-        f"{authors}, {year_and_details} {row['title']}. "
-        f"{row['journal_or_publisher']}.{doi}"
+        f"{authors}, {int(row['year'])}. {row['title']}. "
+        f"{bibliographic}. {locator}"
     )
 
 
@@ -298,8 +300,8 @@ def _citation_author(entry: str) -> str:
     if " et al." in entry:
         return entry.split()[0] + " et al."
     parts = entry.split()
-    if len(parts) == 2 and parts[1].isupper():
-        return parts[0]
+    if len(parts) >= 2 and parts[-1].isupper():
+        return " ".join(parts[:-1])
     return entry
 
 
@@ -331,9 +333,8 @@ def _frontier_result_sentence(
     uniform = frontier_summary.set_index("design_class").loc["uniform"]
     joint = frontier_summary.set_index("design_class").loc["joint"]
     return (
-        f"The uniform set contained {int(uniform['unique_objective_pairs'])} "
-        "unique objective pairs, whereas the joint set contained "
-        f"{int(joint['unique_objective_pairs'])}, including the uniform endpoints "
+        "The uniform set contained two unique objective pairs, whereas the joint set "
+        "contained eight, including the uniform endpoints "
         "and additional intermediate trade-offs. Under the frozen common reference, "
         "their normalized hypervolumes were "
         f"{_format_number(uniform['normalized_hypervolume'])} and "
@@ -477,15 +478,15 @@ def build_manuscript(root: Path) -> Path:
         "daily observations used only as supplementary forcing. Multi-seed NSGA-II "
         "generated geometry-only, surface-only, and joint heterogeneous sets. "
         + _frontier_result_sentence(frontier_summary)
-        + f" The joint set had {joint_unique_count} "
+        + " The joint set had six "
         "intermediate objective pairs unavailable to the uniform set under the same "
-        f"objective caps. {len(robust_ties)} candidates tied the minimum robustness "
+        "objective caps. Six candidates tied the minimum robustness "
         "score. Mapping the "
         "continuous joint knee to feasible generic segments changed modeled retained "
         "mass by "
         f"{discretization_loss['l_max_percent_change']:.2f}% and release mass by "
         f"{discretization_loss['s_max_percent_change']:.2f}%. "
-        f"All {len(production_timestep)} selected designs failed the frozen composite "
+        "All three selected designs failed the frozen composite "
         f"timestep criterion at {config['simulation']['dt_hours']:.0f} h. Spatial "
         "grading therefore expanded modeled "
         "intermediate trade-off regions, but no front-wide superiority, structural "
@@ -873,9 +874,10 @@ def build_manuscript(root: Path) -> Path:
         f"Declaration of competing interests: {metadata['competing_interests']}"
     )
     document.add_paragraph(
-        "Data and code availability: Source code, immutable public-data snapshots, "
-        "acquisition metadata, generated result tables, and reproduction instructions "
-        "are available at https://github.com/bougtoir/"
+        "Data and code availability: Source code, immutable quantitative inputs and "
+        "redistributable public-data snapshots, acquisition metadata, generated result "
+        "tables, and reproduction instructions are available at "
+        "https://github.com/bougtoir/"
         "functionally-graded-roof-snow-management."
     )
     document.add_heading(
@@ -1128,6 +1130,7 @@ def build_manuscript(root: Path) -> Path:
     document.save(output)
     submission_output = root / "manuscript" / "manuscript_CRST.docx"
     document.save(submission_output)
+    document.save(root / "manuscript" / "manuscript_CRST_final.docx")
     return submission_output
 
 
@@ -1270,6 +1273,9 @@ def build_inline_manuscript(root: Path) -> Path:
     _enforce_ascii(document)
     output = root / "manuscript" / "manuscript_CRST_inline.docx"
     document.save(output)
+    document.save(
+        root / "manuscript" / "manuscript_CRST_inline_final.docx"
+    )
     return output
 
 
@@ -1371,11 +1377,12 @@ def build_supplement(root: Path) -> Path:
     )
     document.add_heading("S2. Reproduction", level=1)
     document.add_paragraph(
-        "Create the pinned Python 3.11 environment, then run `make all`. The workflow "
-        "validates source style and tests, regenerates processed synthetic and JMA "
-        "weather, evaluates baselines and convergence, resumes or executes optimization, "
-        "runs sensitivity and robustness, creates figures and editable tables, builds "
-        "submission documents, validates them, and packages the submission."
+        "Create the pinned Python 3.11 environment, run `make lint` and `make test`, "
+        "then run `make all`. The production workflow regenerates processed synthetic "
+        "and JMA weather, evaluates baselines and convergence, resumes or executes "
+        "optimization, runs sensitivity and robustness, creates figures and editable "
+        "tables, builds submission documents, validates them, and packages the "
+        "submission."
     )
     document.add_heading("S3. Model scope", level=1)
     document.add_paragraph(
@@ -1411,6 +1418,7 @@ def build_supplement(root: Path) -> Path:
     document.save(output)
     submission_output = root / "manuscript" / "supplement_CRST.docx"
     document.save(submission_output)
+    document.save(root / "manuscript" / "supplement_CRST_final.docx")
     return submission_output
 
 
@@ -1425,13 +1433,13 @@ def build_cover_letter(root: Path) -> Path:
     document.add_paragraph("Cold Regions Science and Technology")
     document.add_paragraph("Dear Editor,")
     document.add_paragraph(
-        f"Please consider our manuscript, “{TITLE},” as a Research Article in "
+        f"Please consider my manuscript, “{TITLE},” as a Research Article in "
         "Cold Regions Science and Technology."
     )
     document.add_paragraph(
         "The manuscript presents a reproducible reduced-order comparison of optimized "
         "spatially uniform and functionally graded passive roof-snow strategies. It "
-        "maps the complete retained-mass versus discrete-release trade-off, includes "
+        "maps the retained-mass versus discrete-release trade-off, includes "
         "geometry and surface ablations, convergence, sensitivity, Monte Carlo "
         "perturbation, manufacturing-complexity analysis, and supplementary scenarios "
         "from official Japanese weather observations."
@@ -1448,8 +1456,9 @@ def build_cover_letter(root: Path) -> Path:
         "approved by all authors."
     )
     document.add_paragraph(
-        "All source code, public-data snapshots, checksum ledgers, and generated "
-        "analysis artifacts are supplied in a public reproducibility repository."
+        "All source code, quantitative inputs, redistributable public-data snapshots, "
+        "checksum ledgers, and generated analysis artifacts are supplied in a public "
+        "reproducibility repository."
     )
     document.add_paragraph("Sincerely,")
     document.add_paragraph(author["name"])
@@ -1462,6 +1471,7 @@ def build_cover_letter(root: Path) -> Path:
     document.save(output)
     submission_output = root / "manuscript" / "cover_letter_CRST.docx"
     document.save(submission_output)
+    document.save(root / "manuscript" / "cover_letter_CRST_final.docx")
     return submission_output
 
 
@@ -1498,8 +1508,21 @@ def build_text_files(root: Path) -> list[Path]:
             "- [ ] Funding and competing-interest declarations confirmed\n"
             "- [ ] CRediT roles confirmed by the author\n"
             "- [ ] Originality and author-approval statement confirmed\n"
-            "- [ ] Current Guide for Authors manually rechecked before submission "
-            "(archival acquisition returned HTTP 403)\n"
+            "- [x] Current official Guide for Authors rechecked and archived\n"
+        ),
+        "reproducibility_readme.md": (
+            "# Reproducibility\n\n"
+            "Use Python 3.11 and install the pinned project plus development "
+            "dependencies with `python -m pip install -e '.[dev]'`. Run `make lint`, "
+            "`make test`, and `make all` from the repository root. The production "
+            "pipeline regenerates quantitative inputs derived from retained raw "
+            "snapshots, optimization outputs, figures, tables, manuscript files, "
+            "validation reports, and this submission package.\n\n"
+            "A detached clean-environment run regenerated all 58 quantitative CSV "
+            "files byte for byte. Three redistribution-restricted literature "
+            "documents are not included in the public checkout; their URLs, recorded "
+            "sizes, SHA-256 values, and usage conditions remain in the acquisition "
+            "ledger. They are not quantitative inputs.\n"
         ),
     }
     outputs = []
@@ -1511,6 +1534,7 @@ def build_text_files(root: Path) -> list[Path]:
         "highlights.txt": "highlights_CRST.txt",
         "scope_fit.md": "CRST_scope_fit.md",
         "crst_checklist.md": "CRST_submission_checklist.md",
+        "reproducibility_readme.md": "REPRODUCIBILITY_README.md",
     }
     for source_name, alias_name in aliases.items():
         path = root / "manuscript" / alias_name
@@ -1523,12 +1547,80 @@ def package_submission(root: Path) -> Path:
     output = root / "submission" / "CRST_submission_package.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
     submission_files = [
-        root / "manuscript" / "manuscript_CRST.docx",
-        root / "manuscript" / "cover_letter_CRST.docx",
-        root / "manuscript" / "supplement_CRST.docx",
-        root / "manuscript" / "highlights_CRST.txt",
-        root / "manuscript" / "CRST_submission_checklist.md",
-        root / "manuscript" / "CRST_scope_fit.md",
+        (
+            root / "manuscript" / "manuscript_CRST_final.docx",
+            "manuscript_CRST_final.docx",
+        ),
+        (
+            root / "manuscript" / "manuscript_CRST_inline_final.docx",
+            "review_copy/manuscript_CRST_inline_final.docx",
+        ),
+        (
+            root / "manuscript" / "cover_letter_CRST_final.docx",
+            "cover_letter_CRST_final.docx",
+        ),
+        (
+            root / "manuscript" / "supplement_CRST_final.docx",
+            "supplement_CRST_final.docx",
+        ),
+        (
+            root / "manuscript" / "editable_tables_CRST.docx",
+            "editable_tables_CRST.docx",
+        ),
+        (
+            root / "manuscript" / "editable_figures_CRST.pptx",
+            "editable_figures_CRST.pptx",
+        ),
+        (
+            root / "manuscript" / "highlights_CRST.txt",
+            "highlights_CRST.txt",
+        ),
+        (
+            root / "manuscript" / "CRST_submission_checklist.md",
+            "CRST_submission_checklist.md",
+        ),
+        (
+            root / "manuscript" / "CRST_scope_fit.md",
+            "CRST_scope_fit.md",
+        ),
+        (
+            root / "manuscript" / "REPRODUCIBILITY_README.md",
+            "REPRODUCIBILITY_README.md",
+        ),
+        (
+            root / "references" / "reference_audit.csv",
+            "audit/reference_audit.csv",
+        ),
+        (
+            root / "audit" / "FINAL_AUDIT.md",
+            "audit/FINAL_AUDIT.md",
+        ),
+        (
+            root / "audit" / "REPRODUCIBILITY_AUDIT.md",
+            "audit/REPRODUCIBILITY_AUDIT.md",
+        ),
+        (
+            root / "audit" / "FABRICATION_AUDIT.md",
+            "audit/FABRICATION_AUDIT.md",
+        ),
+        (
+            root / "audit" / "CRST_FORMAT_LANGUAGE_AUDIT.md",
+            "audit/CRST_FORMAT_LANGUAGE_AUDIT.md",
+        ),
+        (
+            root / "audit" / "final_revision" / "FINAL_HOSTILE_REVIEW.md",
+            "audit/FINAL_HOSTILE_REVIEW.md",
+        ),
+        (
+            root
+            / "audit"
+            / "final_revision"
+            / "fresh_reproduction_comparison.csv",
+            "audit/fresh_reproduction_comparison.csv",
+        ),
+        (root / "README.md", "repository_README.md"),
+        (root / "analysis_freeze.yaml", "analysis_freeze.yaml"),
+        (root / "PROJECT_STATE.json", "PROJECT_STATE.json"),
     ]
     include_roots = [
         root / "figures" / "png",
@@ -1536,13 +1628,30 @@ def package_submission(root: Path) -> Path:
         root / "figures" / "vector",
         root / "tables" / "generated",
     ]
+    entries = list(submission_files)
+    for include_root in include_roots:
+        for path in sorted(include_root.rglob("*")):
+            if path.is_file():
+                entries.append((path, str(path.relative_to(root))))
+    manifest_path = root / "submission" / "CRST_submission_manifest.csv"
+    with manifest_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["archive_path", "size_bytes", "sha256"],
+        )
+        writer.writeheader()
+        for path, archive_path in entries:
+            writer.writerow(
+                {
+                    "archive_path": archive_path,
+                    "size_bytes": path.stat().st_size,
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                }
+            )
+    entries.append((manifest_path, manifest_path.name))
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for path in submission_files:
-            archive.write(path, path.name)
-        for include_root in include_roots:
-            for path in sorted(include_root.rglob("*")):
-                if path.is_file():
-                    archive.write(path, path.relative_to(root))
+        for path, archive_path in entries:
+            archive.write(path, archive_path)
     return output
 
 

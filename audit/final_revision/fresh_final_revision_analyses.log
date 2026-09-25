@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_final_revision_analyses.py", line 922, in <module>
+    main()
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_final_revision_analyses.py", line 916, in main
+    stage_literature()
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_final_revision_analyses.py", line 701, in stage_literature
+    raise ValueError(
+ValueError: JP02 does not resolve to one ledger source
+
+real	0m2.958s
+user	0m3.503s
+sys	0m0.207s
+
+real	0m1.442s
+user	0m1.528s
+sys	0m0.025s

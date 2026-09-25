@@ -32,7 +32,7 @@ Overall status: PASS
 | Quantity | Canonical value fragment | Manuscript match |
 |---|---:|---|
 | uniform objective-pair count | only 2 objective pairs | PASS |
-| joint objective-pair count | joint set contained 8 | PASS |
+| joint objective-pair count | joint: 8 objective pairs | PASS |
 | uniform hypervolume | 0.402 | PASS |
 | joint hypervolume | 0.611 | PASS |
 | joint descriptive knee Lmax | 3210.6 | PASS |

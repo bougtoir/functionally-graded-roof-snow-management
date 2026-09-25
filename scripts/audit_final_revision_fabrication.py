@@ -138,8 +138,8 @@ def main() -> None:
             "objective pairs"
         ),
         "joint objective-pair count": (
-            f"joint set contained "
-            f"{int(frontier.loc['joint', 'unique_objective_pairs'])}"
+            f"joint: {int(frontier.loc['joint', 'unique_objective_pairs'])} "
+            "objective pairs"
         ),
         "uniform hypervolume": formatted(
             metric.loc["uniform", "normalized_hypervolume_fraction"], 3

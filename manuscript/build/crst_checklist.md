@@ -12,4 +12,4 @@
 - [ ] Funding and competing-interest declarations confirmed
 - [ ] CRediT roles confirmed by the author
 - [ ] Originality and author-approval statement confirmed
-- [ ] Current Guide for Authors manually rechecked before submission (archival acquisition returned HTTP 403)
+- [x] Current official Guide for Authors rechecked and archived

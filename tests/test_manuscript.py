@@ -1,7 +1,8 @@
+import pandas as pd
 from docx import Document
 from PIL import Image
 
-from graded_roof.manuscript import _enforce_ascii
+from graded_roof.manuscript import _enforce_ascii, _reference_text
 from graded_roof.validation import _reference_entries, _unsupported_non_ascii
 
 
@@ -51,3 +52,25 @@ def test_validation_counts_author_year_reference_entries():
         "Alpha, A., 2024. Example.",
         "Beta, B., 2025. Example.",
     ]
+
+
+def test_reference_text_uses_crst_author_year_order():
+    row = pd.Series(
+        {
+            "authors": "Van der Geer J; Handgraaf T",
+            "year": 2020,
+            "title": "The art of writing a scientific article",
+            "journal_or_publisher": "J. Sci. Commun.",
+            "volume": 163,
+            "issue": "",
+            "pages_or_article_number": "51-59",
+            "doi_or_identifier": "10.1016/j.sc.2020.00372",
+            "official_url": "https://example.test/article",
+        }
+    )
+
+    assert _reference_text(row) == (
+        "Van der Geer, J., Handgraaf, T., 2020. The art of writing a scientific "
+        "article. J. Sci. Commun. 163, 51-59. "
+        "https://doi.org/10.1016/j.sc.2020.00372."
+    )

@@ -1,18 +1,27 @@
-# Final audit
+# Final submission audit
 
-Overall: PASS
+Overall scientific and computational status: PASS
+
+Submission status: READY AFTER AUTHOR COMPLETES THE LISTED DECLARATIONS
 
 | Gate | Status | Evidence |
 |---|---|---|
-| A Physics | PASS | Force balance, conservation tests, and scope limits |
-| B Numerics | PASS | Resolution study and deterministic optimizer histories |
-| C Comparison fairness | PASS | Full uniform map and three heterogeneous modes |
-| D References | PASS | Verified literature database and ordered citations |
-| E Manuscript consistency | PASS | Generated values and consistency audit |
-| F Reproducibility | PASS | Pinned environment, raw snapshots, checksums, build |
-| G Hard-coding | PASS | Config-driven methods and automated hard-code audit |
-| H Formatting | PASS | DOCX, separate figures, editable tables, validation |
-| I Language | PASS | Academic edit; DeepL unavailable and not claimed |
-| J Submission completeness | PASS | 0 validation errors; 4 warnings |
+| Physics and conservation | PASS | Force balance, conservation tests, and explicit scope limits |
+| Numerical disclosure | PASS | Resolution audit and prominent disclosure of the failed 1-h composite criterion |
+| Comparison fairness | PASS | Exhaustive 6,300-design uniform grid precedes heuristic heterogeneous comparison |
+| Pareto and robustness interpretation | PASS | Unique objective pairs, hypervolume, epsilon, matched caps, normalization, and six-way tie separated |
+| Constructability | PASS | Continuous feasibility, mapping loss, and transition penalties distinguished |
+| Weather interpretation | PASS | JMA observations are supplementary forcing, not roof validation |
+| References | PASS | 22 verified records in current CRST author-year style |
+| Manuscript format | PASS | Editable DOCX, line numbering, native equations, editable tables, and separate figures |
+| Fresh reproduction | PASS | 58/58 quantitative CSV files byte-identical; Ruff and 32 tests passed |
+| Provenance | PASS WITH DISCLOSED LIMITATION | Three restricted literature files cannot be redistributed and are not quantitative inputs |
+| Submission package | PASS | 0 validation errors; 4 intended warnings |
 
-User-approved author, affiliation, declaration, CRediT, and originality placeholders remain for local completion and are validation warnings rather than scientific or computational failures.
+## Required author completion before upload
+
+- Confirm affiliation and postal address.
+- Complete funding and competing-interest declarations.
+- Confirm CRediT roles.
+- Confirm originality, exclusive submission, and approval of all files.
+- Finalize the generative-AI responsibility statement after author review.

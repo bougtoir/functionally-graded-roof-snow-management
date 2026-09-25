@@ -112,7 +112,7 @@ Warnings: 4
       }
     ],
     "unrecovered_acquisition_records": 131,
-    "zip_file_count": 61
+    "zip_file_count": 76
   }
 }
 ```
