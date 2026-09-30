@@ -1,0 +1,14 @@
+source_id,category,title,url,identifier,usage_conditions,publish_raw
+CRST_GUIDE,journal_rules,CRST Guide for Authors,https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors,ISSN 0165-232X,Official public Elsevier page,false
+ELSEVIER_AI,journal_rules,Elsevier generative AI policies for journals,https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals,NA,Official public Elsevier page,false
+ELSEVIER_COVER,journal_rules,Elsevier cover letter guidance,https://www.elsevier.support/publishing/answer/what-should-be-included-in-a-cover-letter,NA,Official public Elsevier support page,false
+JMA_OBSDL,jma_documentation,JMA historical observation download,https://www.data.jma.go.jp/risk/obsdl/,NA,JMA public data terms,true
+JMA_HELP1,jma_documentation,JMA historical observation download help,https://www.data.jma.go.jp/risk/obsdl/top/help1,NA,JMA public data terms,true
+JMA_HELP3,jma_documentation,JMA CSV and quality code help,https://www.data.jma.go.jp/risk/obsdl/top/help3,NA,JMA public data terms,true
+JMA_FAQ,jma_documentation,JMA historical observation download FAQ,https://www.data.jma.go.jp/risk/obsdl/top/faq,NA,JMA public data terms,true
+JMA_TERMS,jma_documentation,JMA content use terms,https://www.jma.go.jp/jma/kishou/info/coment.html,Public Data Use Terms Version 1.0,JMA public data terms,true
+JMA_AMEDAS,jma_documentation,JMA AMeDAS variable explanation,https://www.jma.go.jp/jma/kishou/know/amedas/kaisetsu.html,NA,JMA public data terms,true
+JMA_STATIONS,jma_metadata,JMA AMeDAS station metadata,https://www.jma.go.jp/bosai/amedas/const/amedastable.json,current,JMA public data terms,true
+JP_HRO,japanese_practice,Hokkaido roof-snow treatment guide,https://www.hro.or.jp/upload/51707/yanenoyukishori.pdf,2017 technical guide,Official public technical guide,false
+JP_NIIGATA,japanese_practice,Niigata roof-snow technical material,https://www.pref.niigata.lg.jp/uploaded/attachment/135532.pdf,2006 technical material,Official public prefectural material,false
+JP_SAPPORO,japanese_practice,Sapporo falling snow and ice guidance,https://www.city.sapporo.jp/toshi/k-shido/kakuninn/yukidome/yukidome.html,Sapporo Building Standards Ordinance Article 12 guidance,Official public municipal guidance,false

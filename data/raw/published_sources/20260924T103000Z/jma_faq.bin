@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+        <title>気象庁|過去の気象データ・ダウンロード</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="Author" content="気象庁 Japan Meteorological Agency" />
+        <meta name="keywords" content="気象庁 Japan Meteorological Agency" />
+        <meta name="description" content="気象庁が提供するページです" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta http-equiv="Content-Script-Type" content="text/javascript" />
+        <link rel="stylesheet" type="text/css" href="/com/css/define.css" media="all" />
+        <style type="text/css" media="all"><!-- @import url(/com/default.css); --></style>
+        <script type="text/javascript">
+            /*@cc_on _d=document;
+             eval('var document=_d');
+             @*/
+        </script>
+        <style>
+            <!--
+            .tblnarabi td{
+                padding:0;
+                white-space:nowrap;
+            }
+            -->
+        </style>
+        <link href="https://www.data.jma.go.jp/risk/obsdl/web/css/top.2.0.css" rel="stylesheet" type="text/css">    </head>
+    <body>
+        <div id="main-area">
+            <div id="header_area">
+	<div id="nheader">
+		<div id="logo"><a href="//www.jma.go.jp/jma/index.html"><img src="//www.jma.go.jp/jma/com/images/logo.gif" alt="気象庁" width="120" height="67" /></a></div>
+
+                <div id="header2_right">
+                    <div id="header2_link">
+                        <ul>
+                        <li xml:lang="en" lang="en"><a href="//www.jma.go.jp/jma/indexe.html">ENGLISH</a></li>
+                        </ul>
+                    </div>
+                    <!-- search -->　
+                    <div id="gsearch">
+                        <form id="cse-search-box" action="//google.com/cse">
+                        <input type="hidden" name="cx" value="009950868052057056798:0yrbmp7chwi" />
+                        <input type="hidden" name="ie" value="UTF-8" />
+                        <input type="text" name="q" />
+                        <input type="image" name="sa" src="/jma/com/images/btn_search6.png" alt="検索"/>
+                        </form>
+                    <script type="text/javascript" src="//www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+                    </div>
+                    <!-- search end -->
+                </div>
+                
+		<ul id="gnavi">
+			<li><a href="//www.jma.go.jp/">ホーム</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menuflash.html">防災情報</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menureport.html" class="on">各種データ・資料</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/areas.html">地域の情報</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuknowledge.html">知識・解説</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuappli.html">各種申請・ご案内</a></li>
+		</ul>
+	</div>
+</div>
+<!--header end -->            <div id="contents_area2">
+                        <div id="ncontents2">
+<!-- pankuzu menu -->
+<div class="clearfix">
+<ul class="breadcrumb2">
+<li><a href="//www.jma.go.jp/">ホーム</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="//www.jma.go.jp/jma/menu/menureport.html">各種データ・資料</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="./../index.php">過去の気象データ・ダウンロード</a>&nbsp;&gt;&nbsp;</li>
+<li>よくある質問</li>
+</ul>
+</div>
+<!-- //pankuzu menu -->
+<div id="main">
+<noscript>このページはJavascriptを使用しています</noscript>
+<ul class="pagelink">
+	<li><a href="https://www.data.jma.go.jp/risk/obsdl/index.php">メニューページに戻る</a></li>
+</ul>
+<br />
+
+
+<h1>FAQ（よくある質問）</h1>
+<div class="contents">
+
+<h2 class="mtx">ツール全般</h2>
+<h3 class="mtx">ツール画面で地図が表示されません・なにも操作できません</h3>
+<div class="l3" style="padding-left:3em">
+    <ul class="mtx">
+        <li>ブラウザの設定によっては正常に動作しない場合があります。画面に「JavaScriptの設定を有効にしてください」の表示がある場合には、JavaScript が使用できるよう、お使いのブラウザの設定を変更してください。</li>
+        <li>一部の古いバージョンのブラウザでは、正常に動作しない場合があります。できるだけ新しいバージョンのブラウザをお使いください。<br>
+            推奨ブラウザ： Microsoft Edge（最新版）, Mozilla Firefox（最新版）, Google Chrome（最新版）<br></li>
+        <li>ブラウザに古いキャッシュファイルが残っていると正常に動作しない場合があります。ブラウザの更新ボタンを押しても正常に動作しない場合は、Ctrl キーとF5 キーを同時に押して（この作業でキャッシュファイルが削除されます）、再度更新をお試しください。<br ></li>
+    </ul>
+</div>
+
+	<h3 class="mtx">選択した項目が空白になり表示されません</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	次のことが考えられます。
+	<ul class="mtx">
+	<li>選択した地点で観測や統計を行っていない項目である。</li>
+	<div class="indent">
+		地点ごとの観測項目は「地点を選ぶ」で地点毎のマークにより分かります。また、選択された地点の観測項目は画面右側の「選択された地点」の欄でご覧になれます。<br />
+		詳しくは使い方ページの「<a href="./help1.html#chiten_select">地点を選ぶ</a>」や「<a href="./help4.html#data_hyouki">データの表記と意味</a>」をご覧ください。
+	</div>
+
+	<li>時別値の、降水量（前1時間）、降雪量（前1時間）の項目で、観測を行っていても、前1時間としての観測値がない期間である。</li>
+
+	<li>「資料不足値」「疑問値」「欠測」、または観測環境などの変化前の値がCSVファイルで空白として格納されるオプションを選択している。</li>
+	<div class="indent">
+		詳細は、使い方ページの「<a href="./help1.html#option_select">表示オプションを選ぶ</a>」やダウンロードファイルの形式ページの「<a href="./help3.html#hukajoho">オプションの組み合わせとデータに付加される情報の値</a>」をご覧ください。
+	</div>
+
+	<li>正常にデータが取得されなかった。</li>
+	<div class="indent">
+		通常、再度操作することで正常に取得できます。<br />
+		なお、正常にデータが取得できなかった場合と観測データがない場合の見分け方は以下のとおりです。<br />
+		データをダウンロードする際に、「表示オプションを選ぶ」のタブで、下掲の2点を選択し品質情報欄が空白かどうかを確認してください。
+		<ul>
+			<li>「利用上注意が必要なデータの扱い」で「値を表示（格納）する」</li>
+			<li>「ダウンロードCSVファイルのデータ仕様」で「すべて数値で格納」</li>
+		</ul>
+		正常にデータが取得できた場合には観測データの有無に関わらず品質情報欄に値が格納されるのに対し、データを取得できなかった場合には品質情報欄は空白になります。
+	</div>
+
+	</ul>
+	</p>
+	</div>
+
+	<h3 class="mtx">取得できるデータ量に制限があって使いづらいのですが、まとめて取得する方法はありますか？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	本ツールは、多くの方々が同時に利用しても円滑に動作するよう、一度に取得できるデータ量に制限を設けています。<br />
+	大容量のデータが必要な場合は、これらを販売している<a href="http://www.jmbsc.or.jp/">（一財）気象業務支援センター</a>へお問い合わせください。
+	</p>
+	</div>
+
+	<h3 class="mtx">このツールは「<a href="//www.data.jma.go.jp/stats/etrn/index.php">過去の気象データ検索</a>」と同じデータを取得できますか？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	はい、以下の点を除き、「過去の気象データ検索」と同じデータを表示・取得できます。<br />
+	本ツールでは「過去の気象データ検索」で閲覧できる一部のデータ（10分値や順位データ等）を取得する機能がないこと、時別値では4時間降水量など1時間としての観測値がない期間は値を表示・取得しないといった違いがあります。また、平年差や平年比の計算には利用できない平年値<a href="//www.data.jma.go.jp/stats/data/mdrr/man/remark.html">（参考値）</a>は表示できません。
+	</p>
+	<p class="mtx">
+	なお、本ツールの時、日、半旬、旬、月および３か月別値の掲載期間、更新時刻、観測所、観測時刻と日界、および要素ごとの値の補足説明についても、「過去の気象データ検索」に準じていますので、そちらもご覧ください。
+	</p>
+	<div class="l3">	
+	<ul class="contentslink">
+	  <li><a href="//www.data.jma.go.jp/stats/data/mdrr/man/kikan.html">各データの掲載期間について</a></li>
+	  <li><a href="//www.data.jma.go.jp/stats/data/mdrr/man/update_k.html">データの更新時刻</a></li>
+	  <li>現在観測を行っている観測所&emsp;<a href="//www.data.jma.go.jp/stats/data/mdrr/chiten/sindex2.html">気象台や測候所などの地上気象観測所一覧</a>&emsp;
+	      <a href="//www.jma.go.jp/jma/kishou/know/amedas/ame_master.pdf">アメダス観測所一覧(pdf形式:972KB)</a></li>
+	  <li><a href="//www.data.jma.go.jp/stats/data/mdrr/man/sampling.html">要素ごとの値の補足説明</a></li>
+	  <li><a href="//www.data.jma.go.jp/stats/data/mdrr/man/nikkai.html">観測時刻と日界について</a></li>
+	</ul>
+	</div>
+	</div>
+	<br />
+
+<h2 class="mtx">統計方法</h2>
+	<h3 class="mtx">任意日数の平均・合計値などを計算する方法は？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	本ツールでは、日別値から任意日数の平均・合計値などを計算する機能を持っています。<br />
+	日別値から特定期間の統計値を計算する方法は、 <a href="https://www.jma.go.jp/jma/kishou/know/stats/shishin/shishin_all.pdf#chap4">気象観測統計指針 第４章　要素及び現象ごとの統計値</a> の
+	「4.4.1　特定の期間の合計、平均、極値、度数の算出方法」に書かれていますのでそちらをご覧ください。<br />
+	</p>
+	</div>
+
+	<h3 class="mtx">任意日数の平年値を計算する方法は？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	任意日数別の平年値は、日別平滑平年値をその期間の日数分について合計または平均して求めています。<br />
+	なお、季節予報等で利用している7,14,28日間の平年値は、本ページの算出方法と異なっていますのでご注意ください。
+	詳細は、 <a href="https://www.jma.go.jp/jma/kishou/know/stats/shishin/shishin_all.pdf#chap5">気象観測統計指針 第５章　平年値</a> の「5.1.2　平年値の算出方法 (3)、(5)」をご覧ください。
+	</p>
+	</div>
+
+	<h3 class="mtx">過去数年間の平均値を計算する方法は？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	本ツールでは、ある年の統計値に対し、その前数年間の平均値を計算し、ある年の値と比較することができます。<br />
+	数年間の平均値の計算方法は、以下のとおりです。<br />
+	</p>
+	<p class="mtx">
+	平均のもととなる値が、準正常値は正常値、資料不足値は欠測として扱います(現象なしの資料不足値は正常値として扱います)。<br />
+	もととなる値がすべて正常値の場合には求める平均値は正常値となります。もととなる値に正常値以外のものがあり、正常値の数が平均する年数の80％以上ある場合には、求める平均値は準正常値になります。<br />
+	もととなる値に正常値以外のものがあり、正常値の数が平均する年数の80％未満の場合には、求める平均値は資料不足値となります。<br />
+	もととなる値がすべて「欠測」の場合には、求める平均値は「欠測」となります。<br />
+	もとの値がすべて「観測・統計値なし」のとき、求める平均値は「観測・統計値なし」、
+	もとの値がすべて「現象なし」のとき、求める平均値は「現象なし」、
+	もとの値が「現象なし」と「欠測」のみのときは、数年間の平均値は「欠測」となります。<br />
+	</p>
+	<p class="mtx">
+	観測環境などの変化により年をまたいで値が不均質になっているときは、観測環境の変化前の値はすべて「欠測」または「観測・統計値なし」にして、平均値を求めます
+	（このため、近年観測環境の変化などがあった地点では、過去数年間の平均値がほとんど資料不足値になってしまうことがあります）。<br />
+	</p>
+	</div>
+
+	<h3 class="mtx">うるう日を含む期間での数年間の平均値の計算方法は？</h3>
+	<div class="l3" style="padding-left:3em">
+	<p class="mtx">
+	うるう年における数日間の集計値は、2/29の値を含めて計算します。<br />
+	例えば、3/1までの3日平均値は、3/1、2/29、2/28の3日間の値を平均します。<br />
+	</p>
+	<p class="mtx">
+	うるう年でない年の数日間の集計値は、2/29を含めず計算します。<br />
+	例えば、3/1までの3日平均値は、3/1、2/28、2/27の3日間の値を平均します。<br />
+	</p>
+	<p class="mtx">
+	うるう年の2/29日までの数日間集計値と、それ以前のうるう年でない年の集計値を比較する場合、うるう年でない年は3/1までの数日間集計値（集計日数は同じ）を使います。<br />
+	例えば、うるう年の2/29までの3日間平均気温は、2/29、2/28、2/27の3日間の平均となり、比較する前年の3日平均気温は、3/1、2/28、2/27の3日間平均となります。<br />
+	</p>
+	</div>
+
+
+</div>
+</div>
+<p class="totop"><a href="#nheader">このページのトップへ</a></p>
+</div>
+            </div>
+            <div id="footer_area">
+	<div id="nfooter">
+                        <ul>
+            <li><a href="//www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページについて</a></li>
+                        </ul>
+	</div>
+</div>
+        </div>
+    </body>
+</html>

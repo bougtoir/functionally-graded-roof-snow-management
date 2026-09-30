@@ -1,0 +1,17 @@
+normalization_origin,reference_margin,design_class,normalized_hypervolume_fraction
+zero,1.05,uniform,0.7011180116246566
+zero,1.05,geometry,0.5039043486837729
+zero,1.05,surface,0.7011180116246566
+zero,1.05,joint,0.7616551708559025
+zero,1.1,uniform,0.7274139983803226
+zero,1.1,geometry,0.5469972639870763
+zero,1.1,surface,0.7274139983803226
+zero,1.1,joint,0.7825728562749084
+minimum,1.05,uniform,0.7052170802551673
+minimum,1.05,geometry,0.5067663957063011
+minimum,1.05,surface,0.7052170802551673
+minimum,1.05,joint,0.7661339584822386
+minimum,1.1,uniform,0.7314064718853901
+minimum,1.1,geometry,0.5498580745254001
+minimum,1.1,surface,0.7314064718853901
+minimum,1.1,joint,0.7869113134104695

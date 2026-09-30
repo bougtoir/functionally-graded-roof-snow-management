@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+        <title>気象庁|過去の気象データ・ダウンロード</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="Author" content="気象庁 Japan Meteorological Agency" />
+        <meta name="keywords" content="気象庁 Japan Meteorological Agency" />
+        <meta name="description" content="気象庁が提供するページです" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta http-equiv="Content-Script-Type" content="text/javascript" />
+        <link rel="stylesheet" type="text/css" href="/com/css/define.css" media="all" />
+        <style type="text/css" media="all"><!-- @import url(/com/default.css); --></style>
+        <script type="text/javascript">
+            /*@cc_on _d=document;
+             eval('var document=_d');
+             @*/
+        </script>
+        <style>
+            <!--
+            .tblnarabi td{
+                padding:0;
+                white-space:nowrap;
+            }
+            -->
+        </style>
+        <link href="https://www.data.jma.go.jp/risk/obsdl/web/css/top.2.0.css" rel="stylesheet" type="text/css">    </head>
+    <body>
+        <div id="main-area">
+            <div id="header_area">
+	<div id="nheader">
+		<div id="logo"><a href="//www.jma.go.jp/jma/index.html"><img src="//www.jma.go.jp/jma/com/images/logo.gif" alt="気象庁" width="120" height="67" /></a></div>
+
+                <div id="header2_right">
+                    <div id="header2_link">
+                        <ul>
+                        <li xml:lang="en" lang="en"><a href="//www.jma.go.jp/jma/indexe.html">ENGLISH</a></li>
+                        </ul>
+                    </div>
+                    <!-- search -->　
+                    <div id="gsearch">
+                        <form id="cse-search-box" action="//google.com/cse">
+                        <input type="hidden" name="cx" value="009950868052057056798:0yrbmp7chwi" />
+                        <input type="hidden" name="ie" value="UTF-8" />
+                        <input type="text" name="q" />
+                        <input type="image" name="sa" src="/jma/com/images/btn_search6.png" alt="検索"/>
+                        </form>
+                    <script type="text/javascript" src="//www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+                    </div>
+                    <!-- search end -->
+                </div>
+                
+		<ul id="gnavi">
+			<li><a href="//www.jma.go.jp/">ホーム</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menuflash.html">防災情報</a></li>
+			<li><a href="//www.jma.go.jp/jma/menu/menureport.html" class="on">各種データ・資料</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/areas.html">地域の情報</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuknowledge.html">知識・解説</a></li>
+                        <li><a href="//www.jma.go.jp/jma/menu/menuappli.html">各種申請・ご案内</a></li>
+		</ul>
+	</div>
+</div>
+<!--header end -->            <div id="contents_area2">
+                        <div id="ncontents2">
+<!-- pankuzu menu -->
+<div class="clearfix">
+<ul class="breadcrumb2">
+<li><a href="//www.jma.go.jp/">ホーム</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="//www.jma.go.jp/jma/menu/menureport.html">各種データ・資料</a>&nbsp;&gt;&nbsp;</li>
+<li><a href="./../index.php">過去の気象データ・ダウンロード</a>&nbsp;&gt;&nbsp;</li>
+<li>使い方</li>
+</ul>
+</div>
+<!-- //pankuzu menu -->
+<div id="main">
+<noscript>このページはJavascriptを使用しています</noscript>
+<ul class="pagelink">
+       <li><a href="https://www.data.jma.go.jp/risk/obsdl/index.php">メニューページに戻る</a></li>
+</ul>
+<br />
+
+<h1>過去の気象データ・ダウンロードの使い方</h1>
+<div class="contents">
+    <p class="mtx">このツールは、気象庁が保有する気象観測データの中から、選択した、地点・項目・期間のデータを画面に表示することができます。またデータを画面には表示せずに、CSVファイルとしてダウンロードすることもできます。</p>
+    <p class="mtx">「<a href="help2">このページでできること</a>」も参考にしてください。</p>
+    <p class="mtx">操作方法は以下のとおりです。</p>
+
+    <h2>検索条件の設定</h2>
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <p class="mtx">まず、検索条件を設定します。</p>
+                <p class="mtx">検索条件には、地点、項目、期間、表示オプションがあります。どの条件から設定してもかまいません。</p>
+                <p class="mtx">条件設定画面を切り替えるには、画面上方の
+                    <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/main2_1.png" class="" width="100" alt="項目選択ボタン"> などの条件選択ボタンをクリックするか、設定画面の左右にある 
+                    <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/set_back_1.png" class="" width="18" alt="左移動ボタン">                    <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/set_next_1.png" class="" width="18" alt="右移動ボタン"> ボタンをクリックしてください。</p>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 画面全体イメージ</span>
+                <div class="indent">
+                    <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                        <tr>
+                            <td >
+                                <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_1.png" class="" width="670" alt="画面全体イメージ">                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <h3 id="chiten_select"><span style='font-size:120%;'>地点を選ぶ</span></h3>
+                <div class="indent"><div class="indent">
+                        <p class="mtx">地点は、全国の気象台やアメダス、約1,500地点（現在、観測を行っていない約200地点を含みます）の中から選びます。まず、選びたい地点の都道府県を選び、地方ごとに表示される地図の中から、選びたい地点をクリックしてください（地図上の選ばれた地点名には 
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/checked.gif" class="" width="17" alt="チェック済みの印"> 印が付き、画面右端の「選択された地点」に地点名が追加されます)。</p>
+                        <p class="mtx">複数の地点を選ぶことができますが、選ぶデータ項目数が多いときやデータ期間が長いときには、選べる地点数が少なくなります。
+					なお、地点選択画面左上の「全地点」ボタンを押すことで、その都道府県内のすべての地点を一括で選択することもできます。</p>
+                        <p class="mtx">どれくらいの地点数を選ぶことができるかについては、選択途中で変わる「選択済みのデータ量」のバー<br /><br />
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help_bar.png" class="" width="430" alt="選択バー"><br /><br />
+                            を参照してください。<br />
+                            100％になるまで、地点数、項目数、期間を増やしていくことができます。100％を超えると、最終的に画面表示やファイルのダウンロードができなくなりますので、100％以下に収まるように、地点数、項目数、表示期間を調整してください。なお、「選択済みのデータ量」は、地点数、項目数、期間のほか、データの取得・計算等にかかる負荷を考慮した値となっています。</p>
+                        <h4 style="color:#000;">地点の表示について</h4>
+                        <p class="mtx">地点のマークまたは地点名にマウスオーバーすることで、地点の緯度、経度、標高が吹き出しで表示されます。また、既に観測終了している地点では「YYYY年MM月DD日に観測終了」と表示されます。白地に黒い文字の観測所は現在運用中、白い文字の観測所は観測を終了した地点です。一部の観測所では、季節により観測を休止する要素があります。また、年代により観測する要素が異なる場合があります。</p>
+                        <p class="mtx">地点のマークの違いは観測要素の違いを表しており、以下のようになっています。</p>
+                        <table class="data2">
+                            <tbody><tr class="mtx">
+                                    <th id="COL1">マーク</th>
+                                    <th id="COL2">地点の種類</th>
+                                    <th id="COL3">観測要素</th>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks01.png" class="" alt="マーク1"></th>
+                                    <td>気象台等</td>
+                                    <td>降水量、風、気温、日照時間、積雪、気圧、湿度、天気など</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks02.png" class="" alt="マーク2"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量、風、気温、日照時間</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks03.png" class="" alt="マーク3"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量、風、気温、日照時間、積雪</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks04.png" class="" alt="マーク4"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量、風、気温(一部の観測所は気温を除く)</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks09.png" class="" alt="マーク9"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量、風、気温、積雪</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks06.png" class="" alt="マーク6"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks07.png" class="" alt="マーク7"></th>
+                                    <td>アメダス</td>
+                                    <td>降水量、積雪</td>
+                                </tr>
+                                <tr class="mtx">
+                                    <th><img src="https://www.data.jma.go.jp/risk/obsdl/web/img/image/ks08.png" class="" alt="マーク8"></th>
+                                    <td>アメダス</td>
+                                    <td>積雪</td>
+                                </tr>
+
+                            </tbody></table>
+                    </div></div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 地点の選択画面</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_2.png" class="" width="450" alt="地点の選択画面">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <h3 id="koumoku_select"><span style='font-size:120%;'>項目を選ぶ</span></h3>
+
+                <div class="indent"><div class="indent">
+                        <p class="mtx">平均気温や降水量など、データ項目を選びます。</p>
+
+                        <li><b>①データの種類を選ぶ</b></li>
+
+                        <div class="indent">
+                            <p class="mtx">まず、データの種類（統計値の集計期間）を選びます。<br />データはその集計期間により、時別値、日平均気温などの日別値、任意の日数で集計した値、毎月を1日から5日ごとに区切った半旬別値（※1）、月の上・中・下旬ごとの旬別値（※2）、月別値、3か月別値があります。<br />ここで選んだ集計期間は、画面下段で選ぶ、すべてのデータ項目に共通になります（たとえば、気温は日別値、降水量は月別値、という選び方はできません）。</p>
+                        </div>
+
+                        <li><b>②項目を選ぶ</b></li>
+                        <div class="indent">
+                            <p class="mtx">先に選んだ集計期間に応じた統計値の一覧から、データ項目を選びます。<br />データ項目は複数選ぶことができますが、選べる項目数は、選んだ地点数や期間の長さによって異なります。どれくらいの項目数を選ぶことができるかについては、選択途中で変わる「選択済みのデータ量」のバーを参照してください。</p>
+                        </div>
+
+                        <li><b>③過去の平均値との比較オプションを選ぶ</b></li>
+                        <div class="indent">
+                            <p class="mtx">選択したデータ項目について、平年値（1981～2010 年の 30 年間の平均値）や過去数年間の平均値と比較結果（差や比＝パーセント）を表示することができます。<br />ダウンロードファイル（CSVファイル）にも比較結果が格納されます。<br />ただし、平年値・平均値がない項目、天気など平均値を計算できない項目、統計を行う対象資料が許容範囲を超えて欠けている値（<a href="./help4.html#data_hyouki">資料不足値</a>）の比較結果については表示されません。</p>
+                        </div>
+                        <li><b>④最高・最低(最大・最小)値の発生時刻を表示</b></li>
+                        <div class="indent">
+                            <p class="mtx">ここを選択することで、最高気温や日降水量の最大など最高・最低(最大・最小)値の発生日時を表示することができます。</p>
+                        </div>
+                    </div></div>
+            </td>
+
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 項目の選択画面</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td>
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_3.png" class="" width="500" alt="項目の選択画面">                        </td>
+                    </tr>
+                </table>
+                <br />
+		<table border="0" cellspacing="0" cellpadding="20" bordercolor="#cccccc" bgcolor="#ffffff">
+		<tr><td valign="top">
+                <span class="mtx">▼ ※1 半旬の集計期間</span>
+                <table class="data2">
+                    <tr><th>半旬</th><th>日付</th></tr>
+                    <tr><td>第1半旬</td><td>1日～5日</td></tr>
+                    <tr><td>第2半旬</td><td>6日～10日</td></tr>
+                    <tr><td>第3半旬</td><td>11日～15日</td></tr>
+                    <tr><td>第4半旬</td><td>16日～20日</td></tr>
+                    <tr><td>第5半旬</td><td>21日～25日</td></tr>
+                    <tr><td>第6半旬</td><td>26日～月末日</td></tr>
+                </table>
+		</td><td valign="top">
+                <span class="mtx">▼ ※2 旬の集計期間</span>
+                <table class="data2">
+                    <tr><th>旬</th><th>日付</th></tr>
+                    <tr><td>上旬</td><td>1日～10日</td></tr>
+                    <tr><td>中旬</td><td>11日～20日</td></tr>
+                    <tr><td>下旬</td><td>21日～月末日</td></tr>
+                </table>
+		</td></tr>
+		</table>
+            </td>
+            </td>
+        </tr>
+    </table>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top" rowspan="2">
+                <h3 id="kikan_select"><span style='font-size:120%;'>期間を選ぶ</span></h3>
+                <div class="indent"><div class="indent">
+                        <p class="mtx">いつからいつまでのデータを表示・ダウンロードするかを選びます。</p>
+                        <p class="mtx">「連続した期間で表示する」方法のほかに、「特定の期間の値を複数年分、表示する」を選ぶことができます。</p>
+                        <p class="mtx">「連続した期間」を選択し、「項目を選ぶ」の「データの種類」でｘ日別値を選んだ場合には、右図で示すように、「ｘ日おきに表示」「毎日連続で表示」を選ぶことができます。</p>
+                        <p class="mtx">特定の期間の値を複数年分、表示する」では、年をまたいだ月日の指定も可能です。例えば12月から翌年1月の日別値を複数年分取得したい場合には、12月1日から1月31日を指定してください。</p>
+                        <p class="mtx">データの種類で時別値を選択した場合には、「特定の時間帯のデータのみ表示する」が選択可能となります。これを選択しない場合には24時間分すべてのデータを表示します。</p>
+                    </div></div>
+            </td>
+
+
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 期間の選択画面</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_4.png" class="" width="500" alt="期間の指定画面">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 期間の指定、「毎日連続で表示」と「Ｘ日おきに表示」の違い</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_5.png" class="" width="500" alt="期間の指定、「毎日連続で表示」と「Ｘ日おきに表示」の違い">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <h3 id="option_select"><span style='font-size:120%;'>表示オプションを選ぶ</span></h3>
+                <div class="indent"><div class="indent">
+                        <p class="mtx">画面での値の表示、データファイル（CSVファイル）への値の格納、の際のデータの扱いを選ぶことができます。</p>
+                        <li><b>利用上注意が必要なデータの扱い</b></li>
+                        <div class="indent">
+                            <p class="mtx">統計値の計算のもととなる資料に大幅な（必要な資料の20％を超える）欠損がある場合、求められた統計値（気象庁ではこのような統計値を「資料不足値」と呼んでいます）は、利用に際しては注意が必要です。<br />
+                                例えば、10日間の合計降水量を求めるとき、3日以上の日降水量が欠測の場合、合計値は残りの7日間の値から求め、結果は「資料不足値」となります。<br />
+                                求められた10日間の合計降水量は、少なくともその値以上であることは確かですが、本当の値とは違う可能性があり、利用する上ではそのことを踏まえる必要があります。<br />
+                                デフォルトでは、このような資料不足値は右の例のように、利用上注意が必要なことを示す情報をつけて表示（または、ダウンロードファイルに格納）させる設定としていますが、「資料不足値」を不用意に利用してしまわないよう、そのようなデータを表示（格納）させない設定も可能です。<br />
+                            データの表記と意味について詳しくは<a href="./help4.html#data_hyouki">こちら</a>をご覧ください。</p>
+                        </div>
+                    </div></div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 表示オプションの指定画面</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_6.png" class="" width="500" alt="表示オプションの指定画面">                        </td>
+                    </tr>
+                </table>
+                <br /><span class="mtx">▼ 利用上注意が必要なデータ表示例</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_6_2.png" class="" width="500" alt="利用上注意が必要なデータ表示例">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <div class="indent"><div class="indent">
+                        <li><b>観測環境などの変化の前後で、値が不均質となったデータの扱い</b></li>
+                        <div class="indent">
+                            <p class="mtx">観測場所の移転、環境の変化、観測方法の変更などにより、その前後で値が不均質となることがあります。観測所の移転により、移転前より移転後の方が気温が全体に高めに観測されるようになった、などがその例です。<br />
+                                このようにデータが不均質になった場合、年をまたいで値の比較を行う際には注意が必要です（データの年による変動には気候的な影響に、観測環境等の変化による影響が加わっている可能性があります）。<br />
+                                デフォルトでは、観測環境などの変化があったときには、そのことを示す情報※とともにデータを表示（データファイルに格納）する設定となっています。不用意に不均質なデータどうしを比較することがないよう、観測環境などの変化前のデータは表示（格納）させない設定も可能です。<br />
+                                なお、平年値は現在の観測環境を基準に作成しているため、環境変化前の平年値や平年値との差（比）は設定によらず表示（格納）されません（平年値を現在の観測環境に補正するためにデータを蓄積している地点を除く）。</p>
+                            <p class="mtx">※画面表示では、右図の表示例のように、観測環境などの変化のあった時期に赤い線を引いています。このツールでは、データが不均質になった時期に赤い実線を一律に引いており、「<a href="//www.data.jma.go.jp/stats/etrn/index.php">過去の気象データ検索</a>」での赤い線の引き方とは違いがありますのでご注意ください。<br />
+                                また、データファイルでは均質番号と呼ぶ値を付加しています（同じ均質番号の値どうしは比較可能、均質番号が違う場合には、値どうしを比較するには注意が必要です）。</p>
+                        </div>
+                        <li><b>ダウンロードCSVファイルのデータ仕様</b></li>
+                        <div class="indent">
+                            <p class="mtx">ダウンロードファイル（CSVファイル）に格納するデータは、すべて数値で格納するか、画面に表示されたとおり文字列を含めた形式にするかを選択できます。デフォルトはすべて数値で格納する設定となっています。<br />
+                                例えば値が「欠測」の時には画面表示では「///」という記号で表しますが、データファイルで「すべて数値で格納」を選択したときには、値のカラムはnull、次のカラムの「品質情報」で欠測の場合は0が格納されることになります。<br />
+                                また、最大（高）・最小（低）値などの発生日時などの日付け情報は、日付けリテラル※と呼ばれる文字列としてひとつのカラムに格納するか、年・月・日それぞれ別のカラムに格納するかを選択することができます。<br />
+                                ※ 日付けリテラルは、ここでは「yyyy/mm/dd hh:nn」という形式にしています（yyyy：年、mm：月、dd：日、hh：時、nn：分）。</p>
+                        </div>
+
+                        <li><b>その他</b></li>
+                        <div class="indent">
+                            <p class="mtx">データの日付に曜日を表示させるか、を選ぶことができます（日別値選択時）。</p>
+                            <p class="mtx">また、CSVファイルに都道府県名を格納するか、を選ぶことができます（CSVファイルダウンロード実行時）。</p>
+                        </div>
+                    </div></div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 観測環境などの変化があったことを示した表示例<br />(赤い線の上側と下側の値の比較には注意が必要)</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_6_3.png" class="" width="500" alt="観測環境などの変化があったことを示した表示例">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
+
+    <h2>データの表示・ダウンロードの実行</h2>
+    <p class="mtx">検索条件の設定が完了したら、画面へのデータ表示、または CSVファイルのダウンロードを行います。</p>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <h3><span style='font-size:120%;'>データを画面に表示させる</span></h3>
+                <div class="indent"><div class="indent">
+                        <p class="mtx">データを画面で見たいときには、右図のようにメニュー画面右上の　<img src="https://www.data.jma.go.jp/risk/obsdl/web/img/view_large_1.png" class="" width="162" alt="画面表示ボタン">　ボタンをクリックしてください。</p>
+                    </div></div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ 画面に表示を実行</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_7.png" class="" width="500" alt="画面に表示を実行">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <div class="indent"><div class="indent">
+                        <p class="mtx">地点数や項目数が多い場合には、スクロールバーが表示されるので縦横のスクロールを動かしてご覧ください。</p>
+
+                        <p class="mtx">また、下図のように見出し部の縦線をドラッグすることにより、その列全体のセルの幅を調節することができます。</p>
+                        <p class="mtx">
+                            <table border="1" cellspacing="0" cellpadding="3" bordercolor="#cccccc" bgcolor="#ffffff" align="center"><tr><td>                            
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_sp1.png" class="" width="220" alt="横幅の調節">                            </td></tr></table>
+                        </p>
+                        
+                        <br />
+                        <p class="mtx">データ表示画面上部の　<img src="https://www.data.jma.go.jp/risk/obsdl/web/img/download_small_1.png" class="" width="180" alt="画面表示ボタン">　ボタンをクリックすることにより、検索結果をCSVファイルによりダウンロードすることができます（データ表示が複数画面に渡る場合でもすべての画面分のデータが一度にダウンロードされます）。</p>
+
+                        <p class="mtx">データ表示画面上部の　<img src="https://www.data.jma.go.jp/risk/obsdl/web/img/return_to_menu_1.png" class="" width="180" alt="画面表示ボタン">　ボタンをクリックすることにより、設定内容を変更し再度検索することができます。</p>
+
+                    </div></div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ データ表示画面</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_8.png" class="" width="500" alt="データ表示画面">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <h3><span style='font-size:120%;'>データをCSVファイルとしてダウンロードする</span></h3>
+                <div class="indent"><div class="indent">
+                        <p class="mtx">画面の内容を CSV ファイルとしてダウンロードしたい場合には、右図のように、メニュー画面右上の　<img src="https://www.data.jma.go.jp/risk/obsdl/web/img/download_large_1.png" class="" width="162" height="30" alt="ダウンロードボタン">　ボタンをクリックしてください。</p><br />
+                    </div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ CSVファイルをダウンロードを実行</span>
+                <table border="1" cellspacing="0" cellpadding="10" bordercolor="#cccccc" bgcolor="#ffffff">
+                    <tr>
+                        <td >
+                            <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_9.png" class="" width="500" alt="CSVファイルをダウンロードを実行">                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+    <table width="100%">
+        <tr>
+            <td valign="top">
+                <div class="indent">
+                    <p class="mtx">クリックすると、右図の画面が表示されますので、「開く」または「保存」を選んでください。</p>
+                    <p class="mtx">「開く」を選んだときには、あらかじめパソコンで設定されているアプリケーションソフトが起動します。</p>
+                    <p class="mtx">「保存」を選ぶと、保存先を聞いてきますので、適当な場所を指定してください。</p>
+                    <p class="mtx">CSVファイルの形式については、　<a href="help3.html">ダウンロードファイルの形式</a>　を参照してください。</p>
+                </div>
+            </td>
+            <td valign="top" align="center">
+                <br /><span class="mtx">▼ ダウンロード実行時の画面表示</span><br />
+                <img src="https://www.data.jma.go.jp/risk/obsdl/web/img/help1_dl_select.png" class="" width="400" alt="ダンロード実行時の表示画面">            </td>
+        </tr>
+    </table>
+    <br />
+
+    <ul class="pagelink">
+        <li><a href="../index.php">メニューページに戻る</a></li>
+    </ul>
+    <br />
+
+
+</div>
+</div>
+<p class="totop"><a href="#nheader">このページのトップへ</a></p>
+</div>
+            </div>
+            <div id="footer_area">
+	<div id="nfooter">
+                        <ul>
+            <li><a href="//www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページについて</a></li>
+                        </ul>
+	</div>
+</div>
+        </div>
+    </body>
+</html>

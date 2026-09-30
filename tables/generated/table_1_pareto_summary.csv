@@ -1,0 +1,5 @@
+design_class,nondominated_design_rows,unique_objective_pairs,duplicate_design_rows,unique_pair_fraction,strict_dominated_fraction_unique_pairs,additive_epsilon_vs_uniform,uniform_epsilon_vs_class_common_minmax,normalized_hypervolume_fraction,descriptive_knee_l_max_kg_per_m,descriptive_knee_s_max_kg_per_m
+uniform,2910,2,2908,0.0006872852233676,0.0,0.0,0.0,0.7011180116246566,39.9995,39.9995
+geometry,155,6,149,0.0387096774193548,0.8333333333333334,0.2093621881581244,0.0,0.5039043486837729,159.977574,65.766977
+surface,270,2,268,0.0074074074074074,0.0,0.0,0.0,0.7011180116246566,39.9995,39.9995
+joint,1341,6,1335,0.0044742729306487,0.0,0.0,0.2252243283215443,0.7616551708559025,4547.373336,12.279773

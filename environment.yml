@@ -1,0 +1,8 @@
+name: graded-roof-snow
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11.10
+  - pip=24.3.1
+  - pip:
+      - -r requirements.txt

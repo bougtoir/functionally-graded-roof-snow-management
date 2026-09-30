@@ -1,0 +1,9 @@
+design_class,normalization,l_max_kg_per_m,s_max_kg_per_m,normalized_distance_to_ideal
+uniform,front_specific_minmax,39.9995,39.9995,1.0
+uniform,common_combined_minmax,39.9995,39.9995,0.324998169018678
+geometry,front_specific_minmax,159.977574,65.766977,0.5343617087414483
+geometry,common_combined_minmax,159.977574,65.766977,0.534691470349801
+surface,front_specific_minmax,39.9995,39.9995,1.0
+surface,common_combined_minmax,39.9995,39.9995,0.324998169018678
+joint,front_specific_minmax,4547.373336,12.279773,0.7706124015214458
+joint,common_combined_minmax,39.9995,39.9995,0.324998169018678

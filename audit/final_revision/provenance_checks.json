@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "checks": {
+    "freeze_record_present": true,
+    "production_config_present": true,
+    "ledger_has_no_corrupt_local_files": true,
+    "jma_quantitative_inputs_verified": true,
+    "optimizer_checkpoint_count_is_nine": true,
+    "generated_primary_results_present": true,
+    "no_primary_result_literals_in_python": true
+  },
+  "acquisition_status_counts": {
+    "not_recovered": 130,
+    "verified": 103,
+    "no_path": 1
+  },
+  "jma_ledger_records": 72,
+  "canonical_checksum_records": 286,
+  "embedded_result_literals": [],
+  "note": "Unavailable historical records are disclosed but are not quantitative analysis inputs. Final-revision outputs supersede the current manuscript and package only after Phase 16."
+}

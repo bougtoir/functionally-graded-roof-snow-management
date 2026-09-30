@@ -1,0 +1,26 @@
+[pipeline] data
+[pipeline] baseline
+[pipeline] convergence
+[pipeline] uniform
+[pipeline] optimize
+[pipeline] jma
+[pipeline] sensitivity
+[pipeline] robustness
+[pipeline] tables
+[pipeline] figures
+The PostScript backend does not support transparency; partially transparent artists will be rendered opaque.
+[pipeline] manuscript
+{"records": 239, "local_status": {"verified": 103, "no_path": 1, "not_recovered": 135}}
+[pipeline] validate
+Traceback (most recent call last):
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_pipeline.py", line 872, in <module>
+    main()
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_pipeline.py", line 865, in main
+    stage(config)
+  File "/home/ubuntu/repro-functionally-graded-roof-snow-management/scripts/run_pipeline.py", line 830, in stage_validate
+    raise RuntimeError("\n".join(report["errors"]))
+RuntimeError: English manuscript contains non-ASCII characters: ['−']
+
+real	70m2.652s
+user	69m59.639s
+sys	0m2.495s

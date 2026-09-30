@@ -1,0 +1,259 @@
+{
+  "topic": "jma-weather",
+  "retrieved_utc": "2026-09-24T06:36:50Z/2026-09-24T06:39:38Z",
+  "publisher": "Japan Meteorological Agency",
+  "terms": {
+    "url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+    "basis": "Public Data Use Terms, Version 1.0, unless a separate rights notice applies",
+    "attribution": "Source: Japan Meteorological Agency website (include the relevant URL); disclose editing or processing"
+  },
+  "notes": [
+    "Original responses are retained under raw/; UTF-8 conversions are retained separately under derived/.",
+    "The two CSV samples are limited route-verification extracts, not a complete research dataset.",
+    "JMA CSV responses were served as application/octet-stream and decoded successfully as CP932/Shift_JIS.",
+    "No repository files were created or modified."
+  ],
+  "derivatives": [
+    {
+      "file": "derived/obsdl-sample-hourly-utf8.csv",
+      "source": "raw/obsdl-sample-hourly.csv",
+      "transformation": "iconv -f CP932 -t UTF-8",
+      "bytes": 2612,
+      "sha256": "ab341eb704de6343777bee1a406fa329ab09b0fb4c83c2ce49e11c83098cca53"
+    },
+    {
+      "file": "derived/obsdl-sample-daily-utf8.csv",
+      "source": "raw/obsdl-sample-daily.csv",
+      "transformation": "iconv -f CP932 -t UTF-8",
+      "bytes": 6275,
+      "sha256": "bc6af3c5217a7c133a7af326ce3e2b13ab64b0ce3d2df846a11e91e73d98cbdd"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "raw/obsdl-index.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/",
+      "method": "GET",
+      "condition": "download-tool landing page",
+      "retrieved_utc": "2026-09-24T06:36:50Z",
+      "bytes": 18305,
+      "sha256": "78e5d9e76d1e3dfb240cda4d837d9a870a8cbc3ae58a8b8ff20b4bee842ad2f9"
+    },
+    {
+      "file": "raw/obsdl-top.2.1.js",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/web/js/top.2.1.js",
+      "method": "GET",
+      "condition": "download-tool client implementation",
+      "retrieved_utc": "2026-09-24T06:36:56Z",
+      "bytes": 77179,
+      "sha256": "01a025ef82e1eff3aaa68a8b03f6276adf382557e1c67e642d72623f984bb16c"
+    },
+    {
+      "file": "raw/obsdl-help1.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/help1",
+      "method": "GET",
+      "condition": "usage help",
+      "retrieved_utc": "2026-09-24T06:36:57Z",
+      "bytes": 36412,
+      "sha256": "364a25d6bf9a9a88dea5bb04309bbb42bc03664fcbcccf3a2990635a7f8685fa"
+    },
+    {
+      "file": "raw/obsdl-help3.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/help3",
+      "method": "GET",
+      "condition": "CSV format and quality-code help",
+      "retrieved_utc": "2026-09-24T06:36:57Z",
+      "bytes": 31310,
+      "sha256": "c020dcdae64a815484ef9a14f710a7978de742c338e63dd6e462d72cbc9f8b96"
+    },
+    {
+      "file": "raw/obsdl-faq.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/faq",
+      "method": "GET",
+      "condition": "download FAQ",
+      "retrieved_utc": "2026-09-24T06:36:57Z",
+      "bytes": 15361,
+      "sha256": "9ce0029566eb2fc347c4ee63a0ba26e35712b1e0b791c407f6c404d0b432343a"
+    },
+    {
+      "file": "raw/jma-terms.html",
+      "url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "method": "GET",
+      "condition": "JMA content-use terms",
+      "retrieved_utc": "2026-09-24T06:36:58Z",
+      "bytes": 23377,
+      "sha256": "ff2b45042e6207053d8f6aa617656aa6a144e462db138f0b8138de6eefbeff48"
+    },
+    {
+      "file": "raw/amedas-explanation.html",
+      "url": "https://www.jma.go.jp/jma/kishou/know/amedas/kaisetsu.html",
+      "method": "GET",
+      "condition": "AMeDAS variables, units, and observation meanings",
+      "retrieved_utc": "2026-09-24T06:36:58Z",
+      "bytes": 11603,
+      "sha256": "fb6039ef8b71be5deb426d65f3907b28582f85902a505dacc673029c4ec60d7e"
+    },
+    {
+      "file": "raw/amedastable.json",
+      "url": "https://www.jma.go.jp/bosai/amedas/const/amedastable.json",
+      "method": "GET",
+      "condition": "current AMeDAS station metadata",
+      "retrieved_utc": "2026-09-24T06:36:58Z",
+      "bytes": 187742,
+      "sha256": "319d215c6c9243ccb794e925dded2f849a0202f1b2cd74ce607b232f2bc2ddc5"
+    },
+    {
+      "file": "raw/obsdl-stations-aomori.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/station",
+      "method": "POST",
+      "condition": "pd=31",
+      "retrieved_utc": "2026-09-24T06:37:21Z",
+      "bytes": 39516,
+      "sha256": "890c641627f9e1a05ccc5a936ebdd190832b062423f77eb8f8ebb47980aa83e3"
+    },
+    {
+      "file": "raw/obsdl-elements-hourly.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/element",
+      "method": "POST",
+      "condition": "aggrgPeriod=9",
+      "retrieved_utc": "2026-09-24T06:37:30Z",
+      "bytes": 14803,
+      "sha256": "010e1422fccb223459d93122620cad5225ad25041497892e8e10e272758185e4"
+    },
+    {
+      "file": "raw/obsdl-stations-ishikari.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/station",
+      "method": "POST",
+      "condition": "pd=14; exploratory station lookup",
+      "retrieved_utc": "2026-09-24T06:37:45Z",
+      "bytes": 17713,
+      "sha256": "3803bc164c63911bd2fcc40d168fd47a9616a58534a4243b5a87be3fc2659f42"
+    },
+    {
+      "file": "raw/obsdl-stations-niigata.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/station",
+      "method": "POST",
+      "condition": "pd=54",
+      "retrieved_utc": "2026-09-24T06:37:45Z",
+      "bytes": 59598,
+      "sha256": "859efbd5ff6c06e948d80874bbb062bd48ade4dde979a8ed5d4257a6d79a3803"
+    },
+    {
+      "file": "raw/obsdl-stations-shiribeshi.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/station",
+      "method": "POST",
+      "condition": "pd=16",
+      "retrieved_utc": "2026-09-24T06:37:53Z",
+      "bytes": 17617,
+      "sha256": "16457a10a56ac1d7bc4ddb1f177a3213d8bb335a4a68f33261c4443ef1b2b7fb"
+    },
+    {
+      "file": "raw/obsdl-elements-daily.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/element",
+      "method": "POST",
+      "condition": "aggrgPeriod=1",
+      "retrieved_utc": "2026-09-24T06:38:03Z",
+      "bytes": 34784,
+      "sha256": "754cbee711944e1d72015625fd575016cd36413cf28be543d5ef600a2c979931"
+    },
+    {
+      "file": "raw/obsdl-sample-hourly.csv",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/show/table",
+      "method": "POST",
+      "condition": "station=a1079; aggrgPeriod=9; elements=201,101,503,501,301,401; 2024-01-15; numeric CSV; include quality and homogeneity columns",
+      "retrieved_utc": "2026-09-24T06:38:33Z",
+      "bytes": 2353,
+      "sha256": "0e9e75a55f68114edce11c861b2a0c7cc65a2f310091fef042cf536837a48aa4"
+    },
+    {
+      "file": "raw/obsdl-sample-hourly.headers",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/show/table",
+      "method": "POST response headers",
+      "condition": "headers corresponding to raw/obsdl-sample-hourly.csv",
+      "retrieved_utc": "2026-09-24T06:38:33Z",
+      "bytes": 1702,
+      "sha256": "0f7a078bf17c53f9eb94fa35bd747a30aad3d891be34d84de731ad218e84d49e"
+    },
+    {
+      "file": "raw/obsdl-sample-daily.csv",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/show/table",
+      "method": "POST",
+      "condition": "stations=s47433,s47575,a1079,a0543; aggrgPeriod=1; elements=201,202,203,101,501,503,301,302,401,610,605; 2024-01-15; numeric CSV; include quality and homogeneity columns",
+      "retrieved_utc": "2026-09-24T06:39:03Z",
+      "bytes": 4690,
+      "sha256": "425e482de4871173ae07481378bff76da5569d943ee10fa4b23e643afc21b6e9"
+    },
+    {
+      "file": "raw/obsdl-sample-daily.headers",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/show/table",
+      "method": "POST response headers",
+      "condition": "headers corresponding to raw/obsdl-sample-daily.csv",
+      "retrieved_utc": "2026-09-24T06:39:03Z",
+      "bytes": 1702,
+      "sha256": "6ee805f72dfd7a01bfcd9ee1a2ef6276c3ed2c5cb936b88650cbe9343639955b"
+    },
+    {
+      "file": "raw/obsdl-stations-yamagata.html",
+      "url": "https://www.data.jma.go.jp/risk/obsdl/top/station",
+      "method": "POST",
+      "condition": "pd=35",
+      "retrieved_utc": "2026-09-24T06:39:25Z",
+      "bytes": 45794,
+      "sha256": "1610c081db3e35dcfb77ca9b5731669728cbf67030942158b613923e720a3d64"
+    },
+    {
+      "file": "raw/normals-kutchan.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_sfc_ym.php?prec_no=16&block_no=47433&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:37Z",
+      "bytes": 22049,
+      "sha256": "64ac406844efbd4106bf05aea18c11da02a8cf01a10a8996c2956caf231d2301"
+    },
+    {
+      "file": "raw/normals-aomori.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_sfc_ym.php?prec_no=31&block_no=47575&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:37Z",
+      "bytes": 22132,
+      "sha256": "045f81575916e3d90bf8f6cac5eeedef714e2af54f664656cd98a64af611d6a9"
+    },
+    {
+      "file": "raw/normals-shinjo.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_sfc_ym.php?prec_no=35&block_no=47520&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:37Z",
+      "bytes": 21887,
+      "sha256": "5278be3befee6dc845c65878db3e517a5d88403cdfb115f82505603b7254c3a3"
+    },
+    {
+      "file": "raw/normals-takada.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_sfc_ym.php?prec_no=54&block_no=47612&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:38Z",
+      "bytes": 22093,
+      "sha256": "6e33d1220952391a03e3f239dc42449a41fe10d982e62f6333f4cde10e6ac1c8"
+    },
+    {
+      "file": "raw/normals-sukayu.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_amd_ym.php?prec_no=31&block_no=1079&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:38Z",
+      "bytes": 13854,
+      "sha256": "80b390764c0481e902b7a8007aa90c9c10e7cbec579a3498ca75993a47ab1a93"
+    },
+    {
+      "file": "raw/normals-tsunan.html",
+      "url": "https://www.data.jma.go.jp/stats/etrn/view/nml_amd_ym.php?prec_no=54&block_no=0543&year=&month=&day=&view=",
+      "method": "GET",
+      "condition": "1991-2020 monthly and annual normals",
+      "retrieved_utc": "2026-09-24T06:39:38Z",
+      "bytes": 13848,
+      "sha256": "97c250d7ab619faf6d7cfb95577736b2611e8f2d94176068400ae65d9e552436"
+    }
+  ]
+}

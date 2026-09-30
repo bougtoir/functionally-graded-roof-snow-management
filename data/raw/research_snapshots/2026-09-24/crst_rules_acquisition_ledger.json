@@ -1,0 +1,40 @@
+{
+  "topic": "crst-rules",
+  "accessed_utc": "2026-09-24T06:38:33Z",
+  "repository_modified": false,
+  "records": [
+    {
+      "title": "Guide for authors - Cold Regions Science and Technology - ISSN 0165-232X | ScienceDirect.com by Elsevier",
+      "url": "https://www.sciencedirect.com/journal/cold-regions-science-and-technology/publish/guide-for-authors",
+      "identifier": "ISSN 0165-232X",
+      "retrieval": "Rendered-page text captured from the official ScienceDirect page through Chrome",
+      "saved_path": "/home/ubuntu/research/crst-rules/raw/sciencedirect-guide-for-authors-browser-text.txt",
+      "bytes": 55270,
+      "sha256": "4fc83e880d08055a4b70679f4619c54da3bb22ac1b2be125179c8af7795016b3",
+      "completeness": "Full rendered page text captured",
+      "use_terms": "Official public Elsevier page; retained locally for research verification"
+    },
+    {
+      "title": "Generative AI policies for journals",
+      "url": "https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals",
+      "identifier": null,
+      "retrieval": "Rendered-page text captured from the official Elsevier page through Chrome",
+      "saved_path": "/home/ubuntu/research/crst-rules/raw/elsevier-generative-ai-policies-browser-text.txt",
+      "bytes": 21489,
+      "sha256": "f6cfb8a2295cc83b74db7469b467ece6d0ec7c7adc4964b01b48bbdd7b9be7e7",
+      "completeness": "Full rendered page text captured",
+      "use_terms": "Official public Elsevier page; retained locally for research verification"
+    },
+    {
+      "title": "What should be included in a cover letter? | Journal Article Publishing Support Center",
+      "url": "https://www.elsevier.support/publishing/answer/what-should-be-included-in-a-cover-letter",
+      "identifier": null,
+      "retrieval": "Official Elsevier support content fetched with the web content tool",
+      "saved_path": "/home/ubuntu/research/crst-rules/raw/elsevier-support-cover-letter-checklist-files.txt",
+      "bytes": 6754,
+      "sha256": "01db94546f7ee5224c0e771547e287bdd85bb78470bab2a566c327bd214d13f1",
+      "completeness": "Cover-letter page complete; same capture also contains adjacent official support pages",
+      "use_terms": "Official public Elsevier support page; retained locally for research verification"
+    }
+  ]
+}

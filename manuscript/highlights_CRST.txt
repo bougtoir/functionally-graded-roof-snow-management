@@ -1,0 +1,4 @@
+- Grading added four nominal trade-offs absent from the uniform grid.
+- No joint row passed all frozen constructability checks.
+- Post hoc mapping shifted the selected point toward shedding.
+- Timestep sensitivity limits interpretation beyond the 0.5-h reference.

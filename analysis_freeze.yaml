@@ -1,0 +1,33 @@
+freeze_date_utc: "2026-09-24"
+commit: "6cb5aef3d20befc2c5db6a61dccf1ad1d01a2c28"
+environment:
+  python: "3.11.10"
+  definition: "environment.yml"
+configuration: "config/production.yaml"
+primary_outcomes:
+  - L_max_kg_per_m
+  - S_max_kg_per_m
+secondary_outcomes:
+  - ssci
+  - total_shed_kg_per_m
+  - shed_event_count
+  - kinetic_energy_proxy_j_per_m
+  - time_above_intervention_h
+  - manual_triggers
+  - residual_mass_kg_per_m
+  - total_variation
+  - transition_count
+optimizer:
+  algorithm: NSGA-II
+  seeds: [1701, 2903, 4517]
+resolution:
+  N: 24
+  original_dt_hours: 1.0
+  dt_hours: 0.5
+  post_freeze_reference_dt_hours: 0.25
+parameter_sources: "references/parameter_sources.csv"
+sensitivity_ranges: "config/production.yaml"
+weather_endpoints:
+  jma_download: "https://www.data.jma.go.jp/risk/obsdl/show/table"
+  jma_terms: "https://www.jma.go.jp/jma/kishou/info/coment.html"
+classification_rules: "config/production.yaml#classification"

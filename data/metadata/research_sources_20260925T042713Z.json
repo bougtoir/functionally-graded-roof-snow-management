@@ -1,0 +1,23 @@
+[
+  {
+    "source_id": "JP10",
+    "category": "crossref_metadata",
+    "title": "Fundamental Study on Control of Roof Snow Sliding",
+    "url": "https://api.crossref.org/works/10.4106%2Fjsse.13.3",
+    "identifier": "10.4106/jsse.13.3",
+    "usage_conditions": "Crossref public bibliographic metadata; https://www.crossref.org/documentation/retrieve-metadata/rest-api/rest-api-metadata-license-information/",
+    "publish_raw": "true",
+    "retrieved_at_utc": "2026-09-25T04:27:13Z",
+    "request_method": "GET",
+    "request_headers": {
+      "User-Agent": "graded-roof-snow-research/0.1 (https://github.com/bougtoir/functionally-graded-roof-snow-management)",
+      "Accept": "application/json"
+    },
+    "completeness": "complete response body",
+    "storage_path": "data/raw/published_sources/20260925T042713Z/jp10.json",
+    "file_size_bytes": 1824,
+    "sha256": "4ca24bcd1c9f53b10a05d250e3ec4bd1e1d3f7006feea8a0723e58a62d22199e",
+    "http_status": 200,
+    "content_type": "application/json"
+  }
+]

@@ -1,0 +1,5 @@
+constraint,continuous_optimization,post_hoc_mapping
+maximum adjacent slope change,True,True
+minimum segment length,False,True
+maximum transition count,False,True
+discrete generic surface classes,False,True

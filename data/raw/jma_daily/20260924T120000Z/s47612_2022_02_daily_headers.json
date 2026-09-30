@@ -1,0 +1,19 @@
+{
+  "Content-Type": "text/html; charset=UTF-8",
+  "Transfer-Encoding": "chunked",
+  "Connection": "keep-alive",
+  "Date": "Thu, 24 Sep 2026 10:11:10 GMT",
+  "Cache-Control": "max-age=600",
+  "X-Content-Type-Options": "nosniff",
+  "Server": "Apache",
+  "X-Frame-Options": "SAMEORIGIN",
+  "Content-Security-Policy": "script-src 'self' 'unsafe-inline' 'unsafe-eval' www.jma.go.jp www.jma-net.go.jp js.jma.go.jp www.data.jma.go.jp ds.data.jma.go.jp www.google.com www.gstatic.com jma.genieesspv.jp pagead2.googlesyndication.com code.jquery.com ajaxzip3.github.io cdn.jsdelivr.net ajax.aspnetcdn.com code.createjs.com tml5shiv.googlecode.com unpkg.com cdnjs.cloudflare.com ajax.googleapis.com platform.twitter.com github.githubassets.com maps.gsi.go.jp img.gsspat.jp",
+  "X-Cache": "Miss from cloudfront",
+  "Via": "1.1 fd84a98fca0c092bda874136d6c8db62.cloudfront.net (CloudFront)",
+  "X-Amz-Cf-Pop": "HIO52-P3",
+  "X-Amz-Cf-Id": "OHDrra8TCYh3iQKDjTFhA-dR4lmJ2xJ64AMZbjvYyNpQ3GB4rdl_sQ==",
+  "X-XSS-Protection": "1; mode=block",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Strict-Transport-Security": "max-age=31536000; preload",
+  "Vary": "Origin"
+}
