@@ -428,7 +428,7 @@ def build(path: Path) -> dict:
         doc,
         f"Every nondominated design was simulated under {rb['samples']} common random draws (seed {rb['seed']}) of lognormal multipliers on friction "
         f"(CV {cv['friction']}), adhesion ({cv['adhesion']}), fresh-snow density ({cv['fresh_snow_density']}) and snowfall ({cv['snowfall']}), and a normal "
-        f"temperature offset (SD {cv['temperature_sd_c']} degrees C); the {int(100 * rb['robust_quantile'])}th percentiles (Q95) are reported. The event definition was "
+        f"temperature offset (SD {cv['temperature_sd_c']} degrees C); the {int(100 * rb['robust_quantile'])}th percentiles (Q95), computed separately for each objective and therefore not a joint design point, are reported. The event definition was "
         "varied (separation 10 min and 3 h; activity threshold 0.1 and 10 kg m^{-1} h^{-1}) and entrainment was switched off.",
     )
     doc.add_heading("2.8 Changes from the submitted analysis and reproducibility", 2)
@@ -568,7 +568,8 @@ def build(path: Path) -> dict:
         "wind redistribution and three-dimensional flow are omitted. Meltwater and rain leave the roof immediately: liquid-water retention, refreezing, "
         "ice dams, runoff routing, drainage capacity and hydrologically triggered wet-snow releases are not represented, so rain-on-snow effects are "
         "limited to a melt-energy term and a near-melt friction reduction. Synthetic winters are stylised, and daily JMA data cannot resolve "
-        "sub-daily timing. Optimisation is heuristic and limited to a 2D strip with three surface classes.",
+        "sub-daily timing. The release magnitude attributed to shedding roofs depends on the event-separation time (Table 3), so comparisons of S_{event,max} "
+        "are conditional on the pre-specified 1 h definition. Optimisation is heuristic and limited to a 2D strip with three surface classes.",
     )
     doc.add_heading("4.2 Future validation", 2)
     para(
