@@ -107,29 +107,6 @@ def cover(path: Path):
     d.save(path)
 
 
-if __name__ == "__main__":
-    OUT.mkdir(parents=True, exist_ok=True)
-    assert all(len(h) <= 85 for h in HIGHLIGHTS), [len(h) for h in HIGHLIGHTS]
-    (OUT / "highlights_R1.txt").write_text("\n".join(f"- {h}" for h in HIGHLIGHTS) + "\n")
-    supplement(OUT / "supplementary_material_R1.docx")
-    cover(OUT / "cover_letter_R1.docx")
-    clean = OUT / "manuscript_R1_clean.docx"
-    caps = [
-        par.text
-        for par in Document(clean).paragraphs
-        if par.text.startswith("Figure ") and par.style.name == "Normal"
-    ][-8:]
-    editable_tables(clean, OUT / "editable_tables_R1.docx")
-    editable_figures(caps, OUT / "editable_figures_R1.pptx")
-    print(
-        tracked(
-            Path("revision_r1/baseline/manuscript_CRST_submitted_v1.docx"),
-            OUT / "manuscript_R1_clean.docx",
-            OUT / "manuscript_R1_tracked.docx",
-        )
-    )
-
-
 def editable_tables(src: Path, path: Path):
     """Copy every manuscript table (with its caption) into a standalone editable docx."""
     import copy
@@ -174,3 +151,26 @@ def editable_figures(captions: list[str], path: Path):
         cb.text_frame.text = cap
         cb.text_frame.paragraphs[0].runs[0].font.size = PPt(12)
     prs.save(path)
+
+
+if __name__ == "__main__":
+    OUT.mkdir(parents=True, exist_ok=True)
+    assert all(len(h) <= 85 for h in HIGHLIGHTS), [len(h) for h in HIGHLIGHTS]
+    (OUT / "highlights_R1.txt").write_text("\n".join(f"- {h}" for h in HIGHLIGHTS) + "\n")
+    supplement(OUT / "supplementary_material_R1.docx")
+    cover(OUT / "cover_letter_R1.docx")
+    clean = OUT / "manuscript_R1_clean.docx"
+    caps = [
+        par.text
+        for par in Document(clean).paragraphs
+        if par.text.startswith("Figure ") and par.style.name == "Normal"
+    ][-8:]
+    editable_tables(clean, OUT / "editable_tables_R1.docx")
+    editable_figures(caps, OUT / "editable_figures_R1.pptx")
+    print(
+        tracked(
+            Path("revision_r1/baseline/manuscript_CRST_submitted_v1.docx"),
+            OUT / "manuscript_R1_clean.docx",
+            OUT / "manuscript_R1_tracked.docx",
+        )
+    )
