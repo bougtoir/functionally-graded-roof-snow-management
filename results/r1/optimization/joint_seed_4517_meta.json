@@ -1,0 +1,12 @@
+{
+  "mode": "joint",
+  "seed": 4517,
+  "population": 48,
+  "generations": 45,
+  "dt_hours": 1.0,
+  "objective_evaluations": 2160,
+  "unique_designs_simulated": 1822,
+  "runtime_s": 126.84245586395264,
+  "feasible_fraction": 1.0,
+  "config_sha256": "94dd9bdd5111da68bb42496b2b53e5dfd9223cc1217c60087b7f52a173ee25e7"
+}
