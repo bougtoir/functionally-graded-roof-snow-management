@@ -25,3 +25,5 @@ Reviewer comment ORIGINAL TEXT NOT YET PROVIDED (asked user 2026-11-09). Also as
 - v2 model: src/graded_roof/simulation_v2.py, forcing_v2.py (15-s reference grid), optimization_v2.py (feasible encoding, max 7 segments). Probe: 0.23 s/design at 0.25 h with 2 workers.
 - Convergence: scripts/r1_convergence.py -> results/r1/convergence/ (production_dt_choice.json).
 - Next: scripts/r1_optimize.py (uniform exhaustive 132 + continuous uniform 6300 sensitivity; geometry/surface/joint x 5 seeds 48x45), robustness, figures, manuscript.
+- Convergence done: all dt acceptable under pre-specified rule -> production dt = 1.0 h (coarsest). p95 rel S_event 2.9% at 1 h; isolated outliers up to 1333 kg/m (threshold-boundary designs). Pre-specified add-on (2026-11-09 before optimisation): all final nondominated designs re-evaluated at 0.0625 h and N=48; report changes.
+- Optimisation launched: scripts/r1_optimize.py -> results/r1/optimization/, log results/r1/optimize_run.log

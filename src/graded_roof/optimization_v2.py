@@ -142,7 +142,10 @@ def check_constructable(segments: list[list[int]], c: Constructability) -> bool:
     slopes = [s for _, s, _ in segments]
     if min(slopes) < c.slope_min or max(slopes) > c.slope_max:
         return False
-    if len(slopes) > 1 and max(abs(a - b) for a, b in zip(slopes, slopes[1:])) > c.adjacent_slope_limit_deg:
+    if (
+        len(slopes) > 1
+        and max(abs(a - b) for a, b in zip(slopes, slopes[1:], strict=False)) > c.adjacent_slope_limit_deg
+    ):
         return False
     return all(0 <= k < len(c.classes) for _, _, k in segments)
 
@@ -150,7 +153,9 @@ def check_constructable(segments: list[list[int]], c: Constructability) -> bool:
 def weather_set_v2(config: dict, dt_hours: float, **perturb) -> list[WeatherSeries]:
     settings = config["synthetic_weather"]
     return [
-        continuous_synthetic_weather(s, duration_h=settings["duration_h"], dt_hours=dt_hours, **perturb)
+        continuous_synthetic_weather(
+            s, duration_h=settings["duration_h"], dt_hours=dt_hours, **perturb
+        )
         for s in settings["scenarios"]
     ]
 
@@ -158,7 +163,9 @@ def weather_set_v2(config: dict, dt_hours: float, **perturb) -> list[WeatherSeri
 OBJECTIVE_COLUMNS = ["l_max_kg_per_m", "s_event_max_kg_per_m"]
 
 
-def evaluate_v2(design: RoofDesign, weathers: list[WeatherSeries], sim: SimulationConfig, spec: EventSpec) -> dict:
+def evaluate_v2(
+    design: RoofDesign, weathers: list[WeatherSeries], sim: SimulationConfig, spec: EventSpec
+) -> dict:
     rec: dict = {}
     per = [simulate_v2(design, w, sim, spec) for w in weathers]
     rec["l_max_kg_per_m"] = max(r.l_max_kg_per_m for r in per)
@@ -184,7 +191,12 @@ _WORKER: dict = {}
 
 
 def _init_worker(config: dict, dt_hours: float, sim: SimulationConfig, spec: EventSpec) -> None:
-    _WORKER.update(c=constructability_from_config(config), weathers=weather_set_v2(config, dt_hours), sim=sim, spec=spec)
+    _WORKER.update(
+        c=constructability_from_config(config),
+        weathers=weather_set_v2(config, dt_hours),
+        sim=sim,
+        spec=spec,
+    )
 
 
 def _evaluate_segments(segments: list[list[int]]) -> dict:
@@ -213,8 +225,19 @@ class ConstructableProblem(Problem):
         self.last_keys = keys
 
 
-def run_constrained(config: dict, mode: str, seed: int, *, dt_hours: float, sim: SimulationConfig, spec: EventSpec,
-                    population: int, generations: int, out_dir: Path, workers: int = 2) -> dict:
+def run_constrained(
+    config: dict,
+    mode: str,
+    seed: int,
+    *,
+    dt_hours: float,
+    sim: SimulationConfig,
+    spec: EventSpec,
+    population: int,
+    generations: int,
+    out_dir: Path,
+    workers: int = 2,
+) -> dict:
     c = constructability_from_config(config)
     out_dir.mkdir(parents=True, exist_ok=True)
     cache: dict = {}
@@ -223,7 +246,9 @@ def run_constrained(config: dict, mode: str, seed: int, *, dt_hours: float, sim:
     with Pool(workers, initializer=_init_worker, initargs=(config, dt_hours, sim, spec)) as pool:
         problem = ConstructableProblem(mode, c, pool, cache)
         algorithm = NSGA2(pop_size=population, eliminate_duplicates=True)
-        algorithm.setup(problem, termination=get_termination("n_gen", generations), seed=seed, verbose=False)
+        algorithm.setup(
+            problem, termination=get_termination("n_gen", generations), seed=seed, verbose=False
+        )
         while algorithm.has_next():
             algorithm.next()
             for key in problem.last_keys:
@@ -234,9 +259,14 @@ def run_constrained(config: dict, mode: str, seed: int, *, dt_hours: float, sim:
     evaluated.to_csv(out_dir / f"{mode}_seed_{seed}_evaluated.csv", index=False)
     history.to_csv(out_dir / f"{mode}_seed_{seed}_history.csv", index=False)
     meta = {
-        "mode": mode, "seed": seed, "population": population, "generations": generations,
-        "dt_hours": dt_hours, "objective_evaluations": int(len(history)),
-        "unique_designs_simulated": int(problem.n_simulated), "runtime_s": runtime,
+        "mode": mode,
+        "seed": seed,
+        "population": population,
+        "generations": generations,
+        "dt_hours": dt_hours,
+        "objective_evaluations": int(len(history)),
+        "unique_designs_simulated": int(problem.n_simulated),
+        "runtime_s": runtime,
         "feasible_fraction": float(evaluated["feasible"].mean()),
         "config_sha256": hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest(),
     }
@@ -245,9 +275,21 @@ def run_constrained(config: dict, mode: str, seed: int, *, dt_hours: float, sim:
 
 
 def uniform_constructable_segments(c: Constructability) -> list[list[list[int]]]:
-    return [[[c.cells, s, k]] for s in range(c.slope_min, c.slope_max + 1) for k in range(len(c.classes))]
+    return [
+        [[c.cells, s, k]]
+        for s in range(c.slope_min, c.slope_max + 1)
+        for k in range(len(c.classes))
+    ]
 
 
-def evaluate_many(config: dict, segment_list, *, dt_hours: float, sim: SimulationConfig, spec: EventSpec, workers: int = 2) -> pd.DataFrame:
+def evaluate_many(
+    config: dict,
+    segment_list,
+    *,
+    dt_hours: float,
+    sim: SimulationConfig,
+    spec: EventSpec,
+    workers: int = 2,
+) -> pd.DataFrame:
     with Pool(workers, initializer=_init_worker, initargs=(config, dt_hours, sim, spec)) as pool:
         return pd.DataFrame(pool.map(_evaluate_segments, segment_list, chunksize=4))

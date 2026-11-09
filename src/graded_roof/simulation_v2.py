@@ -166,7 +166,9 @@ def max_window_mass(log: OutflowLog, window_h: float) -> float:
 def _static_threshold(theta, mu_s, adhesion_pa, cell_area, gravity):
     drive = np.sin(theta) - mu_s * np.cos(theta)
     with np.errstate(divide="ignore"):
-        return np.where(drive > 0, adhesion_pa * cell_area / (gravity * np.where(drive > 0, drive, 1.0)), np.inf)
+        return np.where(
+            drive > 0, adhesion_pa * cell_area / (gravity * np.where(drive > 0, drive, 1.0)), np.inf
+        )
 
 
 def _stream_destinations(accel: np.ndarray, dx: float, can_retain: np.ndarray) -> np.ndarray:
@@ -299,8 +301,12 @@ def simulate_v2(
             if nxt == 0.0 and len(hit) == 0:
                 break
         age += mass * dt / 24.0
-        density = np.where(volume > 0, mass / np.where(volume > 0, volume, 1.0), config.initial_density_kg_m3)
-        density += config.compaction_rate_per_day * dt / 24.0 * (config.maximum_density_kg_m3 - density)
+        density = np.where(
+            volume > 0, mass / np.where(volume > 0, volume, 1.0), config.initial_density_kg_m3
+        )
+        density += (
+            config.compaction_rate_per_day * dt / 24.0 * (config.maximum_density_kg_m3 - density)
+        )
         density = np.minimum(density, config.maximum_density_kg_m3)
         volume = np.where(mass > 0, mass / density, 0.0)
         roof_end[step] = mass.sum() / width
