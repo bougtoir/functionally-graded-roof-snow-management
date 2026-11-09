@@ -494,12 +494,14 @@ def build(path: Path) -> dict:
         f"(uniform) and {fine.loc['joint', 'hv_max_x1.1_fine']:.4f} (joint).",
     )
     doc.add_heading("3.5 Event-definition sensitivity", 2)
-    para(
-        doc,
-        "Across the event-definition and entrainment variants, the number of graded designs on the combined front ranged from "
-        f"{int(evs.graded_designs_on_combined_front.min())} to {int(evs.graded_designs_on_combined_front.max())} and the uniform-to-combined epsilon from "
-        f"{f1(evs.eps_uniform_to_combined.min())} to {f1(evs.eps_uniform_to_combined.max())} kg m^{{-1}} (Table 3).",
-    )
+    b, s10, s3, ne = (evs.loc[k] for k in ("base", "tau_sep_10min", "tau_sep_3h", "no_entrainment"))
+    para(doc,
+        "The activity threshold (0.1 or 10 kg m^{-1} h^{-1}) did not change any front. The separation time did (Table 3). With 10 min separation, "
+        f"closely spaced releases from steep smooth roofs counted as separate events, the uniform front shrank to {int(s10.uniform_front_pairs)} pairs and the "
+        f"uniform gap began at {f1(s10.uniform_gap_lo)} kg m^{{-1}}; with 3 h separation it began at {f1(s3.uniform_gap_lo)} kg m^{{-1}}. Graded pairs inside the uniform gap "
+        f"numbered {int(b.pairs_in_uniform_gap)} (base), {int(s10.pairs_in_uniform_gap)} (10 min) and {int(s3.pairs_in_uniform_gap)} (3 h), and {int(ne.pairs_in_uniform_gap)} without entrainment. "
+        "The existence of intermediate graded options was therefore insensitive to these choices, whereas the release magnitude attributed to shedding roofs "
+        "depended strongly on how closely spaced releases are grouped.")
     doc.add_heading("3.6 Robustness", 2)
     rcs = pd.read_csv(R / "robustness/robustness_class_summary.csv").set_index("class")
     rcl = pd.read_csv(R / "robustness/robustness_classified.csv")
@@ -654,25 +656,11 @@ def build(path: Path) -> dict:
     for col in t2.columns[3:8]:
         t2[col] = t2[col].map(lambda x: f"{x:.4f}")
     table(doc, t2, "Table 2. Constructable front comparison (5 seeds pooled for graded sets).")
-    t3 = evs.reset_index()[
-        [
-            "variant",
-            "uniform_front_size",
-            "combined_front_size",
-            "eps_uniform_to_combined",
-            "graded_designs_on_combined_front",
-        ]
-    ]
-    t3.columns = [
-        "Variant",
-        "Uniform front pairs",
-        "Combined front pairs",
-        "Epsilon uniform to combined (kg m^{-1})",
-        "Graded designs on combined front",
-    ]
-    t3["Epsilon uniform to combined (kg m^{-1})"] = t3[
-        "Epsilon uniform to combined (kg m^{-1})"
-    ].map(f1)
+    t3 = evs.reset_index()[["variant", "uniform_front_pairs", "combined_front_pairs", "uniform_gap_lo", "pairs_in_uniform_gap", "gap_s_event_max", "eps_uniform_to_combined"]]
+    t3.columns = ["Variant", "Uniform front pairs", "Combined front pairs", "Uniform gap starts at L_{max} (kg m^{-1})", "Graded pairs in gap", "Largest S_{event,max} in gap (kg m^{-1})", "Epsilon uniform to combined (kg m^{-1})"]
+    for col in t3.columns[3:]:
+        if col != "Graded pairs in gap":
+            t3[col] = t3[col].map(f1)
     table(doc, t3, "Table 3. Sensitivity to event-definition and entrainment choices.")
 
     doc.add_heading("Figure captions", 1)

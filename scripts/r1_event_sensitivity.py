@@ -55,6 +55,44 @@ def _job(args):
     }
 
 
+def summarize(out: pd.DataFrame, uni_keys: list[str]) -> pd.DataFrame:
+    """Per variant: unique objective pairs on the uniform and combined fronts and gap coverage."""
+    obj = ["l_max_kg_per_m", "s_event_max_kg_per_m"]
+    rows = []
+    for v, g in out.groupby("variant"):
+        g = g.drop_duplicates("segments").set_index("segments")
+        g["graded"] = g.index.str.contains(";")
+        u = g.loc[uni_keys, obj].drop_duplicates()
+        u = u[nondominated_mask(u.to_numpy())]
+        a = g[nondominated_mask(g[obj].to_numpy())]
+        pairs = a.groupby(obj).graded.min().reset_index()
+        L = np.sort(u[obj[0]].to_numpy())
+        k = int(np.diff(L).argmax())
+        lo, hi = L[k], L[k + 1]
+        tol = 1e-6 * hi
+        inner = pairs[(pairs[obj[0]] > lo + tol) & (pairs[obj[0]] < hi - tol)]
+        rows.append(
+            {
+                "variant": v,
+                "uniform_front_pairs": len(u),
+                "combined_front_pairs": len(pairs),
+                "graded_only_pairs_on_combined_front": int(pairs.graded.sum()),
+                "eps_uniform_to_combined": additive_epsilon_indicator(
+                    u.to_numpy(), pairs[obj].to_numpy()
+                ),
+                "uniform_gap_lo": lo,
+                "uniform_gap_hi": hi,
+                "pairs_in_uniform_gap": len(inner),
+                "gap_s_event_min": inner[obj[1]].min() if len(inner) else np.nan,
+                "gap_s_event_max": inner[obj[1]].max() if len(inner) else np.nan,
+            }
+        )
+    df = pd.DataFrame(rows)
+    df.to_csv(OUT / "event_sensitivity_summary.csv", index=False)
+    print(df.round(2).to_string())
+    return df
+
+
 if __name__ == "__main__":
     sys.path.insert(0, "scripts")
     from r1_analyze import parse
@@ -68,31 +106,11 @@ if __name__ == "__main__":
     uni_keys = allev[allev["mode"] == "uniform"].segments.tolist()
     front_keys = set(pd.concat([pd.read_csv(f) for f in FRONT_FILES]).segments)
     keys = sorted(set(uni_keys) | front_keys)
+    if "--summary" in sys.argv:
+        summarize(pd.read_csv(OUT / "event_sensitivity_runs.csv"), uni_keys)
+        raise SystemExit
     jobs = [(k, parse(k), v) for k in keys for v in VARIANTS]
     with Pool(2, initializer=_init, initargs=(cfg, dt)) as pool:
         out = pd.DataFrame(pool.map(_job, jobs, chunksize=10))
     out.to_csv(OUT / "event_sensitivity_runs.csv", index=False)
-    rows = []
-    for v, g in out.groupby("variant"):
-        g = g.set_index("segments")
-        u = g.loc[uni_keys, ["l_max_kg_per_m", "s_event_max_kg_per_m"]].to_numpy()
-        u = u[nondominated_mask(u)]
-        a = g[["l_max_kg_per_m", "s_event_max_kg_per_m"]].to_numpy()
-        a = a[nondominated_mask(a)]
-        graded_on = g.index[
-            np.isin(
-                g[["l_max_kg_per_m", "s_event_max_kg_per_m"]].apply(tuple, axis=1),
-                [tuple(x) for x in a],
-            )
-        ]
-        rows.append(
-            {
-                "variant": v,
-                "uniform_front_size": len(u),
-                "combined_front_size": len(a),
-                "eps_uniform_to_combined": additive_epsilon_indicator(u, a),
-                "graded_designs_on_combined_front": int(sum(";" in k for k in graded_on)),
-            }
-        )
-    pd.DataFrame(rows).to_csv(OUT / "event_sensitivity_summary.csv", index=False)
-    print(pd.DataFrame(rows).to_string())
+    summarize(out, uni_keys)
