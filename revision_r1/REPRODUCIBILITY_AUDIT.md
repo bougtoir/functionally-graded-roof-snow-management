@@ -8,7 +8,7 @@
 ## Pipeline (run from repository root, in order)
 | Step | Command | Outputs |
 |---|---|---|
-| Synthetic forcing summary | `.venv/bin/python scripts/r1_weather.py` (if present) | `results/r1/weather/` |
+| Synthetic forcing summary | `.venv/bin/python scripts/r1_weather.py` | `results/r1/weather/` |
 | Convergence | `.venv/bin/python scripts/r1_convergence.py` | `results/r1/convergence/` (selects dt) |
 | Optimisation | `.venv/bin/python scripts/r1_optimize.py` | `results/r1/optimization/` (uniform exhaustive, continuous grid, 3 modes x 5 seeds) |
 | Pareto analysis | `.venv/bin/python scripts/r1_analyze.py` | `results/r1/pareto/` incl. fine re-check |
