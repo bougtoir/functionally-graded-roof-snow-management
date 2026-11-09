@@ -1,0 +1,33 @@
+parameter,value,unit,classification_R1,literature_trace,what_literature_supports,evidence_status,used_in_R1_model
+gravity_m_s2,9.80665,m/s2,standard_constant,see source_or_rationale,-,standard_constant,yes
+roof_length_m,8.0,m,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+roof_width_m,1.0,m,normalization_choice,see source_or_rationale,-,normalization_choice,yes
+cells,24,count,numerical_choice,see source_or_rationale,-,numerical_choice,yes
+slope_bounds_deg,2-45,degree,design_space_assumption,see source_or_rationale,-,design_space_assumption,yes
+adjacent_slope_limit_deg,12,degree,manufacturing_assumption,see source_or_rationale,-,manufacturing_assumption,yes
+minimum_segment_cells,3,count,manufacturing_assumption,see source_or_rationale,-,manufacturing_assumption,yes
+maximum_transitions,6,count,manufacturing_assumption,see source_or_rationale,-,manufacturing_assumption,yes
+initial_density_kg_m3,120,kg/m3,explicit_assumption,none verified,typical fresh-snow order of magnitude,assumption; perturbed ±15 % CV,yes
+maximum_density_kg_m3,420,kg/m3,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+compaction_rate_per_day,0.035,1/day,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+melt_factor_kg_m2_c_h,0.12,kg/m2/C/hour,explicit_assumption,none verified for roofs,degree-hour melt concept is standard; value not traced,assumption; sensitivity in robustness,yes
+rain_heat_factor_kg_m2_mm,0.02,kg/m2/mm,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+dynamic_friction_age_scale_days,5,day,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+friction_age_gain,0.18,fraction,explicit_assumption,Ito et al. 1997 (10.4106/jsse.13.244),UV and mechanical ageing alter coated-steel sliding,functional form and magnitude are assumptions,yes
+near_melt_friction_loss,0.22,fraction,explicit_assumption,Tomabechi et al. 1996,water content changes friction,form and magnitude assumptions,yes
+near_melt_center_c,-0.5,C,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+near_melt_width_c,1.8,C,explicit_assumption,see source_or_rationale,-,explicit_assumption,yes
+static_friction_bounds,0.08-0.65,dimensionless,design_space_assumption,Tomabechi et al. 1996 (10.4106/jsse.12.205); Takakura et al. 2003 (10.3130/aijt.9.67_1),qualitative: friction depends on roughness and snow water content; wet granular snow low friction,bounds are design-space assumptions; no coefficient adopted from a test,yes
+kinetic_ratio,0.78,dimensionless,explicit_assumption,none,-,assumption,yes
+adhesion_bounds_pa,0-250,Pa,design_space_assumption,Fasani et al. 2026 (10.1016/j.coldregions.2026.104971),shear adhesion of dry/wet snow on metallic surfaces depends on LWC and roughness,range not calibrated to reported values; component-level comparison only,yes
+transport_fraction_limit,1.0,fraction,numerical_choice,see source_or_rationale,-,numerical_choice,no (replaced)
+event_threshold_kg_per_m,0.1,kg/m,analysis_definition,see source_or_rationale,-,analysis_definition,no (replaced)
+intervention_mass_kg_per_m,800,kg/m,scenario_assumption,see source_or_rationale,-,scenario_assumption,yes
+optimizer_population,48,count,numerical_choice,see source_or_rationale,-,numerical_choice,yes
+optimizer_generations,45,count,numerical_choice,see source_or_rationale,-,numerical_choice,yes
+robustness_samples,250,count,numerical_choice,see source_or_rationale,-,numerical_choice,yes
+jma_daily_rain_rule,precipitation when mean temperature >1 C and snowfall depth=0,rule,analysis_assumption,see source_or_rationale,-,analysis_assumption,yes
+event_flow_threshold_q_min,1.0,kg/m/h,analysis_definition,none,-,definition; sensitivity 0.1 and 10,yes
+event_separation_tau_sep,1.0,h,analysis_definition,none,-,definition; sensitivity 10 min and 3 h,yes
+slab_entrainment,perfectly inelastic,-,model_assumption,none,-,assumption; no-entrainment sensitivity,yes
+surface_classes,3 discrete classes,-,manufacturing_assumption,Tomabechi 1996; Ito 1997,ordering smooth<aged coated<rough plausible,class values are assumptions,yes

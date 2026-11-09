@@ -27,3 +27,6 @@ Reviewer comment ORIGINAL TEXT NOT YET PROVIDED (asked user 2026-11-09). Also as
 - Next: scripts/r1_optimize.py (uniform exhaustive 132 + continuous uniform 6300 sensitivity; geometry/surface/joint x 5 seeds 48x45), robustness, figures, manuscript.
 - Convergence done: all dt acceptable under pre-specified rule -> production dt = 1.0 h (coarsest). p95 rel S_event 2.9% at 1 h; isolated outliers up to 1333 kg/m (threshold-boundary designs). Pre-specified add-on (2026-11-09 before optimisation): all final nondominated designs re-evaluated at 0.0625 h and N=48; report changes.
 - Optimisation launched: scripts/r1_optimize.py -> results/r1/optimization/, log results/r1/optimize_run.log
+- Docs written: NUMERICAL_CONVERGENCE_AUDIT, SEMANTIC_CODE_AUDIT, PHYSICAL_PARAMETER_PROVENANCE.csv, PHYSICAL_BENCHMARK_AUDIT, PHYSICAL_EVIDENCE_GAP, WEATHER_FORCING_AUDIT (results/r1/weather/synthetic_summary.csv), analysis_deviations R1 items 6-11.
+- Uniform constructable: smooth steep roofs: L 33-85, S_event 313-1374 (frequent small slabs merged by tau_sep=1h); 20 deg smooth: L=S=91.9; classes 1 (aged) ~ L=S>=130.
+- TODO after optimisation: scripts/r1_analyze.py (fronts, HV, epsilon, matched, per-seed, budget sensitivity via generation history, 0.0625h recheck), r1_robustness.py, sensitivities (tau_sep, q_min, entrainment), figures, manuscript build, response letter.
