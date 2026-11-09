@@ -173,6 +173,7 @@ def place_inline(doc, caps):
     for par in list(doc.paragraphs):
         if par.text.strip() == "Tables" and par.style.name == "Heading 1":
             body.remove(par._p)
+    inserted = []
     for i, (name, cap) in enumerate(zip(FIGS, caps, strict=True), 1):
         anchor = _first_citing(doc, rf"Fig\. {i}[a-z]?\b")
         if anchor is None:
@@ -183,8 +184,12 @@ def place_inline(doc, caps):
         cp = doc.add_paragraph()
         cp.paragraph_format.space_before = Pt(14)
         _runs(cp, cap)
-        anchor._p.addnext(img._p)
+        pos = anchor._p
+        while any(pos.getnext() is e for e in inserted):
+            pos = pos.getnext()
+        pos.addnext(img._p)
         img._p.addnext(cp._p)
+        inserted += [img._p, cp._p]
 
 
 def build(path: Path) -> dict:
@@ -199,10 +204,6 @@ def build(path: Path) -> dict:
     seeds = gap[gap.index.str.contains("_seed")]
     rob = v["rob"].copy()
     rob["graded"] = rob.segments.str.contains(";")
-    fc = v["fc"]
-    inter = fc[(fc[O[0]] > lo) & (fc[O[0]] < hi)]
-    rob_i = rob[rob.segments.isin(inter.segments)]
-    rob_u = rob[~rob.graded]
     rc = v["recheck"]
     drel = {
         o: np.abs(rc[f"{o}__dt0.0625"] - rc[f"{o}__dt1"])
@@ -221,6 +222,8 @@ def build(path: Path) -> dict:
         (leg.cells == 24) & (leg.segments == "24x40d0") & (leg.weather == "severe_inland")
     ].sort_values("dt_h", ascending=False)
     jp = v["jp"]
+    pop = re.match(r"(\d+) \(([\d.]+) %", jp.loc[4, "value"])
+    pop_m, pop_pct = f"{int(pop.group(1)) / 1000:.1f}", pop.group(2)
     uc = v["ucont"]
     wx = v["wx"]
     diag = v["diag"]
@@ -276,7 +279,7 @@ def build(path: Path) -> dict:
         doc,
         f"Heavy snowfall shapes building practice across much of Japan. Under the Act on Special Measures for Heavy Snowfall Areas {c('JPR04')}, "
         f"{jp.loc[1, 'value']} municipalities are designated heavy-snowfall areas, covering {jp.loc[3, 'value']}% of the national land and "
-        f"about {jp.loc[4, 'value'].split(' (')[1].rstrip(')')} of the population {c('JPR01')}. Snow-related deaths numbered {jp.loc[7, 'value']} in the "
+        f"{pop_m} million people, about {pop_pct}% of the national population {c('JPR01')}. Snow-related deaths numbered {jp.loc[7, 'value']} in the "
         f"FY2023 winter; over the preceding decade about {jp.loc[8, 'value']}% occurred during snow removal and about {jp.loc[9, 'value']}% "
         f"of those victims were aged 65 or older, with falls from roofs and falling roof snow among the dominant accident types {c('JPR02')}. "
         f"Annual snowfall normals reach {jp.loc[11, 'value']} cm in Sapporo and {jp.loc[12, 'value']} cm in Aomori {c('JPR05')}. "
@@ -495,33 +498,41 @@ def build(path: Path) -> dict:
     )
     doc.add_heading("3.5 Event-definition sensitivity", 2)
     b, s10, s3, ne = (evs.loc[k] for k in ("base", "tau_sep_10min", "tau_sep_3h", "no_entrainment"))
-    para(doc,
+    para(
+        doc,
         "The activity threshold (0.1 or 10 kg m^{-1} h^{-1}) did not change any front. The separation time did (Table 3). With 10 min separation, "
         f"closely spaced releases from steep smooth roofs counted as separate events, the uniform front shrank to {int(s10.uniform_front_pairs)} pairs and the "
         f"uniform gap began at {f1(s10.uniform_gap_lo)} kg m^{{-1}}; with 3 h separation it began at {f1(s3.uniform_gap_lo)} kg m^{{-1}}. Graded pairs inside the uniform gap "
         f"numbered {int(b.pairs_in_uniform_gap)} (base), {int(s10.pairs_in_uniform_gap)} (10 min) and {int(s3.pairs_in_uniform_gap)} (3 h), and {int(ne.pairs_in_uniform_gap)} without entrainment. "
         "The existence of intermediate graded options was therefore insensitive to these choices, whereas the release magnitude attributed to shedding roofs "
-        "depended strongly on how closely spaced releases are grouped.")
+        "depended strongly on how closely spaced releases are grouped.",
+    )
     doc.add_heading("3.6 Robustness", 2)
     rcs = pd.read_csv(R / "robustness/robustness_class_summary.csv").set_index("class")
     rcl = pd.read_csv(R / "robustness/robustness_classified.csv")
     gi, us = rcs.loc["graded_intermediate"], rcs.loc["uniform_shedding"]
     qf = rcl[rcl.on_q95_front & (rcl["class"] == "graded_intermediate")]
     ur = rcl[rcl["class"] == "uniform_retention"]
-    para(doc,
+    para(
+        doc,
         f"Uncertainty degraded the intermediate designs strongly (Fig. 7). For the {int(gi.designs)} graded designs inside the nominal uniform gap, "
         f"Q95 S_{{event,max}} ranged from {f0(gi.q95_s_min)} to {f0(gi.q95_s_max)} kg m^{{-1}} (median {f0(gi.q95_s_median)}), against nominal values of at most "
         f"{f1(gi.nominal_s_max)} kg m^{{-1}}; in a median {pct(gi.frac_above_lo_median, 0)} of draws their release exceeded {f1(lo)} kg m^{{-1}}. Uniform shedding roofs "
         f"were similarly sensitive at the retentive end (Q95 S_{{event,max}} {f0(us.q95_s_min)}-{f0(us.q95_s_max)} kg m^{{-1}}). In Q95 space the gap persisted: uniform roofs "
         f"gave Q95 L_{{max}} of at most {f0(us.q95_l_max)} kg m^{{-1}} or full retention ({f0(ur.l_q.iloc[0])} kg m^{{-1}}), whereas {len(qf)} graded designs formed the Q95 front between "
         f"{f0(qf.l_q.min())} and {f0(qf.l_q.max())} kg m^{{-1}} with Q95 S_{{event,max}} of {f0(qf.s_q.min())}-{f0(qf.s_q.max())} kg m^{{-1}}, below every uniform shedding roof. "
-        f"Mass-balance error remained below {rcs.max_mass_balance_error.max():.0e} kg m^{{-1}}.")
+        f"Mass-balance error remained below {rcs.max_mass_balance_error.max():.0e} kg m^{{-1}}.",
+    )
     doc.add_heading("3.7 JMA station-winter scenarios", 2)
+    js = pd.read_csv(R / "jma/jma_station_summary.csv")
     para(
         doc,
-        f"Under the {sw} observed station-winters (snowfall water equivalent {f0(v['jmaf'].snowfall_we_kg_m2.min())}-{f0(v['jmaf'].snowfall_we_kg_m2.max())} kg m^{{-2}}), "
-        "the same designs were re-simulated without re-optimisation (Fig. 8). "
-        f"These scenario results extend the comparison to longer, observed forcing but do not validate roof behaviour.",
+        f"Under the {sw} observed station-winters (snowfall water equivalent {f0(v['jmaf'].snowfall_we_kg_m2.min())}-{f0(v['jmaf'].snowfall_we_kg_m2.max())} kg m^{{-2}}, "
+        f"rain {f0(v['jmaf'].rain_mm.min())}-{f0(v['jmaf'].rain_mm.max())} mm), the same designs were re-simulated without re-optimisation (Fig. 8). Because daily snowfall was spread "
+        f"uniformly, steep smooth roofs shed as near-continuous streams and the uniform front reduced to {int(js.uniform_front_pairs.max())} pairs in every station-winter: "
+        f"a shedding roof with L_{{max}} of {f1(js.uniform_gap_lo.min())}-{f1(js.uniform_gap_lo.max())} kg m^{{-1}}, or full retention. In every station-winter, {int(js.graded_pairs_in_gap.min())}-"
+        f"{int(js.graded_pairs_in_gap.max())} graded pairs lay between these options, with S_{{event,max}} of {f1(js.gap_s_event_min.min())}-{f1(js.gap_s_event_max.max())} kg m^{{-1}}. "
+        "These scenario results extend the comparison to longer, observed forcing but do not validate roof behaviour.",
     )
 
     doc.add_heading("4. Discussion", 1)
@@ -656,8 +667,26 @@ def build(path: Path) -> dict:
     for col in t2.columns[3:8]:
         t2[col] = t2[col].map(lambda x: f"{x:.4f}")
     table(doc, t2, "Table 2. Constructable front comparison (5 seeds pooled for graded sets).")
-    t3 = evs.reset_index()[["variant", "uniform_front_pairs", "combined_front_pairs", "uniform_gap_lo", "pairs_in_uniform_gap", "gap_s_event_max", "eps_uniform_to_combined"]]
-    t3.columns = ["Variant", "Uniform front pairs", "Combined front pairs", "Uniform gap starts at L_{max} (kg m^{-1})", "Graded pairs in gap", "Largest S_{event,max} in gap (kg m^{-1})", "Epsilon uniform to combined (kg m^{-1})"]
+    t3 = evs.reset_index()[
+        [
+            "variant",
+            "uniform_front_pairs",
+            "combined_front_pairs",
+            "uniform_gap_lo",
+            "pairs_in_uniform_gap",
+            "gap_s_event_max",
+            "eps_uniform_to_combined",
+        ]
+    ]
+    t3.columns = [
+        "Variant",
+        "Uniform front pairs",
+        "Combined front pairs",
+        "Uniform gap starts at L_{max} (kg m^{-1})",
+        "Graded pairs in gap",
+        "Largest S_{event,max} in gap (kg m^{-1})",
+        "Epsilon uniform to combined (kg m^{-1})",
+    ]
     for col in t3.columns[3:]:
         if col != "Graded pairs in gap":
             t3[col] = t3[col].map(f1)

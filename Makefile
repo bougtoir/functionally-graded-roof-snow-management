@@ -1,7 +1,7 @@
 PYTHON ?= python
 export PYTHONPATH := $(CURDIR)/src$(if $(PYTHONPATH),:$(PYTHONPATH))
 
-.PHONY: test lint data baseline convergence uniform optimize jma sensitivity robustness figures tables manuscript validate all clean
+.PHONY: test lint data baseline convergence uniform optimize jma sensitivity robustness figures tables manuscript validate all clean r1 r1-docs
 
 test:
 	$(PYTHON) -m pytest
@@ -72,3 +72,24 @@ all:
 
 clean:
 	rm -rf results/generated figures/png figures/tiff figures/vector tables/generated manuscript/build submission/CRST_submission_package.zip submission/CRST_submission_package_final.zip submission/CRST_submission_package_FINAL.zip
+
+# Reviewer-driven revision (R1). Writes only to results/r1, checkpoints/r1, figures/r1, manuscript/r1;
+# the submitted pipeline above (`all`) and its outputs are left untouched.
+r1:
+	$(PYTHON) scripts/r1_weather.py
+	$(PYTHON) scripts/r1_convergence.py
+	$(PYTHON) scripts/r1_optimize.py
+	$(PYTHON) scripts/r1_analyze.py
+	$(PYTHON) scripts/r1_robustness.py
+	$(PYTHON) scripts/r1_robustness_summary.py
+	$(PYTHON) scripts/r1_event_sensitivity.py
+	$(PYTHON) scripts/r1_jma.py
+	$(PYTHON) scripts/r1_jma_summary.py
+	$(PYTHON) scripts/r1_figures.py
+	$(MAKE) r1-docs PYTHON=$(PYTHON)
+
+r1-docs:
+	$(PYTHON) scripts/r1_build_manuscript.py
+	$(PYTHON) scripts/r1_package.py
+	$(PYTHON) scripts/r1_reference_audit.py manuscript/r1/manuscript_R1_clean.docx revision_r1/REFERENCE_AUDIT_R1.csv
+	$(PYTHON) scripts/r1_qc.py

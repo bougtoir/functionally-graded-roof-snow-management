@@ -24,10 +24,21 @@ from graded_roof.study import simulation_config  # noqa: E402
 R = Path("results/r1")
 FIG = Path("figures/r1")
 DATA = R / "figure_data"
-O = ["l_max_kg_per_m", "s_event_max_kg_per_m"]
+O = ["l_max_kg_per_m", "s_event_max_kg_per_m"]  # noqa: E741
 COL = {"uniform": "#222222", "geometry": "#1b9e77", "surface": "#d95f02", "joint": "#7570b3"}
 CLASS_COL = ["#9ecae1", "#fdae6b", "#a1d99b"]
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8, "axes.linewidth": 0.6})
+
+
+def tiff_rgb(path: Path) -> None:
+    """Flatten the alpha channel onto white; journals expect RGB TIFF."""
+    from PIL import Image
+
+    im = Image.open(path)
+    if im.mode != "RGB":
+        bg = Image.new("RGB", im.size, "white")
+        bg.paste(im, mask=im.getchannel("A") if "A" in im.mode else None)
+        bg.save(path, compression="tiff_lzw", dpi=(1000, 1000))
 
 
 def save(fig, name: str, data: pd.DataFrame) -> None:
@@ -40,6 +51,7 @@ def save(fig, name: str, data: pd.DataFrame) -> None:
         bbox_inches="tight",
         pil_kwargs={"compression": "tiff_lzw"},
     )
+    tiff_rgb(FIG / "tiff" / f"{name}.tiff")
     fig.savefig(FIG / "vector" / f"{name}.pdf", bbox_inches="tight")
     fig.savefig(FIG / "vector" / f"{name}.svg", bbox_inches="tight")
     DATA.mkdir(parents=True, exist_ok=True)
@@ -125,7 +137,9 @@ def fig2(cfg):
 
 
 def fig3():
-    df = pd.read_csv(R / "convergence/convergence_runs.csv")
+    df = pd.read_csv(R / "convergence/convergence_runs.csv").drop_duplicates(
+        ["segments", "weather", "dt_h", "cells"]
+    )
     s = pd.read_csv(R / "convergence/convergence_summary.csv")
     d24 = df[df.cells == 24]
     ref = d24[d24.dt_h == 0.0625].set_index(["segments", "weather"])

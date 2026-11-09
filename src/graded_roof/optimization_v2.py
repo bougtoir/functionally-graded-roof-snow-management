@@ -144,7 +144,8 @@ def check_constructable(segments: list[list[int]], c: Constructability) -> bool:
         return False
     if (
         len(slopes) > 1
-        and max(abs(a - b) for a, b in zip(slopes, slopes[1:], strict=False)) > c.adjacent_slope_limit_deg
+        and max(abs(a - b) for a, b in zip(slopes, slopes[1:], strict=False))
+        > c.adjacent_slope_limit_deg
     ):
         return False
     return all(0 <= k < len(c.classes) for _, _, k in segments)

@@ -113,7 +113,8 @@ def summarize(df: pd.DataFrame) -> None:
     print(s.T.to_string())
     ok = s[(s.cells == 24) & (s.acceptable) & (s.dt_h > 0.0625)]
     choice = float(ok.dt_h.max()) if len(ok) else 0.0625
-    (OUT / "production_dt_choice.json").write_text(json.dumps({"production_dt_h": choice}, indent=2))
+    choice_json = json.dumps({"production_dt_h": choice}, indent=2)
+    (OUT / "production_dt_choice.json").write_text(choice_json)
     print("production dt", choice)
 
 
