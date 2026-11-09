@@ -34,3 +34,6 @@ Reviewer comment ORIGINAL TEXT NOT YET PROVIDED (asked user 2026-11-09). Also as
 - front() dedupes per objective pair (fewest segments). FRONT_FILES explicit list (glob front_* caught summary files).
 - Chain running: scripts/r1_chain.sh (robustness -> event_sensitivity -> jma -> figures); done flag results/r1/chain_done.txt. Recheck (0.0625 h, N48) inside r1_analyze -> pareto_run.log.
 - GOTCHA: `pkill -f r1_analyze.py` kills the exec shell whose cmd contains the string.
+- references/references_r1_additional.csv: JPR01-06 official sources (MLIT 001881217/001881218, e-Gov, JMA). Manuscript builder TODO: scripts/r1_build_manuscript.py with Vancouver numbering, omml.py equations, values from CSVs.
+- Pareto analysis DONE (fine recheck incl.). PARETO_RELIABILITY_AUDIT.md written. Chain running robustness (~1h) -> event_sens -> jma -> figures; flag results/r1/chain_done.txt.
+- scripts/r1_build_manuscript.py written (Vancouver numbering via Refs.cite, OMML eqs, values from CSVs); run after chain; output manuscript/r1/manuscript_R1_clean.docx. Then: lint fixes, tracked docx (vs revision_r1/baseline/manuscript_CRST_submitted_v1.docx), audits (ROBUSTNESS, REFERENCE, TEXT_FIGURE_TABLE, REPRO, HOSTILE, FINAL_QC), supplement Table S1 from PHYSICAL_PARAMETER_PROVENANCE.csv, cover letter, highlights, ZIP, PR, Japanese handoff.

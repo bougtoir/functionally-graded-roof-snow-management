@@ -1,0 +1,7 @@
+record_id,authors,year,title,journal_or_publisher,doi_or_identifier,official_url,volume,issue,pages_or_article_number
+JPR01,Ministry of Land Infrastructure Transport and Tourism,2026,Overview of designated heavy snowfall areas and special heavy snowfall areas,MLIT,MLIT 001881217,https://www.mlit.go.jp/kokudoseisaku/chisei/content/001881217.pdf,,,
+JPR02,Ministry of Land Infrastructure Transport and Tourism,2025,Implementation status of measures in heavy snowfall areas,MLIT,MLIT 001881218,https://www.mlit.go.jp/kokudoseisaku/chisei/content/001881218.pdf,,,
+JPR03,Government of Japan,1950,Order for Enforcement of the Building Standards Act (Cabinet Order No. 338 of 1950) Article 86,e-Gov Law Search,325CO0000000338,https://laws.e-gov.go.jp/law/325CO0000000338,,,
+JPR04,Government of Japan,1962,Act on Special Measures for Heavy Snowfall Areas (Act No. 73 of 1962),e-Gov Law Search,337AC1000000073,https://laws.e-gov.go.jp/law/337AC1000000073,,,
+JPR05,Japan Meteorological Agency,2026,Climatological normals 1991-2020 (Sapporo 47412 Aomori 47575 Niigata 47604),JMA,jma_normals_1991_2020,https://www.data.jma.go.jp/stats/etrn/index.php,,,
+JPR06,Japan Meteorological Agency,2026,Historical daily weather data (Kutchan Aomori Shinjo Takada),JMA,jma_daily,https://www.data.jma.go.jp/stats/etrn/index.php,,,
