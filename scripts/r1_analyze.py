@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -25,10 +26,21 @@ MODES = ["geometry", "surface", "joint"]
 GENS = (15, 30, 45)
 
 
-def front(df: pd.DataFrame) -> pd.DataFrame:
+def front(df: pd.DataFrame, *, ties: bool = False) -> pd.DataFrame:
+    """Nondominated set; by default one representative (fewest segments) per objective pair."""
     df = df.drop_duplicates("segments")
-    pts = df[OBJ].to_numpy()
-    return df[nondominated_mask(pts)].sort_values(OBJ[0])
+    df = df[nondominated_mask(df[OBJ].to_numpy())]
+    df = df.assign(
+        n_segments=df.segments.str.count(";") + 1,
+        tie_count=df.groupby(OBJ).segments.transform("size"),
+    )
+    if not ties:
+        df = df.sort_values(["n_segments", "segments"]).drop_duplicates(OBJ)
+    return df.sort_values(OBJ[0])
+
+
+def norm_eps(a: np.ndarray, b: np.ndarray, scale: np.ndarray) -> float:
+    return additive_epsilon_indicator(a / scale, b / scale)
 
 
 def parse(key: str) -> list[list[int]]:
@@ -75,7 +87,7 @@ def main() -> None:
                     "mode": mode,
                     "seed": seed,
                     "generation": g,
-                    "front_size": len(f),
+                    "unique_objective_pairs": len(f),
                     "evaluated_unique": len(sub),
                 }
                 for name, r in refs.items():
@@ -89,13 +101,18 @@ def main() -> None:
     summ = []
     for name, f in fronts.items():
         pts = f[OBJ].to_numpy()
-        row = {"set": name, "front_size": len(f)}
+        row = {"set": name, "unique_objective_pairs": len(f)}
         for rn, r in refs.items():
             row[f"hv_{rn}"] = normalized_hypervolume_2d(pts, tuple(r))
         row["eps_set_to_uniform"] = additive_epsilon_indicator(pts, uni_front[OBJ].to_numpy())
         row["eps_uniform_to_set"] = additive_epsilon_indicator(uni_front[OBJ].to_numpy(), pts)
+        upts = uni_front[OBJ].to_numpy()
+        row["eps_norm_set_to_uniform"] = norm_eps(pts, upts, ref_base)
+        row["eps_norm_uniform_to_set"] = norm_eps(upts, pts, ref_base)
+        pool = uni if name == "uniform" else pd.concat([allev[allev["mode"] == name], uni])
+        row["nondominated_designs_incl_ties"] = len(front(pool, ties=True))
         row.update(matched_objective_improvement(pts, uni_front[OBJ].to_numpy()))
-        row["graded_points_on_front"] = int((~f.segments.str.count(";").eq(0)).sum())
+        row["graded_pairs_on_front"] = int((f.n_segments > 1).sum())
         summ.append(row)
         f.to_csv(OUT / f"front_{name}.csv", index=False)
     pd.DataFrame(summ).to_csv(OUT / "front_summary.csv", index=False)

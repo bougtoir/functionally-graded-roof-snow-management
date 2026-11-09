@@ -21,6 +21,9 @@ from graded_roof.simulation_v2 import EventSpec, simulate_v2
 from graded_roof.study import simulation_config
 
 PARETO = Path("results/r1/pareto")
+FRONT_FILES = [
+    PARETO / f"front_{n}.csv" for n in ("uniform", "geometry", "surface", "joint", "combined")
+]
 OUT = Path("results/r1/event_sensitivity")
 VARIANTS = {
     "base": (EventSpec(), True),
@@ -63,7 +66,7 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     allev = pd.read_csv(PARETO / "all_evaluated_designs.csv").drop_duplicates("segments")
     uni_keys = allev[allev["mode"] == "uniform"].segments.tolist()
-    front_keys = set(pd.concat([pd.read_csv(f) for f in PARETO.glob("front_*.csv")]).segments)
+    front_keys = set(pd.concat([pd.read_csv(f) for f in FRONT_FILES]).segments)
     keys = sorted(set(uni_keys) | front_keys)
     jobs = [(k, parse(k), v) for k in keys for v in VARIANTS]
     with Pool(2, initializer=_init, initargs=(cfg, dt)) as pool:

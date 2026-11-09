@@ -30,3 +30,7 @@ Reviewer comment ORIGINAL TEXT NOT YET PROVIDED (asked user 2026-11-09). Also as
 - Docs written: NUMERICAL_CONVERGENCE_AUDIT, SEMANTIC_CODE_AUDIT, PHYSICAL_PARAMETER_PROVENANCE.csv, PHYSICAL_BENCHMARK_AUDIT, PHYSICAL_EVIDENCE_GAP, WEATHER_FORCING_AUDIT (results/r1/weather/synthetic_summary.csv), analysis_deviations R1 items 6-11.
 - Uniform constructable: smooth steep roofs: L 33-85, S_event 313-1374 (frequent small slabs merged by tau_sep=1h); 20 deg smooth: L=S=91.9; classes 1 (aged) ~ L=S>=130.
 - TODO after optimisation: scripts/r1_analyze.py (fronts, HV, epsilon, matched, per-seed, budget sensitivity via generation history, 0.0625h recheck), r1_robustness.py, sensitivities (tau_sep, q_min, entrainment), figures, manuscript build, response letter.
+- Optimisation done (15 runs, feasible 100%). Pareto: unique pairs uniform 26 / geometry 89 / surface 49 / joint 86; HV(1.1max) .982/.987/.988/.988; eps_uniform_to_set 78-80 kg/m (norm .013); uniform gap 91.9-6417 L: graded pairs 20-26 (S 11.5-91.8), every seed covers gap (8-23 pairs) -> POST HOC descriptive.
+- front() dedupes per objective pair (fewest segments). FRONT_FILES explicit list (glob front_* caught summary files).
+- Chain running: scripts/r1_chain.sh (robustness -> event_sensitivity -> jma -> figures); done flag results/r1/chain_done.txt. Recheck (0.0625 h, N48) inside r1_analyze -> pareto_run.log.
+- GOTCHA: `pkill -f r1_analyze.py` kills the exec shell whose cmd contains the string.

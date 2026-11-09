@@ -20,6 +20,9 @@ from graded_roof.simulation_v2 import EventSpec, simulate_v2
 from graded_roof.study import simulation_config
 
 PARETO = Path("results/r1/pareto")
+FRONT_FILES = [
+    PARETO / f"front_{n}.csv" for n in ("uniform", "geometry", "surface", "joint", "combined")
+]
 OUT = Path("results/r1/robustness")
 _W: dict = {}
 
@@ -91,9 +94,7 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     smp = samples(cfg)
     smp.to_csv(OUT / "uncertainty_samples.csv", index=False)
-    keys = sorted(
-        set(pd.concat([pd.read_csv(f) for f in PARETO.glob("front_*.csv")]).segments)
-    )
+    keys = sorted(set(pd.concat([pd.read_csv(f) for f in FRONT_FILES]).segments))
     jobs = [(k, parse(k), row) for k in keys for row in smp.to_dict("records")]
     with Pool(2, initializer=_init, initargs=(cfg, dt)) as pool:
         out = pd.DataFrame(pool.map(_job, jobs, chunksize=25))

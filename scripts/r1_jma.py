@@ -21,6 +21,9 @@ from graded_roof.simulation_v2 import EventSpec, simulate_v2
 from graded_roof.study import simulation_config
 
 PARETO = Path("results/r1/pareto")
+FRONT_FILES = [
+    PARETO / f"front_{n}.csv" for n in ("uniform", "geometry", "surface", "joint", "combined")
+]
 OUT = Path("results/r1/jma")
 _W: dict = {}
 
@@ -86,7 +89,7 @@ if __name__ == "__main__":
     ).to_csv(OUT / "jma_forcing_summary.csv", index=False)
     allev = pd.read_csv(PARETO / "all_evaluated_designs.csv").drop_duplicates("segments")
     uni = allev[allev["mode"] == "uniform"].segments.tolist()
-    front = set(pd.concat([pd.read_csv(f) for f in PARETO.glob("front_*.csv")]).segments)
+    front = set(pd.concat([pd.read_csv(f) for f in FRONT_FILES]).segments)
     keys = sorted(set(uni) | front)
     with Pool(2, initializer=_init, initargs=(cfg, ws)) as pool:
         rows = [
