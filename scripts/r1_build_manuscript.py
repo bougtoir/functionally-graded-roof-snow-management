@@ -263,6 +263,7 @@ def build(path: Path) -> dict:
         f"({f0(hi)} kg m^{{-1}}). Graded roofs added {int(gj.pairs_in_uniform_gap)} nondominated intermediate combinations "
         f"(S_{{event,max}} {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}}), found in all {len(seeds)} optimisation runs, but changed "
         f"normalised hypervolume only from {fs.loc['uniform', 'hv_max_x1.1']:.3f} to {fs.loc['joint', 'hv_max_x1.1']:.3f}. "
+        "Under parameter and forcing uncertainty these intermediate options persisted, but their 95th-percentile releases were an order of magnitude larger than nominal. "
         "Spatial grading is therefore a configurable means of intermediate retention rather than a general improvement; "
         "the model is verified numerically but not validated against roof observations.",
     )
@@ -500,14 +501,19 @@ def build(path: Path) -> dict:
         f"{f1(evs.eps_uniform_to_combined.min())} to {f1(evs.eps_uniform_to_combined.max())} kg m^{{-1}} (Table 3).",
     )
     doc.add_heading("3.6 Robustness", 2)
-    para(
-        doc,
-        f"Under parameter and forcing uncertainty, the Q95 L_{{max}} of the intermediate graded designs ranged from {f0(rob_i.l_q.min())} to {f0(rob_i.l_q.max())} kg m^{{-1}} "
-        f"and their Q95 S_{{event,max}} from {f1(rob_i.s_q.min())} to {f0(rob_i.s_q.max())} kg m^{{-1}}, compared with nominal S_{{event,max}} of {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}} (Fig. 7). "
-        f"For uniform front designs, Q95 S_{{event,max}} ranged from {f1(rob_u.s_q.min())} to {f0(rob_u.s_q.max())} kg m^{{-1}}. "
-        f"{int((rob_i.s_q < lo).sum())} of {len(rob_i)} intermediate graded designs kept Q95 S_{{event,max}} below the nominal release of the most retentive "
-        f"shedding uniform roof ({f1(lo)} kg m^{{-1}}).",
-    )
+    rcs = pd.read_csv(R / "robustness/robustness_class_summary.csv").set_index("class")
+    rcl = pd.read_csv(R / "robustness/robustness_classified.csv")
+    gi, us = rcs.loc["graded_intermediate"], rcs.loc["uniform_shedding"]
+    qf = rcl[rcl.on_q95_front & (rcl["class"] == "graded_intermediate")]
+    ur = rcl[rcl["class"] == "uniform_retention"]
+    para(doc,
+        f"Uncertainty degraded the intermediate designs strongly (Fig. 7). For the {int(gi.designs)} graded designs inside the nominal uniform gap, "
+        f"Q95 S_{{event,max}} ranged from {f0(gi.q95_s_min)} to {f0(gi.q95_s_max)} kg m^{{-1}} (median {f0(gi.q95_s_median)}), against nominal values of at most "
+        f"{f1(gi.nominal_s_max)} kg m^{{-1}}; in a median {pct(gi.frac_above_lo_median, 0)} of draws their release exceeded {f1(lo)} kg m^{{-1}}. Uniform shedding roofs "
+        f"were similarly sensitive at the retentive end (Q95 S_{{event,max}} {f0(us.q95_s_min)}-{f0(us.q95_s_max)} kg m^{{-1}}). In Q95 space the gap persisted: uniform roofs "
+        f"gave Q95 L_{{max}} of at most {f0(us.q95_l_max)} kg m^{{-1}} or full retention ({f0(ur.l_q.iloc[0])} kg m^{{-1}}), whereas {len(qf)} graded designs formed the Q95 front between "
+        f"{f0(qf.l_q.min())} and {f0(qf.l_q.max())} kg m^{{-1}} with Q95 S_{{event,max}} of {f0(qf.s_q.min())}-{f0(qf.s_q.max())} kg m^{{-1}}, below every uniform shedding roof. "
+        f"Mass-balance error remained below {rcs.max_mass_balance_error.max():.0e} kg m^{{-1}}.")
     doc.add_heading("3.7 JMA station-winter scenarios", 2)
     para(
         doc,
@@ -521,7 +527,9 @@ def build(path: Path) -> dict:
         doc,
         "Within this model, spatial grading did not produce a generally better roof: hypervolume, epsilon and matched-objective gains over the "
         "exhaustive constructable uniform set were small. What grading did provide, reproducibly across seeds, was access to intermediate states between "
-        "near-complete shedding and full retention, where a roof holds most of its snow but releases it in small events. Uniform roofs reach these "
+        "near-complete shedding and full retention, where a roof holds most of its snow and releases less than any shedding uniform roof. "
+        "The nominal smallness of those releases was not robust: it depends on a retaining segment holding close to its failure threshold, and modest changes "
+        "in friction, adhesion or snowfall convert it into releases of several hundred kg m^{-1}. Uniform roofs reach these "
         "states only through non-catalogue surface properties, if at all. In practice this corresponds to a retention zone combined with a short "
         "controlled-shedding eave zone, a configuration related to snow guards and retention roofs in regional guidance "
         f"{c('JP02', 'JP03', 'JP04')}; the mechanism is physically interpretable (upslope releases stop on a retaining segment).",
@@ -560,8 +568,8 @@ def build(path: Path) -> dict:
     para(
         doc,
         "With a timestep-independent event metric and constructability enforced inside the search, constructable uniform roofs either shed nearly all "
-        "snow or retained all of it. Spatially graded roofs reproducibly filled this gap with intermediate retention-release combinations but did not "
-        "materially improve the overall frontier. Spatial grading is best viewed as a configurable retention strategy whose physical benefit remains to "
+        "snow or retained all of it. Spatially graded roofs reproducibly filled this gap with intermediate retention-release combinations, which persisted "
+        "under uncertainty with substantially larger releases, but did not materially improve the overall frontier. Spatial grading is best viewed as a configurable retention strategy whose physical benefit remains to "
         "be demonstrated experimentally.",
     )
 
