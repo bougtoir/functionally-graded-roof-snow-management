@@ -19,3 +19,9 @@ Reviewer comment ORIGINAL TEXT NOT YET PROVIDED (asked user 2026-11-09). Also as
 - Convergence: dt 1,0.5,0.25,0.125,0.0625 h; N 12,24,48,96. Criteria predefined in EVENT/CONVERGENCE docs.
 - Constrained optimization: feasible encoding + repair; segments (<=7, >=3 cells of 24), integer-degree slopes in [2,45], |adjacent dslope|<=12, discrete classes (3). Modes: uniform (exhaustive slope x class), geometry (class fixed aged_coated_metal), surface (slope fixed 25), joint. 5 seeds, pop 48 x gen 45.
 - Robustness: paired CRN perturbations friction, adhesion, density, snowfall, temperature.
+
+## Progress log
+- Done: tag crst-submitted-v1, PHASE_00, DOI verification (all 3 resolve; off-topic: mine roof rock beam, rockfall-bridge, debris flow), Japan evidence docs (MLIT 532 munis/50.8%/18.25M 14.5%; deaths 22 FY2023; ~90% during removal, ~90% >=65; Art.86(4) mu_b no reduction with snow stops; Art.86(6) 1 m reduction where removal customary; JMA normals Sapporo 479 cm, Aomori 567, Niigata 139).
+- v2 model: src/graded_roof/simulation_v2.py, forcing_v2.py (15-s reference grid), optimization_v2.py (feasible encoding, max 7 segments). Probe: 0.23 s/design at 0.25 h with 2 workers.
+- Convergence: scripts/r1_convergence.py -> results/r1/convergence/ (production_dt_choice.json).
+- Next: scripts/r1_optimize.py (uniform exhaustive 132 + continuous uniform 6300 sensitivity; geometry/surface/joint x 5 seeds 48x45), robustness, figures, manuscript.
