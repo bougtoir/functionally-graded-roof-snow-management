@@ -1,0 +1,40 @@
+{
+  "pairs_compared": 543,
+  "pairs_failing_any_metric": 29,
+  "failures_by_metric": {
+    "s_event_max_kg_per_m": 22,
+    "s_window_1h_kg_per_m": 16,
+    "l_max_kg_per_m": 10,
+    "total_shed_kg_per_m": 7
+  },
+  "failures_by_family": {
+    "uniform": 13,
+    "geometry": 6,
+    "joint": 6,
+    "surface": 4
+  },
+  "failing_designs_on_uniform_front": 7,
+  "failing_designs_on_combined_front": 1,
+  "failing_designs_graded_in_gap": 0,
+  "gap_dt1": {
+    "uniform_front_pairs": 26,
+    "uniform_gap_lo": 91.86004078474303,
+    "uniform_gap_hi": 6416.968009642465,
+    "graded_pairs_in_gap": 26,
+    "gap_s_event_min": 11.48250509809288,
+    "gap_s_event_max": 91.79303422870932
+  },
+  "gap_fine_dt0.0625": {
+    "uniform_front_pairs": 26,
+    "uniform_gap_lo": 91.83924274443709,
+    "uniform_gap_hi": 6416.9680096425,
+    "graded_pairs_in_gap": 26,
+    "gap_s_event_min": 11.479905343054636,
+    "gap_s_event_max": 91.78697979535288
+  },
+  "runs_finding_fine_gap_designs": "9/15",
+  "fine_gap_designs_per_run_min_max": [
+    0,
+    9
+  ]
+}

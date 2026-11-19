@@ -1,0 +1,5 @@
+- Physical event metric replaces a timestep-dependent shedding endpoint
+- Constructability is enforced inside the optimiser by a feasible encoding
+- Uniform roofs either shed nearly all snow or retain all of it
+- Graded roofs add intermediate retention-release options in every seed
+- Frontier-wide gains over uniform roofs are small; no roof validation

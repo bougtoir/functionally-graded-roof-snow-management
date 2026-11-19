@@ -1,0 +1,41 @@
+                         seeds  objective_evaluations  unique_designs_simulated  runtime_s_total  runtime_s_per_seed_median  feasible_fraction
+geometry                     5                  10800                      8839            573.8                      113.8                1.0
+joint                        5                  10800                      8669            592.5                      114.7                1.0
+surface                      5                  10800                      5947            354.8                       73.0                1.0
+uniform_exhaustive           0                    132                       132              NaN                        NaN                NaN
+uniform_continuous_grid      0                   6300                      6300              NaN                        NaN                NaN
+                         size  min  max
+release_equals_retained                
+False                      28   18   45
+True                       60    7   45
+                  class             objective                factor  designs  median_rho    q25    q75  frac_abs_gt_0_3
+0   graded_intermediate        l_max_kg_per_m       adhesion_factor       68       0.038  0.021  0.076            0.044
+1   graded_intermediate        l_max_kg_per_m        density_factor       68      -0.044 -0.079 -0.024            0.000
+2   graded_intermediate        l_max_kg_per_m       friction_factor       68       0.167  0.045  0.627            0.485
+3   graded_intermediate        l_max_kg_per_m       snowfall_factor       68       0.915  0.572  0.986            0.956
+4   graded_intermediate        l_max_kg_per_m  temperature_offset_c       68      -0.012 -0.077  0.026            0.059
+5   graded_intermediate  s_event_max_kg_per_m       adhesion_factor       68      -0.302 -0.308 -0.148            0.515
+6   graded_intermediate  s_event_max_kg_per_m        density_factor       68       0.044  0.035  0.081            0.000
+7   graded_intermediate  s_event_max_kg_per_m       friction_factor       68      -0.125 -0.464 -0.037            0.353
+8   graded_intermediate  s_event_max_kg_per_m       snowfall_factor       68       0.536  0.369  0.600            0.779
+9   graded_intermediate  s_event_max_kg_per_m  temperature_offset_c       68       0.164  0.156  0.179            0.000
+30     uniform_shedding        l_max_kg_per_m       adhesion_factor       25       0.986  0.975  0.992            1.000
+31     uniform_shedding        l_max_kg_per_m        density_factor       25      -0.132 -0.140 -0.127            0.000
+32     uniform_shedding        l_max_kg_per_m       friction_factor       25       0.172  0.135  0.220            0.040
+33     uniform_shedding        l_max_kg_per_m       snowfall_factor       25       0.029  0.028  0.031            0.000
+34     uniform_shedding        l_max_kg_per_m  temperature_offset_c       25      -0.075 -0.076 -0.073            0.000
+35     uniform_shedding  s_event_max_kg_per_m       adhesion_factor       25      -0.407 -0.504 -0.315            0.840
+36     uniform_shedding  s_event_max_kg_per_m        density_factor       25       0.006 -0.002  0.014            0.000
+37     uniform_shedding  s_event_max_kg_per_m       friction_factor       25      -0.055 -0.068 -0.026            0.000
+38     uniform_shedding  s_event_max_kg_per_m       snowfall_factor       25       0.849  0.748  0.922            1.000
+39     uniform_shedding  s_event_max_kg_per_m  temperature_offset_c       25       0.081  0.073  0.104            0.000
+                      no_jump_median  jump_median  jump_fraction  n_samples
+friction_factor                0.996        0.919          0.201      17000
+adhesion_factor                1.011        0.855          0.201      17000
+density_factor                 0.960        0.996          0.201      17000
+snowfall_factor                0.928        1.123          0.201      17000
+temperature_offset_c          -0.021        0.264          0.201      17000
+   roof_length_m  designs  uniform_front_pairs  combined_front_pairs  uniform_gap_lo  uniform_gap_hi  pairs_in_uniform_gap  graded_pairs_in_gap  gap_s_event_min  gap_s_event_max
+0            4.0      317                   26                    97           45.93         3208.48                    26                   26             5.74            45.90
+1            8.0      317                   26                    97           91.86         6416.97                    26                   26            11.48            91.79
+2           12.0      317                   26                    93          137.79         9625.45                    23                   23            17.22           137.69

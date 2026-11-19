@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>気象庁｜過去の気象データ検索</title>
+<meta name="Author" content="気象庁 Japan Meteorological Agency">
+<meta name="keywords" content="気象庁 Japan Meteorological Agency">
+<meta name="description" content="気象庁｜過去の気象データ検索">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<link rel="stylesheet" type="text/css" href="/com/css/define.css" media="all">
+<link rel="stylesheet" type="text/css" href="../../css/default.css" media="all">
+<script language="JavaScript" type="text/JavaScript" src="/com/js/jquery.js"></script>
+<script language="JavaScript" type="text/JavaScript" src="../js/jquery.tablefix.js"></script>
+<style type="text/css" media="all"><!-- @import url(/com/default.css); --></style>
+<link rel="stylesheet" type="text/css" href="../../data/css/kako.css" media="all">
+<link rel="stylesheet" type="text/css" href="../../data/css/print.css" media="print">
+</head>
+<body>
+<noscript><div>すべての機能をご利用いただくにはJavascriptを有効にしてください。</div></noscript>
+<!--header start -->
+<div id="header_area">
+  <div id="nheader">
+    <div id="logo"><a href="//www.jma.go.jp/jma/index.html"><img src="/jma/com/images/logo.gif" alt="気象庁" width="120" height="67" /></a></div>
+    <div id="header2_right">
+      <div id="header2_link">
+        <ul>
+          <li xml:lang="en" lang="en"><a href="//www.jma.go.jp/jma/kokusai/multi.html">Other Languages</a></li>
+        </ul>
+      </div>
+      <div id="header2_link">
+        <ul>
+          <li xml:lang="en" lang="en"><a href="//www.jma.go.jp/jma/indexe.html">ENGLISH</a></li>
+        </ul>
+      </div>
+<!-- search -->
+      <div id="gsearch">
+        <form id="cse-search-box" action="//google.com/cse">
+          <input type="hidden" name="cx" value="009950868052057056798:0yrbmp7chwi">
+          <input type="hidden" name="ie" value="UTF-8">
+          <input type="text" name="q">
+          <input type="image" name="sa" src="/jma/com/images/btn_search6.png" alt="検索">
+        </form>
+        <script type="text/javascript" src="//www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+      </div>
+<!-- search end-->
+    </div>
+    <ul id="gnavi">
+      <li><a href="//www.jma.go.jp/">ホーム</a></li>
+      <li><a href="//www.jma.go.jp/jma/menu/menuflash.html">防災情報</a></li>
+      <li><a href="//www.jma.go.jp/jma/menu/menureport.html" class="on">各種データ・資料</a></li>
+      <li><a href="//www.jma.go.jp/jma/menu/areas.html">地域の情報</a></li>
+      <li><a href="//www.jma.go.jp/jma/menu/menuknowledge.html">知識・解説</a></li>
+      <li><a href="//www.jma.go.jp/jma/menu/menuappli.html">各種申請・ご案内</a></li>
+    </ul>
+  </div>
+</div>
+<!--header end -->
+
+<div id="contents_area3">
+  <div id="ncontents2">
+<!-- pankuzu menu -->
+<div class="print">
+  <ul class="breadcrumb2">
+  <li><a href="//www.jma.go.jp/">ホーム</a>&nbsp;&gt;&nbsp;</li>
+  <li><a href="//www.jma.go.jp/jma/menu/menureport.html">各種データ・資料</a>&nbsp;&gt;&nbsp;</li>
+  <li><a href="../index.php?prec_no=54&block_no=47604&year=&month=&day=&view=">過去の気象データ検索</a>&nbsp;&gt;&nbsp;</li>
+  <li>平年値（年・月ごとの値）</li>
+  </ul></div>
+<!-- //pankuzu menu -->
+
+<div id="main">
+<!-- contents -->
+<h1 class="print">平年値（年・月ごとの値）</h1>
+<div class="print"><table style="float:left"><tr><td><img src="../../data/icon/sellected/table.gif" alt="一覧表"></td></tr></table><table style="margin-left: auto"><tr><td><a href="nml_sfc_ym.php?prec_no=54&block_no=47604&year=&month=&day=&view=p1s"><img src="../../data/icon/true/scroll_ari.gif" alt="見出しの固定"></a></td><td><a href="../index.php?prec_no=54&block_no=47604&year=&month=&day=&view=p1"><img src="../../data/icon/true/2menu.gif" alt="メニューに戻る"></a></td></tr></table><table><tr><td><img src="../../data/icon/sellected/default.gif" alt="主な要素"></td><td><a href="nml_sfc_ym.php?prec_no=54&block_no=47604&year=&month=&day=&view=a1"><img src="../../data/icon/true/ppre.gif" alt="詳細（気圧・降水量）"></a></td><td><a href="nml_sfc_ym.php?prec_no=54&block_no=47604&year=&month=&day=&view=a2"><img src="../../data/icon/true/temvh.gif" alt="詳細（気温・蒸気圧・湿度）"></a></td><td><a href="nml_sfc_ym.php?prec_no=54&block_no=47604&year=&month=&day=&view=a3"><img src="../../data/icon/true/windsun.gif" alt="詳細（風・日照）"></a></td><td><a href="nml_sfc_ym.php?prec_no=54&block_no=47604&year=&month=&day=&view=a4"><img src="../../data/icon/true/snow.gif" alt="詳細（雪）"></a></td></tr></table><table style="margin-left: auto"><tr><td><img src="../../data/icon/sellected/4annuallymonthly.gif" alt="年・月ごとの値"></td><td><a href="nml_sfc_3m.php?prec_no=54&block_no=47604&year=&month=&day=&view=p1"><img src="../../data/icon/true/4_3monthly.gif" alt="３か月ごとの値"></a></td><td><a href="nml_sfc_10d.php?prec_no=54&block_no=47604&year=&month=&day=&view=p1"><img src="../../data/icon/true/4jun.gif" alt="旬ごとの値"></a></td><td><a href="nml_sfc_mb5d.php?prec_no=54&block_no=47604&year=&month=&day=&view=p1"><img src="../../data/icon/true/4hanjun.gif" alt="半旬ごとの値"></a></td></tr></table>
+</div>
+
+<h3 style='padding:0px;margin-bottom:0px'>新潟（新潟県)　平年値（年・月ごとの値）　主な要素</h3>
+<table id='tablefix1' class='data2_s'>
+<tr class="mtx"><th rowspan="3" scope="row">要素</th><th colspan="2" scope="colgroup">気圧</th><th scope="colgroup">降水量</th><th colspan="3" scope="colgroup">気温</th><th scope="colgroup">蒸気圧</th><th scope="colgroup">相対湿度</th><th colspan="2" scope="colgroup">風向・風速</th><th scope="colgroup">日照時間</th><th scope="colgroup">全天日射量</th><th colspan="3" scope="colgroup">雪</th><th scope="colgroup">雲量</th><th colspan="3" scope="colgroup">大気現象</th></tr>
+<tr class="mtx"><th rowspan="2" scope="col">現地平均<br>(hPa)</th><th rowspan="2" scope="col">海面平均<br>(hPa)</th><th rowspan="2" scope="col">合計<br>(mm)</th><th rowspan="2" scope="col">平均<br>(℃)</th><th rowspan="2" scope="col">日最高<br>(℃)</th><th rowspan="2" scope="col">日最低<br>(℃)</th><th rowspan="2" scope="col">平均<br>(hPa)</th><th rowspan="2" scope="col">平均<br>(％)</th><th rowspan="2" scope="col">平均<br>(m/s)</th><th rowspan="2" scope="col">最多風向</th><th rowspan="2" scope="col">合計<br>(時)</th><th rowspan="2" scope="col">平均<br>(MJ/㎡)</th><th colspan="2" scope="colgroup">降雪の深さ</th><th rowspan="2" scope="col">最深積雪<br>(cm)</th><th rowspan="2" scope="col">平均</th><th rowspan="2" scope="col">雪日数</th><th rowspan="2" scope="col">霧日数</th><th rowspan="2" scope="col">雷日数</th></tr>
+<tr class="mtx"><th scope="col">合計<br>(cm)</th><th scope="col">日合計の最大<br>(cm)</th></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row">統計期間</th><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td><td style="text-align:center">1991～<br>2020</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row">資料年数</th><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td><td style="text-align:center">30</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=1&day=&view=p1">1月</a></span></th><td style="text-align:right">1016.6</td><td style="text-align:right">1017.5</td><td style="text-align:right">180.9</td><td style="text-align:right">2.5</td><td style="text-align:right">5.3</td><td style="text-align:right">0.1</td><td style="text-align:right">5.6</td><td style="text-align:right">72</td><td style="text-align:right">3.9</td><td style="text-align:center">西北西</td><td style="text-align:right">56.4</td><td style="text-align:right">5.3</td><td style="text-align:right">63</td><td style="text-align:right">18</td><td style="text-align:right">23</td><td style="text-align:right">9.0</td><td style="text-align:right">26.8</td><td style="text-align:right">0.2</td><td style="text-align:right">4.5</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=2&day=&view=p1">2月</a></span></th><td style="text-align:right">1017.1</td><td style="text-align:right">1017.9</td><td style="text-align:right">115.8</td><td style="text-align:right">3.1</td><td style="text-align:right">6.4</td><td style="text-align:right">-0.1</td><td style="text-align:right">5.4</td><td style="text-align:right">74</td><td style="text-align:right">3.8</td><td style="text-align:center">南</td><td style="text-align:right">74.3</td><td style="text-align:right">8.0</td><td style="text-align:right">48</td><td style="text-align:right">14</td><td style="text-align:right">23</td><td style="text-align:right">8.7</td><td style="text-align:right">23.5</td><td style="text-align:right">0.4</td><td style="text-align:right">3.0</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=3&day=&view=p1">3月</a></span></th><td style="text-align:right">1016.1</td><td style="text-align:right">1017.0</td><td style="text-align:right">112.0</td><td style="text-align:right">6.2</td><td style="text-align:right">10.3</td><td style="text-align:right">2.4</td><td style="text-align:right">6.4</td><td style="text-align:right">68</td><td style="text-align:right">3.5</td><td style="text-align:center">南</td><td style="text-align:right">136.8</td><td style="text-align:right">12.0</td><td style="text-align:right">8</td><td style="text-align:right">4</td><td style="text-align:right">5</td><td style="text-align:right">7.8</td><td style="text-align:right">15.8</td><td style="text-align:right">0.3</td><td style="text-align:right">1.5</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=4&day=&view=p1">4月</a></span></th><td style="text-align:right">1013.9</td><td style="text-align:right">1014.8</td><td style="text-align:right">97.2</td><td style="text-align:right">11.3</td><td style="text-align:right">16.1</td><td style="text-align:right">7.0</td><td style="text-align:right">9.0</td><td style="text-align:right">66</td><td style="text-align:right">3.4</td><td style="text-align:center">南</td><td style="text-align:right">177.7</td><td style="text-align:right">16.5</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">7.0</td><td style="text-align:right">2.3</td><td style="text-align:right">0.7</td><td style="text-align:right">1.2</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=5&day=&view=p1">5月</a></span></th><td style="text-align:right">1011.2</td><td style="text-align:right">1012.1</td><td style="text-align:right">94.4</td><td style="text-align:right">16.7</td><td style="text-align:right">21.3</td><td style="text-align:right">12.7</td><td style="text-align:right">13.1</td><td style="text-align:right">69</td><td style="text-align:right">3.2</td><td style="text-align:center">西南西</td><td style="text-align:right">202.8</td><td style="text-align:right">19.0</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">7.1</td><td style="text-align:right">0.0</td><td style="text-align:right">0.8</td><td style="text-align:right">1.6</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=6&day=&view=p1">6月</a></span></th><td style="text-align:right">1008.2</td><td style="text-align:right">1009.0</td><td style="text-align:right">121.1</td><td style="text-align:right">20.9</td><td style="text-align:right">24.8</td><td style="text-align:right">17.7</td><td style="text-align:right">18.5</td><td style="text-align:right">74</td><td style="text-align:right">2.7</td><td style="text-align:center">北北東</td><td style="text-align:right">179.2</td><td style="text-align:right">18.6</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">7.9</td><td style="text-align:right">0.0</td><td style="text-align:right">0.7</td><td style="text-align:right">2.0</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=7&day=&view=p1">7月</a></span></th><td style="text-align:right">1007.8</td><td style="text-align:right">1008.5</td><td style="text-align:right">222.3</td><td style="text-align:right">24.9</td><td style="text-align:right">28.7</td><td style="text-align:right">21.8</td><td style="text-align:right">24.4</td><td style="text-align:right">79</td><td style="text-align:right">2.8</td><td style="text-align:center">南</td><td style="text-align:right">162.1</td><td style="text-align:right">17.1</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">8.1</td><td style="text-align:right">0.0</td><td style="text-align:right">0.3</td><td style="text-align:right">2.4</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=8&day=&view=p1">8月</a></span></th><td style="text-align:right">1008.9</td><td style="text-align:right">1009.7</td><td style="text-align:right">163.4</td><td style="text-align:right">26.5</td><td style="text-align:right">30.8</td><td style="text-align:right">23.3</td><td style="text-align:right">25.9</td><td style="text-align:right">75</td><td style="text-align:right">2.7</td><td style="text-align:center">南</td><td style="text-align:right">205.2</td><td style="text-align:right">17.9</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">7.0</td><td style="text-align:right">0.0</td><td style="text-align:right">0.1</td><td style="text-align:right">3.3</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=9&day=&view=p1">9月</a></span></th><td style="text-align:right">1012.4</td><td style="text-align:right">1013.1</td><td style="text-align:right">151.9</td><td style="text-align:right">22.5</td><td style="text-align:right">26.4</td><td style="text-align:right">19.0</td><td style="text-align:right">20.1</td><td style="text-align:right">73</td><td style="text-align:right">2.9</td><td style="text-align:center">南東</td><td style="text-align:right">156.2</td><td style="text-align:right">13.8</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">7.6</td><td style="text-align:right">0.0</td><td style="text-align:right">0.2</td><td style="text-align:right">1.9</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=10&day=&view=p1">10月</a></span></th><td style="text-align:right">1016.6</td><td style="text-align:right">1017.4</td><td style="text-align:right">157.7</td><td style="text-align:right">16.7</td><td style="text-align:right">20.7</td><td style="text-align:right">12.8</td><td style="text-align:right">13.8</td><td style="text-align:right">72</td><td style="text-align:right">2.8</td><td style="text-align:center">南</td><td style="text-align:right">138.2</td><td style="text-align:right">10.2</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">---</td><td style="text-align:right">7.3</td><td style="text-align:right">0.0</td><td style="text-align:right">0.3</td><td style="text-align:right">2.3</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=11&day=&view=p1">11月</a></span></th><td style="text-align:right">1018.4</td><td style="text-align:right">1019.3</td><td style="text-align:right">203.5</td><td style="text-align:right">10.5</td><td style="text-align:right">14.3</td><td style="text-align:right">6.9</td><td style="text-align:right">9.5</td><td style="text-align:right">74</td><td style="text-align:right">3.2</td><td style="text-align:center">南</td><td style="text-align:right">91.5</td><td style="text-align:right">6.4</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td style="text-align:right">7.8</td><td style="text-align:right">2.7</td><td style="text-align:right">0.2</td><td style="text-align:right">4.9</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row"><span class="a_print"><a href="nml_sfc_d.php?prec_no=54&block_no=47604&year=&month=12&day=&view=p1">12月</a></span></th><td style="text-align:right">1017.5</td><td style="text-align:right">1018.3</td><td style="text-align:right">225.9</td><td style="text-align:right">5.3</td><td style="text-align:right">8.7</td><td style="text-align:right">2.4</td><td style="text-align:right">6.8</td><td style="text-align:right">74</td><td style="text-align:right">3.9</td><td style="text-align:center">南</td><td style="text-align:right">62.9</td><td style="text-align:right">4.5</td><td style="text-align:right">19</td><td style="text-align:right">7</td><td style="text-align:right">8</td><td style="text-align:right">8.8</td><td style="text-align:right">19.5</td><td style="text-align:right">0.2</td><td style="text-align:right">6.1</td></tr>
+<tr class="mtx" style="white-space:pre; text-align:center;"><th scope="row">年</th><td style="text-align:right">1013.7</td><td style="text-align:right">1014.5</td><td style="text-align:right">1845.9</td><td style="text-align:right">13.9</td><td style="text-align:right">17.8</td><td style="text-align:right">10.5</td><td style="text-align:right">13.2</td><td style="text-align:right">72</td><td style="text-align:right">3.3</td><td style="text-align:center">南</td><td style="text-align:right">1639.6</td><td style="text-align:right">12.4</td><td style="text-align:right">139</td><td style="text-align:right">24</td><td style="text-align:right">32</td><td style="text-align:right">7.8</td><td style="text-align:right">90.5</td><td style="text-align:right">4.5</td><td style="text-align:right">34.7</td></tr>
+</table>
+<div class="print"><ul class="pagelink"><li>「&#64;」の付いた値は、参考値です。平年差や平年比に利用できません。</li></ul></div>
+
+</div>
+
+<hr class="print" style="color:#DADFEC" /><div class="print"><table style='margin-left:auto;margin-right:0px'><tr><td><ul class="pagelink mtx"><li><a href="../../data/mdrr/man/first.html">利用される方へ</a></li></ul></td><td><ul class="pagelink mtx"><li><a href="../../data/mdrr/faq/index_k.html">よくある質問（FAQ）</a></li></ul></td><td><ul class="pagelink mtx"><li><a href="//www.jma.go.jp/jma/kishou/know/stats/index.html">気象観測統計の解説</a></li></ul></td><td><ul class="pagelink mtx"><li><a href="//www.data.jma.go.jp/cpd/longfcst/tenkou_index.html">年・季節・各月の天候</a></li></ul></td></tr></table></div><!-- //contents -->
+<p class="totop"><a href="#nheader">このページのトップへ</a></p>
+</div>
+</div>
+
+<div id="footer_area"><div id="nfooter"><ul><li><a href="//www.jma.go.jp/jma/kishou/info/coment.html">気象庁ホームページについて</a></li></ul></div></div></body>
+</html>
+

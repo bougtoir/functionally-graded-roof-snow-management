@@ -1,0 +1,14 @@
+item,quantity,value,unit,reference_date,source,source_file,notes
+1,Municipalities designated heavy snowfall areas,532 of 1719,municipalities,2026-04-01,MLIT designation overview,data/raw/japan_context/20261109/mlit_designation_overview.pdf,Tokyo 23 wards counted as one
+2,of which special heavy snowfall areas,201,municipalities,2026-04-01,same,same,
+3,Heavy snowfall area share of national land,50.8,percent (191992 of 377980 km2),2026-04-01 (area as of 2025-10-01),same,same,
+4,Population in heavy snowfall areas,18248 (14.5 % of 126146),thousand persons,2020 census,same,same,Excludes Sendai Koriyama Shizuoka Otsu (partially designated large cities)
+5,Population in special heavy snowfall areas,2793 (2.2 %),thousand persons,2020 census,same,same,
+6,Prefectures entirely designated,10 (incl. Hokkaido Aomori Niigata),prefectures,2026-04-01,same,same,
+7,Snow-related deaths FY2023 winter,22,persons,FY2023 (provisional),MLIT implementation status Feb 2025 citing FDMA,data/raw/japan_context/20261109/mlit_implementation_status_2025-02.pdf,Despite low snowfall that winter
+8,Share of snow deaths occurring during snow removal (last 10 years),about 90,percent,10 winters to FY2023,same,same,
+9,Share of snow-removal deaths aged 65 or older,about 90,percent,same,same,same,
+10,Dominant snow-removal fatal accident types,falls from roofs and falling roof snow,-,same,same,same,Qualitative ranking from MLIT chart
+11,Annual snowfall normal Sapporo,479,cm,1991-2020,JMA normals 47412,data/raw/japan_context/20261109/jma_normals_sapporo_47412.html,max snow depth normal 97 cm
+12,Annual snowfall normal Aomori,567,cm,1991-2020,JMA normals 47575,data/raw/japan_context/20261109/jma_normals_aomori_47575.html,max snow depth normal 101 cm
+13,Annual snowfall normal Niigata (city station),139,cm,1991-2020,JMA normals 47604,data/raw/japan_context/20261109/jma_normals_niigata_47604.html,coastal city; inland Niigata (e.g. Takada) much higher - see existing JMA daily data

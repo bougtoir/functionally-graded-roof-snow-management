@@ -131,8 +131,9 @@ def main() -> None:
         "completed_phases": sum(phase["status"] == "completed" for phase in phases),
         "total_phases": len(phases),
     }
-    if "final_revision" in previous_state:
-        state["final_revision"] = previous_state["final_revision"]
+    for key in ("final_revision", "r1_major_revision"):
+        if key in previous_state:
+            state[key] = previous_state[key]
     state_path.write_text(
         json.dumps(state, indent=2) + "\n",
         encoding="utf-8",

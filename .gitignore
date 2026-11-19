@@ -8,3 +8,4 @@ __pycache__/
 logs/*.log
 checkpoints/*.pkl
 data/raw/external/
+private/

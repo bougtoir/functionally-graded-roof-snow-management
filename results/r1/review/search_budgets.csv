@@ -1,0 +1,6 @@
+search,seeds,objective_evaluations,unique_designs_simulated,runtime_s_total,runtime_s_per_seed_median,feasible_fraction
+geometry,5,10800,8839,573.7620480060577,113.8116865158081,1.0
+joint,5,10800,8669,592.5076682567596,114.73193645477296,1.0
+surface,5,10800,5947,354.81441736221313,72.97963881492615,1.0
+uniform_exhaustive,0,132,132,,,
+uniform_continuous_grid,0,6300,6300,,,
