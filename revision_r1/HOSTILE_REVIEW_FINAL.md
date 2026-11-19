@@ -17,6 +17,9 @@ Critical pre-submission review of the R1 clean manuscript, written from a scepti
 | 11 | "Rain-on-snow / hydrology ignored." | No liquid retention, refreezing, drainage, hydrological triggering. | Listed in 4.1 as unrepresented. |
 | 12 | "Japanese regulatory claims overreach." | Article 86 and heavy-snowfall statistics verified from official raw snapshots. | Text states no compliance claim and that retaining roofs carry full design load. |
 | 13 | "Optimiser may not have converged." | Per-seed HV changes 30->45 generations <= 0.0005; heuristic. | Reported (Fig. 6); no global-optimality claim. |
+| 15 | "Hidden assumptions drive the intermediate releases." | Release jumps (>10x nominal, 20% of draws) coincide with lower friction/adhesion and heavier snowfall; density has no effect. | Section 3.6 explains mechanism. |
+| 16 | "Results hold only for 8 m roofs." | 4 m and 12 m re-evaluation keeps the gap (26 and 23 graded pairs). | Section 3.8; not re-optimised, other shapes untested (4.2). |
+| 17 | "Reviewer-cited rock-mechanics papers are padding." | Wang/Zhang cited only to delimit scope (structural failure, impact); Liu cited for hydrological triggering as an unmodelled process. | Introduction para 4, Section 4.2. |
 | 14 | "Single-author, AI-assisted work." | Generative-AI declaration included. | Author must confirm CRediT, funding, competing interests and affiliation (open REQUIRED fields). |
 
-Unresolved before submission: reviewer comments not supplied (no point-by-point response possible); author metadata placeholders; identity of the archived baseline with the Editorial Manager file unconfirmed.
+Unresolved before submission: author metadata placeholders (completed locally by the author). Reviewer comments and the Editorial Manager file were supplied on 2026-11-19; all 37 comments have responses (33 addressed, 2 addressed as limitations, 2 partially addressed because no roof-scale validation data exist).

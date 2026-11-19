@@ -14,3 +14,9 @@ Recovered: 2026-11-09 (UTC+9).
 10. **Deadline.** Revision due 2026-11-29.
 
 Original analysis remains distinguishable: nothing under `results/generated/`, `results/reference_1h/` or `checkpoints/dt_0p5h/` is overwritten; revised outputs are written to `results/r1/` and `checkpoints/r1/`.
+
+## Update 2026-11-19: Editorial Manager submission file received
+
+- The author supplied the file actually submitted to Editorial Manager (`manuscript_CRST.docx`, SHA-256 `a7f74bac1b837011290ebf4f7b958115e472d4975b584077242ec71ef3b82440`). It is kept outside git (`private/submitted_em/`) because its title page contains personal contact data.
+- It differs from the repository fallback (`baseline/manuscript_CRST_submitted_v1.docx`, SHA-256 `5c311f58f63ce10447a62d754b2d66122372e9837ff48f3a63b2828d0169fa06`): author metadata completed, figures and captions placed inline, and three additional Methods/Data sentences (pinned-environment instructions, a mass-balance/model-type sentence, and a provenance-ledger sentence). Table content is identical.
+- The tracked R1 manuscript is now generated against the Editorial Manager file (title page excluded). Reviewer line numbers refer to that file.

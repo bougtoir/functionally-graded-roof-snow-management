@@ -34,16 +34,32 @@ def sha(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
-if __name__ == "__main__":
-    OUT.mkdir(parents=True, exist_ok=True)
-    z = OUT / "R1_revision_package.zip"
+PRIVATE = Path("private/r1_response")
+
+
+def build(z: Path, items: dict) -> int:
     rows = ["folder,path,bytes,sha256"]
     with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
-        for folder, files in ITEMS.items():
+        for folder, files in items.items():
             for f in files:
                 p = Path(f)
                 zf.write(p, f"{folder}/{p.as_posix()}")
                 rows.append(f"{folder},{p.as_posix()},{p.stat().st_size},{sha(p)}")
         zf.writestr("MANIFEST_SHA256.csv", "\n".join(rows) + "\n")
-    (OUT / "R1_revision_package_manifest.csv").write_text("\n".join(rows) + "\n")
-    print(z, z.stat().st_size, len(rows) - 1, "files")
+    z.with_name(z.stem + "_manifest.csv").write_text("\n".join(rows) + "\n")
+    return len(rows) - 1
+
+
+if __name__ == "__main__":
+    OUT.mkdir(parents=True, exist_ok=True)
+    if PRIVATE.exists():
+        full = dict(ITEMS)
+        full["02_letters"] = ITEMS["02_letters"] + sorted(
+            str(p)
+            for p in PRIVATE.glob("*")
+            if p.suffix in {".docx", ".csv", ".xlsx"} and "manifest" not in p.name
+        )
+        zp = PRIVATE / "R1_submission_package_with_response.zip"
+        print(zp, build(zp, full), "files (private, includes reviewer comments)")
+    z = OUT / "R1_revision_package.zip"
+    print(z, build(z, ITEMS), "files")

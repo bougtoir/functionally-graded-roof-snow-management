@@ -75,3 +75,11 @@ All changes below were made after peer review of CRST-D-26-01129 and are disting
 9. **Constructability enforced inside optimisation** by feasible encoding (segments ≥ 3 cells, ≤ 6 transitions, integer slopes 2–45°, |Δslope| ≤ 12°, three discrete surface classes). Uniform reference evaluated exhaustively over the same constructable set (132 roofs); the 6,300-design continuous uniform map is re-run with the revised model as a sensitivity.
 10. **Seeds increased** from 3 to 5 (1701, 2903, 4517, 6007, 8191); population 48 × 45 generations unchanged.
 11. **Production dt = 1 h** selected by the pre-specified convergence rule (`revision_r1/NUMERICAL_CONVERGENCE_AUDIT.md`); nondominated designs re-checked at 0.0625 h and N = 48.
+
+## R1 reviewer-comment analyses (2026-11-19) — added after receipt of the full reviewer comments
+
+12. **Factor attribution** (`scripts/r1_review_analyses.py`): Spearman rank correlations of each design's 250 robustness draws with the five uncertainty factors, and comparison of draws with S_event,max > 10x nominal against other draws (Reviewer 1 M9, M10). Descriptive; uses the existing robustness runs.
+13. **Roof-length sensitivity**: the constructable uniform set and all nondominated designs re-evaluated (not re-optimised) at 4 and 12 m with 24 cells; 8 m reproduces the base result exactly (Reviewer 1 L1).
+14. **Search budgets and uniform threshold check**: evaluation counts and runtimes per search; shedding uniform roofs with L_max = S_event,max (Reviewer 1 M8, R2).
+15. **Decision-scoring layer removed**: labour-scarcity, complexity- and transition-penalty selections and the scalar robustness score of the submitted analysis are not part of R1, because hard constraints and whole-front comparisons replace them (Reviewer 1 M11, M12, R2, R5).
+16. **Baseline for the tracked manuscript** is the Editorial Manager file supplied by the author (title page excluded).

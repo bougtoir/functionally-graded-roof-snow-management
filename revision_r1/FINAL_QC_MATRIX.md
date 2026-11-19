@@ -18,10 +18,11 @@
 | Vancouver order, no orphan references, DOI records checked | done | REFERENCE_AUDIT_R1.md/.csv |
 | Tracked DOCX (red additions, blue strikethrough deletions) with content identical to clean | done (vs fallback baseline) | check "Tracked minus deletions == clean text" |
 | Editable tables DOCX, editable figures PPTX (16:9, one per slide) | done | manuscript/r1 |
-| Lint (`ruff check src scripts tests`) and tests (`pytest`, 41 passed) | done | local run |
+| Lint (`ruff check src scripts tests`) and tests (`pytest`) | done | local run |
+| Reviewer-driven analyses (factor attribution, roof length, budgets, threshold check) | done | results/r1/review |
 | Hostile review | done | HOSTILE_REVIEW_FINAL.md |
 | Author metadata (affiliation, funding, competing interests, CRediT) | author-pending (completed locally by the author; not a QC failure) | 5 REQUIRED placeholders |
-| Editor/Reviewer comments, point-by-point response, response matrix | OPEN - comments not supplied | CHANGES_FOR_RESPONSE.md prepared |
-| Baseline identical to Editorial Manager file | OPEN - submitted DOCX not supplied | fallback used |
+| Editor/Reviewer comments, point-by-point response, response matrix | done (37 comments; kept outside git as confidential) | private/r1_response/ (scripts/r1_response.py) |
+| Tracked DOCX against Editorial Manager file | done (title page excluded) | PHASE_00_PROJECT_RECOVERY.md update |
 | `make all` (submitted pipeline) | not re-run by design: it regenerates historical outputs; R1 is reproduced by `make r1` | Makefile |
 | Submission / editor contact / merge | not done (not authorised) | - |

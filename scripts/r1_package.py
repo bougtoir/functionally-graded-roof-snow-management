@@ -14,6 +14,16 @@ sys.path.insert(0, "src")
 sys.path.insert(0, "scripts")
 from r1_tracked import build as tracked  # noqa: E402
 
+# Editorial Manager file (kept outside git; title page holds personal data); repository fallback otherwise.
+SUBMITTED = next(
+    p
+    for p in (
+        Path("private/submitted_em/manuscript_CRST.docx"),
+        Path("revision_r1/baseline/manuscript_CRST_submitted_v1.docx"),
+    )
+    if p.exists()
+)
+
 from graded_roof.manuscript import _add_line_numbering  # noqa: E402
 
 OUT = Path("manuscript/r1")
@@ -169,7 +179,7 @@ if __name__ == "__main__":
     editable_figures(caps, OUT / "editable_figures_R1.pptx")
     print(
         tracked(
-            Path("revision_r1/baseline/manuscript_CRST_submitted_v1.docx"),
+            SUBMITTED,
             OUT / "manuscript_R1_clean.docx",
             OUT / "manuscript_R1_tracked.docx",
         )

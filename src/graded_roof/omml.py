@@ -44,6 +44,11 @@ def nary(char: str, lower, upper, body):
     ch = OxmlElement("m:chr")
     ch.set("{http://schemas.openxmlformats.org/officeDocument/2006/math}val", char)
     pr.append(ch)
+    for tag, lim in (("m:subHide", lower), ("m:supHide", upper)):
+        if lim == "":
+            h = OxmlElement(tag)
+            h.set("{http://schemas.openxmlformats.org/officeDocument/2006/math}val", "1")
+            pr.append(h)
     return _el("m:nary", pr, _el("m:sub", *_wrap(lower)), _el("m:sup", *_wrap(upper)),
                _el("m:e", *_wrap(body)))
 
@@ -66,7 +71,7 @@ def _wrap(x):
 def add_equation(paragraph, *parts, number: str | None = None):
     math = _el("m:oMath", *_wrap(list(parts)))
     if number:
-        math.append(r(f"    ({number})", italic=False))
+        math.append(r(f"\u2003\u2003\u2003({number})", italic=False))
     paragraph._p.append(_el("m:oMathPara", math))
     return paragraph
 

@@ -10,16 +10,20 @@ from pathlib import Path
 import pandas as pd
 from docx import Document
 
-RAW = sorted(Path("data/raw/published_sources").rglob("*.json"))
+RAW = sorted(
+    p
+    for d in ("data/raw/published_sources", "data/raw/reviewer_doi")
+    for p in Path(d).rglob("*.json")
+)
 
 
 def norm(t: str) -> str:
     return re.sub(r"[^a-z0-9]", "", str(t).lower())
 
 
-def crossref_title(rid: str) -> tuple[str, str]:
+def crossref_title(rid: str, doi: str = "") -> tuple[str, str]:
     for p in RAW:
-        if p.stem.lower() == rid.lower():
+        if p.stem.lower() in (rid.lower(), doi.lower().replace("/", "_")):
             try:
                 msg = json.loads(p.read_text()).get("message", {})
                 return " ".join(msg.get("title", [""])), str(p)
@@ -49,7 +53,7 @@ def main(docx: Path, out: Path) -> pd.DataFrame:
     for i, r in enumerate(refs, 1):
         title_in_ref = r
         rid = next((k for k in db.index if norm(db.loc[k, "title"]) in norm(title_in_ref)), "")
-        cr, src = crossref_title(rid) if rid else ("", "")
+        cr, src = crossref_title(rid, str(db.loc[rid, "doi_or_identifier"])) if rid else ("", "")
         doi = str(db.loc[rid, "doi_or_identifier"]) if rid else ""
         rows.append(
             {

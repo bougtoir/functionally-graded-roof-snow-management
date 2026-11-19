@@ -85,6 +85,7 @@ r1:
 	$(PYTHON) scripts/r1_event_sensitivity.py
 	$(PYTHON) scripts/r1_jma.py
 	$(PYTHON) scripts/r1_jma_summary.py
+	$(PYTHON) scripts/r1_review_analyses.py
 	$(PYTHON) scripts/r1_figures.py
 	$(MAKE) r1-docs PYTHON=$(PYTHON)
 

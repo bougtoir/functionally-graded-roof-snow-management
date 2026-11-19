@@ -1,7 +1,8 @@
 """Marked-up R1 manuscript: clean R1 DOCX with additions red, deletions blue strikethrough.
 
 The clean document is the base, so figures, tables, equations and line numbering match the clean
-version. Paragraphs are aligned with the submitted baseline; closely similar paragraphs receive
+version. The title page (author metadata) is excluded from the comparison.
+Paragraphs are aligned with the submitted baseline; closely similar paragraphs receive
 word-level marks, other changed paragraphs appear as the deleted baseline paragraph followed by
 the new paragraph in red. Baseline tables are reproduced as deleted text before the references.
 """
@@ -64,6 +65,7 @@ def _deleted_before(anchor, text: str, doc):
 def _old_items(path: Path):
     d = Document(path)
     paras = [p.text.strip() for p in d.paragraphs if p.text.strip()]
+    paras = paras[paras.index("Abstract") :] if "Abstract" in paras else paras
     tables = [" | ".join(c.text.strip() for c in row.cells) for tb in d.tables for row in tb.rows]
     return paras, tables
 
@@ -72,6 +74,8 @@ def build(old: Path, new: Path, out: Path) -> dict:
     A, old_tables = _old_items(old)
     doc = Document(new)
     B = [p for p in doc.paragraphs if p.text.strip()]
+    start = next((k for k, p in enumerate(B) if p.text.strip() == "Abstract"), 0)
+    B = B[start:]
     bt = [p.text.strip() for p in B]
     n = {"equal": 0, "word_marked": 0, "replaced": 0, "inserted": 0, "deleted": 0}
     sm = difflib.SequenceMatcher(None, A, bt, autojunk=False)

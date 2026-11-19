@@ -42,7 +42,10 @@ def pct(x, d=1):
 class Refs:
     def __init__(self):
         a = pd.read_csv("references/literature_database.csv")
-        b = pd.read_csv("references/references_r1_additional.csv")
+        b = pd.read_csv(
+            "references/references_r1_additional.csv",
+            dtype={"volume": str, "issue": str, "pages_or_article_number": str},
+        )
         self.db = pd.concat([a, b], ignore_index=True).set_index("record_id")
         self.order: list[str] = []
 
@@ -226,6 +229,7 @@ def build(path: Path) -> dict:
     pop_m, pop_pct = f"{int(pop.group(1)) / 1000:.1f}", pop.group(2)
     uc = v["ucont"]
     wx = v["wx"]
+    wxs = wx.set_index("scenario")
     diag = v["diag"]
     evs = v["evs"]
     hv_last = v["seedhv"][v["seedhv"].generation == v["seedhv"].generation.max()]
@@ -251,24 +255,21 @@ def build(path: Path) -> dict:
     doc.add_heading("Abstract", 1)
     para(
         doc,
-        "Roofs in heavy-snowfall regions either retain snow, which raises structural load and the need for manual "
-        "clearing, or shed it, which creates eave-release hazards. We asked whether spatial grading of slope and "
-        "surface class along a constructable roof creates retention-release trade-offs that uniform roofs cannot provide. "
-        "A reduced-order ridge-to-eave model with Coulomb-adhesion failure, exact threshold-crossing times and work-energy "
-        "runout was forced by three synthetic winters. Release hazard was quantified by a pre-specified physical event "
-        "metric, the largest integrated eave-release mass per event (S_{event,max}), replacing a per-timestep metric that "
-        "halved whenever the timestep halved. Numerical convergence was tested on "
-        f"{int(conv.pairs.iloc[0])} design-winter pairs; every tested timestep met the pre-specified criterion. "
-        "Constructability (segments of at least 3 cells, at most 6 transitions, integer slopes, three discrete surface "
-        "classes) was enforced inside NSGA-II by a feasible encoding, and graded searches were compared with all "
-        f"{len(pd.read_csv(R / 'optimization/uniform_constructable_evaluated.csv'))} constructable uniform roofs. "
-        f"Uniform roofs either shed nearly all snow (maximum retained mass L_{{max}} {f1(lo)} kg m^{{-1}}) or retained all of it "
-        f"({f0(hi)} kg m^{{-1}}). Graded roofs added {int(gj.pairs_in_uniform_gap)} nondominated intermediate combinations "
-        f"(S_{{event,max}} {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}}), found in all {len(seeds)} optimisation runs, but changed "
-        f"normalised hypervolume only from {fs.loc['uniform', 'hv_max_x1.1']:.3f} to {fs.loc['joint', 'hv_max_x1.1']:.3f}. "
-        "Under parameter and forcing uncertainty these intermediate options persisted, but their 95th-percentile releases were an order of magnitude larger than nominal. "
-        "Spatial grading is therefore a configurable means of intermediate retention rather than a general improvement; "
-        "the model is verified numerically but not validated against roof observations.",
+        f"In Japan's heavy-snowfall areas, about {jp.loc[8, 'value']}% of snow-related deaths occur during snow removal, while roofs that shed snow "
+        "create eave-release hazards; roof designs between full retention and full shedding have not been examined under explicit constructability "
+        "limits. We asked whether spatial grading of slope and surface class along a constructable roof creates retention-release trade-offs that "
+        "uniform roofs cannot provide. A reduced-order ridge-to-eave model with Coulomb-adhesion failure, exact threshold-crossing times and "
+        "work-energy runout was forced by three synthetic winters. Release hazard was quantified by a pre-specified physical event metric, the "
+        "largest integrated eave-release mass per event (S_{event,max}), replacing a per-timestep metric that halved whenever the timestep halved; "
+        "every tested timestep met a pre-specified convergence criterion. Constructability rules were enforced inside NSGA-II by a feasible "
+        f"encoding, and graded searches were compared with all {len(pd.read_csv(R / 'optimization/uniform_constructable_evaluated.csv'))} "
+        f"constructable uniform roofs. In the model, uniform roofs either shed nearly all snow (maximum retained mass L_{{max}} up to {f1(lo)} "
+        f"kg m^{{-1}}) or retained all of it ({f0(hi)} kg m^{{-1}}). Graded roofs added {int(gj.pairs_in_uniform_gap)} nondominated intermediate "
+        f"combinations (S_{{event,max}} {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}}), found in all {len(seeds)} optimisation runs, but changed "
+        f"normalised hypervolume only from {fs.loc['uniform', 'hv_max_x1.1']:.3f} to {fs.loc['joint', 'hv_max_x1.1']:.3f}. Under parameter and "
+        "forcing uncertainty these intermediate options persisted, but their 95th-percentile releases were an order of magnitude larger than "
+        "nominal. These model-derived results identify spatial grading as a configurable means of intermediate retention rather than a general "
+        "improvement; the model is verified numerically but not validated against roof observations.",
     )
     doc.add_paragraph(
         "Keywords: roof snow; snow shedding; snow retention; heavy-snowfall areas; constructability; multiobjective optimisation; reduced-order model"
@@ -292,7 +293,10 @@ def build(path: Path) -> dict:
         "coefficient for roofs that shed snow, withholds this reduction where snow guards prevent sliding, requires consideration of uneven "
         "snow, and permits a reduced design depth only where roof clearing is customary and its conditions are posted. Retention, shedding, "
         f"melting and load-resisting roofs are thus design choices described in regional technical guidance {c('JP02', 'JP03')} and historical "
-        f"practice {c('JP01', 'JP10')}, not in binding rules. The model in this paper does not compute code snow loads and makes no compliance claim.",
+        f"practice {c('JP01', 'JP10')}, not in binding rules. Regional guidance for detached houses distinguishes shedding, retention (load-resisting) "
+        "and melting approaches and identifies the burdens that the two objectives of this study represent: retained load and clearing work on "
+        f"retaining roofs, and falling snow and the clear area it requires below shedding roofs {c('JP02', 'JP03', 'JP09')}. The model in this paper "
+        "does not compute code snow loads and makes no compliance claim.",
     )
     para(
         doc,
@@ -300,13 +304,45 @@ def build(path: Path) -> dict:
         f"and on load monitoring {c('CRST11')}. Sliding depends on surface roughness, water content, ageing and adhesion {c('JP05', 'JP06', 'CRST12')}, "
         f"snow guards change retention {c('JP04')}, and melting systems trade energy for clearance {c('JP07', 'CRST10')}; sliding models for inclined "
         f"photovoltaic panels show the sensitivity of release to interface parameters {c('CRST07')}. Municipal guidance highlights the hazard of "
-        f"falling roof snow and ice {c('JP09')}. Whether varying slope and surface along a single roof can place it between the retention and "
-        "shedding extremes has not, to our knowledge, been examined under explicit constructability limits.",
+        f"falling roof snow and ice {c('JP09')}.",
     )
     para(
         doc,
-        "The question tested here was whether spatial grading produces physically interpretable, numerically stable, robust and constructable "
-        "retention-release trade-offs that uniform roofs cannot provide. A negative or limited answer was admissible. Compared with the originally "
+        "Roof-snow stability, that is, whether and when snow on a roof surface fails and slides, precedes and differs from the mechanisms "
+        "addressed by structural-failure and impact-hazard studies. Analyses of roof rock-beam failure at mine roadway intersections concern the "
+        f"collapse of the load-bearing structure itself {c('WANG26')}, and coupled rockfall-bridge assessments concern the trajectory and impact "
+        f"damage of a mass already in motion {c('ZHANG26')}. The present study addresses only the onset and size of releases from the roof surface; "
+        "the structural capacity of the roof and impact damage below the eave would require structural and trajectory models of the kind used in "
+        "those studies and are not evaluated.",
+    )
+    para(
+        doc,
+        "We use the term functionally graded roof, borrowed from materials whose properties vary with position, for a roof whose slope or surface "
+        "properties vary deliberately from ridge to eave. Practical realisations are piecewise: multi-pitch or curved profiles assembled from "
+        "segments of constant pitch, and zones of different roofing finish, for example smooth coated steel that promotes sliding and rough or aged "
+        f"finishes or snow-stop elements that promote retention {c('JP04', 'JP05', 'JP06')}. Such roofs are passive: unlike roof heating and "
+        f"snow-melting systems, which clear snow at a continuing energy and operating cost {c('JP07', 'CRST10')}, they need no energy in operation. "
+        "Whether varying slope and surface along a single roof can place it between the retention and shedding extremes has not, to our knowledge, "
+        "been examined under explicit constructability limits.",
+    )
+    para(
+        doc,
+        "Physics-resolving methods address other parts of the problem. Computational fluid dynamics and wind-tunnel studies predict where wind "
+        f"deposits snow {c('CRST04', 'CRST09')}, and energy-balance melt models predict melt and refreezing; neither is designed to decide, tens of "
+        "thousands of times within an optimisation, whether a snow layer on a sloping surface fails by sliding. To first order, release onset on a "
+        "sloping roof is governed by the balance between the downslope weight of the snow and interface resistance from friction and adhesion "
+        f"{c('JP05', 'JP06', 'CRST12')}, which a threshold model represents at a cost that permits a constrained design search. The price is that "
+        "results are comparative and model-derived, and omitted processes limit their transfer to real roofs (Section 4.2).",
+    )
+    para(
+        doc,
+        "The question tested here was whether spatial grading of slope and surface, restricted to roofs that can be built from a small number of "
+        "segments and standard finishes, produces physically interpretable, numerically stable and robust retention-release trade-offs that uniform "
+        "roofs cannot provide (workflow in Fig. 1c). Constructability is part of the question because a graded profile that cannot be built is not "
+        "a design option. In the model, retention or shedding of each part of the roof is decided by the local balance between the downslope weight "
+        "of the snow and interface resistance; grading changes this balance along the roof so that snow released upslope can stop on a retaining "
+        "segment. Wind redistribution, phase changes and snow heterogeneity also control real releases, but they were held fixed or omitted so that "
+        "the effect of the designed variables could be isolated. A negative or limited answer was admissible. Compared with the originally "
         "submitted analysis, the release metric, the transport scheme, the treatment of constructability and the number of optimisation seeds were "
         "revised; all changes are listed in Section 2.8 and the original outputs are retained.",
     )
@@ -314,12 +350,68 @@ def build(path: Path) -> dict:
     doc.add_heading("2. Methods", 1)
     doc.add_heading("2.1 Reduced-order roof-snow model", 2)
     rf = cfg["roof"]
+    phys = cfg["snow"]
     para(
         doc,
         f"A {rf['length_m']:.0f} m ridge-to-eave strip of unit width was divided into {rf['cells']} cells, each with slope, static and kinetic "
-        "friction and adhesion. Snowfall was added as mass, compacted with age, melted by a degree-hour factor plus a rain-heat term, and "
-        "assigned a dynamic friction that increased with age and decreased near melting (parameters in Supplementary Table S1). "
-        "A cell with mass m per unit area failed when gravity exceeded the Coulomb-adhesion resistance:",
+        "friction and adhesion. The cells are fixed parts of the roof; only the snow they carry moves. Each cell i holds snow mass m_{i} per unit "
+        "plan area, a snow volume and an age moment, the mass-weighted sum of time since deposition, from which the mean snow age a_{i} follows. "
+        "Between releases, mass changes by snowfall P and melt M_{i}:",
+    )
+    M.add_equation(
+        doc.add_paragraph(),
+        M.frac(["d", M.sub("m", "i")], "d t"),
+        " = P − ",
+        M.sub("M", "i"),
+        ",    ",
+        M.sub("M", "i"),
+        " = ",
+        M.sub("f", "m"),
+        " ",
+        M.func("max", "(T, 0)"),
+        " + ",
+        M.sub("f", "r"),
+        " R",
+        number="1",
+    )
+    para(
+        doc,
+        f"where T is air temperature, R the rain rate, f_{{m}} = {phys['melt_factor_kg_m2_c_h']} kg m^{{-2}} °C^{{-1}} h^{{-1}} a degree-hour melt "
+        f"factor and f_{{r}} = {phys['rain_heat_factor_kg_m2_mm']} kg m^{{-2}} mm^{{-1}} a rain-heat factor. Melt removes mass, volume and age moment "
+        f"in proportion. Fresh snow enters at {phys['initial_density_kg_m3']:.0f} kg m^{{-3}} and compacts towards ρ_{{max}} = "
+        f"{phys['maximum_density_kg_m3']:.0f} kg m^{{-3}},",
+    )
+    M.add_equation(
+        doc.add_paragraph(),
+        M.frac("dρ", "d t"),
+        " = ",
+        M.sub("k", "c"),
+        " (",
+        M.sub("ρ", "max"),
+        " − ρ)",
+        number="2",
+    )
+    para(
+        doc,
+        f"with k_{{c}} = {phys['compaction_rate_per_day']} d^{{-1}}; compaction changes snow depth but not mass, and density does not enter the "
+        "failure criterion below. Static and kinetic friction coefficients increase with snow age and decrease near melting:",
+    )
+    M.add_equation(
+        doc.add_paragraph(),
+        "μ = ",
+        M.sub("μ", "0"),
+        " [1 + α (1 − ",
+        M.func("exp", ["(−", M.frac("a", M.sub("τ", "a")), ")"]),
+        ")] [1 − β ",
+        M.func("exp", ["(−", M.sup(["(", M.frac(["T − ", M.sub("T", "c")], "w"), ")"], "2"), ")"]),
+        "]",
+        number="3",
+    )
+    para(
+        doc,
+        f"where μ_{{0}} is the surface-class value, α = {phys['friction_age_gain']}, τ_{{a}} = {phys['dynamic_friction_age_scale_days']:g} d, "
+        f"β = {phys['near_melt_friction_loss']}, T_{{c}} = {phys['near_melt_center_c']} °C and w = {phys['near_melt_width_c']} °C. A cell with "
+        "mass m per unit area failed when the downslope weight exceeded the Coulomb-adhesion resistance:",
     )
     M.add_equation(
         doc.add_paragraph(),
@@ -330,7 +422,7 @@ def build(path: Path) -> dict:
         " m g ",
         M.func("cos", "θ"),
         " + c",
-        number="1",
+        number="4",
     )
     para(
         doc,
@@ -350,13 +442,22 @@ def build(path: Path) -> dict:
         " ",
         M.func("cos", M.sub("θ", "j")),
         ")",
-        number="2",
+        number="5",
     )
     para(
         doc,
         "and it stops where the speed reaches zero or leaves at the eave. Mass resting in cells it crosses that are themselves at or above threshold is "
         "entrained inelastically. Cells that cannot hold any snow (sin θ > μ_{s} cos θ and c = 0) route incoming snowfall continuously to the eave or "
         "to the first retaining cell. Mass balance (input = eave release + melt + residual) was checked in every run.",
+    )
+    para(
+        doc,
+        "The friction and adhesion values of the three surface classes and the ageing and near-melt coefficients were not calibrated against "
+        "roof measurements. They were set to span low, intermediate and high interface resistance, consistent in ordering with roofing-surface "
+        f"and adhesion studies {c('JP05', 'JP06', 'CRST12')} (values and provenance in Supplementary Table S1), and their influence was quantified "
+        "by the uncertainty analysis (Section 2.7). The model represents only retention and release because these are what the designed "
+        "variables control directly. Uneven snow distribution by wind, liquid-water retention in the snowpack and the structural response of the "
+        "roof are not modelled; their consequences are discussed in Section 4.2.",
     )
     doc.add_heading("2.2 Outcomes", 2)
     para(
@@ -376,7 +477,7 @@ def build(path: Path) -> dict:
         M.nary("∑", "i∈e", "", M.sub("m", "i")),
         " + ",
         M.nary("∫", M.sub("t", "e,0"), M.sub("t", "e,1"), "q(t) dt"),
-        number="3",
+        number="6",
     )
     para(
         doc,
@@ -392,18 +493,28 @@ def build(path: Path) -> dict:
         "snowfall pulses, linear warming with a diurnal cycle, and terminal rain-on-snow. Step totals are exact integrals, so every timestep sees "
         f"the same storm (water-equivalent snowfall {f0(wx.snowfall_we_kg_m2.min())}-{f0(wx.snowfall_we_kg_m2.max())} kg m^{{-2}}; Fig. 2). "
         f"Observed JMA daily records for {jma.station_winter.str.split('_').str[0].nunique()} stations and {sw} station-winters {c('JPR06')} were used only "
-        "as supplementary scenarios, spreading daily totals uniformly over 24 h. These ground observations are not roof-snow validation data.",
+        "as supplementary scenarios, spreading daily totals uniformly over 24 h. These ground observations are not roof-snow validation data, "
+        "and the synthetic winters are stylised and were not fitted to any station record. "
+        f"The cold persistent and maritime warming winters have similar snowfall ({f0(wxs.loc['cold_persistent', 'snowfall_we_kg_m2'])} and "
+        f"{f0(wxs.loc['maritime_warming', 'snowfall_we_kg_m2'])} kg m^{{-2}}) but differ in mean temperature "
+        f"({wxs.loc['cold_persistent', 't_mean_c']:.1f} and {wxs.loc['maritime_warming', 't_mean_c']:.1f} °C) and rain "
+        f"({wxs.loc['cold_persistent', 'rain_mm']:.0f} and {wxs.loc['maritime_warming', 'rain_mm']:.0f} mm); the severe inland winter has "
+        f"{f0(wxs.loc['severe_inland', 'snowfall_we_kg_m2'])} kg m^{{-2}} with air temperature never above {wxs.loc['severe_inland', 't_max_c']:.1f} °C "
+        "(Fig. 2a-c). Daily mean temperature and precipitation of the JMA station-winters are shown in Fig. 2d-f.",
     )
     doc.add_heading("2.4 Numerical verification", 2)
     para(
         doc,
         "Before optimisation, all constructable uniform roofs and 60 random constructable graded roofs were simulated at dt = 1, 0.5, 0.25, 0.125 "
-        "and 0.0625 h (reference) with 24 cells, and at 48 and 96 cells. A timestep was acceptable if at least 95% of pairs agreed with the "
+        "and 0.0625 h (reference) with 24 cells, and at 48 and 96 cells "
+        f"({int(conv.pairs.max())} unique design-winter pairs). A timestep was acceptable if at least 95% of pairs agreed with the "
         "reference within max(2%, 1 kg m^{-1}) for L_{max}, S_{event,max}, S_{1h,max} and total release, at least 90% had event counts within one, "
         "and mass-balance error was below 10^{-6} kg m^{-1}; the coarsest acceptable step was used. All final nondominated designs were then "
         "re-evaluated at 0.0625 h and at 48 cells.",
     )
     doc.add_heading("2.5 Constructable optimisation", 2)
+    bud = pd.read_csv(R / "review/search_budgets.csv").set_index("search")
+    MODES_ = ["geometry", "surface", "joint"]
     para(
         doc,
         "Candidates were decoded from a unit hypercube into piecewise-constant segments that satisfy every rule by construction: segments of at "
@@ -411,7 +522,19 @@ def build(path: Path) -> dict:
         f"adjacent slope changes of at most {rf['adjacent_slope_limit_deg']} degrees, and one of three surface classes (smooth metal, aged coated metal, "
         "rough retention surface). Geometry-only (single class), surface-only (single slope) and joint searches each used NSGA-II with population "
         f"{cfg['optimizer']['population']}, {cfg['optimizer']['generations']} generations and {diag.seed.nunique()} seeds. The uniform reference was the exhaustive "
-        "set of constructable uniform roofs; a 6,300-design continuous uniform grid was evaluated as a sensitivity.",
+        f"set of constructable uniform roofs; a continuous uniform grid of {len(uc):,} designs (slope {rf['slope_bounds_deg'][0]}-{rf['slope_bounds_deg'][1]} "
+        f"degrees, static friction {cfg['surface']['static_friction_bounds'][0]}-{cfg['surface']['static_friction_bounds'][1]}, adhesion "
+        f"{cfg['surface']['adhesion_bounds_pa'][0]:.0f}-{cfg['surface']['adhesion_bounds_pa'][1]:.0f} Pa) was evaluated as a sensitivity. The class values "
+        "(μ_{s}, μ_{k}, c) were "
+        + "; ".join(
+            f"{k.replace('_', ' ')} ({x['mu_static']}, {x['mu_kinetic']}, {x['adhesion_pa']:.0f} Pa)"
+            for k, x in cfg["surface"]["discrete_classes"].items()
+        )
+        + f". Each run evaluated {cfg['optimizer']['population'] * cfg['optimizer']['generations']:,} candidates; the {len(diag)} graded runs together "
+        f"evaluated {int(bud.loc[MODES_, 'objective_evaluations'].sum()):,} objective vectors ({int(bud.loc[MODES_, 'unique_designs_simulated'].sum()):,} "
+        f"distinct designs) in {bud.loc[MODES_, 'runtime_s_total'].sum() / 60:.0f} min on two cores ({bud.loc[MODES_, 'runtime_s_per_seed_median'].min():.0f}-"
+        f"{bud.loc[MODES_, 'runtime_s_per_seed_median'].max():.0f} s per run), against {int(bud.loc['uniform_exhaustive', 'objective_evaluations'])} exhaustive "
+        "uniform evaluations. The comparison is therefore asymmetric: the uniform set is complete, whereas graded fronts are heuristic approximations.",
     )
     doc.add_heading("2.6 Frontier comparison", 2)
     para(
@@ -419,7 +542,12 @@ def build(path: Path) -> dict:
         "Fronts were compared by normalised hypervolume (reference point 1.1 times the largest observed objectives, with 1.05 and 1.5 as "
         "sensitivities), additive epsilon in both directions, matched-objective improvement, unique objective pairs, per-seed variability and "
         "hypervolume after 15, 30 and 45 generations. The number of graded pairs lying inside the L_{max} gap of the uniform front is reported "
-        "as a descriptive summary defined after the fronts were inspected.",
+        "as a descriptive summary defined after the fronts were inspected. A segment is a run of adjacent cells with equal slope and surface "
+        "class, and a transition is a change between segments. Normalised hypervolume is the fraction of the box between the origin and the "
+        "reference point that a front dominates after each objective is divided by its reference value (larger is better). Additive epsilon is "
+        "the smallest amount that must be subtracted from every objective of one front for it to weakly dominate the other; normalised epsilon "
+        "divides this amount by the reference values. Matched-objective improvement is the relative improvement in one objective at a matched "
+        "value of the other, with respect to the uniform front.",
     )
     doc.add_heading("2.7 Robustness and event-definition sensitivity", 2)
     rb = cfg["robustness"]
@@ -429,14 +557,20 @@ def build(path: Path) -> dict:
         f"Every nondominated design was simulated under {rb['samples']} common random draws (seed {rb['seed']}) of lognormal multipliers on friction "
         f"(CV {cv['friction']}), adhesion ({cv['adhesion']}), fresh-snow density ({cv['fresh_snow_density']}) and snowfall ({cv['snowfall']}), and a normal "
         f"temperature offset (SD {cv['temperature_sd_c']} degrees C); the {int(100 * rb['robust_quantile'])}th percentiles (Q95), computed separately for each objective and therefore not a joint design point, are reported. The event definition was "
-        "varied (separation 10 min and 3 h; activity threshold 0.1 and 10 kg m^{-1} h^{-1}) and entrainment was switched off.",
+        "varied (separation 10 min and 3 h; activity threshold 0.1 and 10 kg m^{-1} h^{-1}) and entrainment was switched off. To identify what "
+        "drives robustness losses, Spearman rank correlations between each uncertainty factor and each outcome were computed for every design, "
+        "and draws in which an intermediate design released more than ten times its nominal S_{event,max} were compared with the remaining "
+        "draws. Finally, the constructable uniform set and all nondominated designs were re-evaluated, without re-optimisation, on roofs 4 m "
+        "and 12 m long with 24 cells.",
     )
     doc.add_heading("2.8 Changes from the submitted analysis and reproducibility", 2)
     para(
         doc,
         "The submitted analysis moved snow one cell per step and defined events per timestep, so its release endpoint depended on dt; it also "
         "applied constructability only after optimisation. The revision replaced transport, the release metric and the constraint handling, "
-        "increased seeds from three to five, and selected dt by the rule above. Code, configuration, raw public-data snapshots with checksums, "
+        "increased seeds from three to five, and selected dt by the rule above. The decision-scoring layer of the submitted version (labour-scarcity, "
+        "complexity-penalty and transition-penalty selections and the scalar robustness score) was removed, because hard constraints and whole-front "
+        "comparisons replace it. Code, configuration, raw public-data snapshots with checksums, "
         "and every table and figure source are in the project repository; the submitted state is preserved under a fixed tag.",
     )
 
@@ -467,6 +601,14 @@ def build(path: Path) -> dict:
         "steep smooth roofs shed frequently, and closely spaced small releases merge into long events. The next uniform option was full retention "
         f"(L_{{max}} {f0(hi)} kg m^{{-1}}, no release). No constructable uniform roof lay between these regimes. The continuous uniform grid, which allows "
         f"non-catalogue friction and adhesion, also had no design between {f1(uc[uc[O[0]] > 0][uc[uc[O[0]] > 0][O[1]] < uc[uc[O[0]] > 0][O[0]] + 1e-6][O[0]].min())} and {f0(uc[O[0]].max())} kg m^{{-1}} on its front.",
+    )
+    ut = pd.read_csv(R / "review/uniform_threshold_check.csv")
+    para(
+        doc,
+        f"For {int(ut.release_equals_retained.sum())} of the {len(ut)} shedding uniform roofs, the largest event equalled the retained maximum "
+        "(L_{max} = S_{event,max}): the whole roof reached its failure threshold and released at once, so the objective pair is set by the "
+        "threshold load c/[g(sin θ − μ_{s} cos θ)] rather than by the design search. The remaining shedding roofs released in parts or as "
+        "continuous streams. The single uniform objective pair that dominated the submitted analysis was of the first kind.",
     )
     doc.add_heading("3.3 Graded fronts", 2)
     para(
@@ -523,6 +665,29 @@ def build(path: Path) -> dict:
         f"{f0(qf.l_q.min())} and {f0(qf.l_q.max())} kg m^{{-1}} with Q95 S_{{event,max}} of {f0(qf.s_q.min())}-{f0(qf.s_q.max())} kg m^{{-1}}, below every uniform shedding roof. "
         f"Mass-balance error remained below {rcs.max_mass_balance_error.max():.0e} kg m^{{-1}}.",
     )
+    frc = pd.read_csv(R / "review/factor_rank_correlation_summary.csv").set_index(
+        ["class", "objective", "factor"]
+    )
+    jd = pd.read_csv(R / "review/release_jump_drivers.csv").set_index("factor")
+
+    def rho(k, o, f):
+        return frc.loc[(k, f"{o}_kg_per_m", f"{f}_factor"), "median_rho"]
+
+    dens = frc.xs("density_factor", level="factor").median_rho.abs().max()
+    para(
+        doc,
+        f"Releases larger than ten times nominal occurred in {pct(jd.jump_fraction.iloc[0], 0)} of draws for the intermediate designs. In those "
+        f"draws the median friction multiplier was {jd.loc['friction_factor', 'jump_median']:.2f} (other draws "
+        f"{jd.loc['friction_factor', 'no_jump_median']:.2f}), the adhesion multiplier {jd.loc['adhesion_factor', 'jump_median']:.2f} "
+        f"({jd.loc['adhesion_factor', 'no_jump_median']:.2f}), the snowfall multiplier {jd.loc['snowfall_factor', 'jump_median']:.2f} "
+        f"({jd.loc['snowfall_factor', 'no_jump_median']:.2f}) and the temperature offset {jd.loc['temperature_offset_c', 'jump_median']:+.2f} °C "
+        f"({jd.loc['temperature_offset_c', 'no_jump_median']:+.2f} °C): weaker interfaces and heavier snowfall let the retaining segment fail and "
+        "release its accumulated load in one event. Across intermediate designs, S_{event,max} correlated most with snowfall (median Spearman "
+        f"ρ = {rho('graded_intermediate', 's_event_max', 'snowfall'):.2f}) and adhesion ({rho('graded_intermediate', 's_event_max', 'adhesion'):.2f}), "
+        f"and less with friction ({rho('graded_intermediate', 's_event_max', 'friction'):.2f}). For uniform shedding roofs, L_{{max}} was controlled "
+        f"almost entirely by adhesion (ρ = {rho('uniform_shedding', 'l_max', 'adhesion'):.2f}), as expected from the threshold load. Fresh-snow "
+        f"density had no material influence (|ρ| ≤ {dens:.2f}) because it changes snow depth but not the failure criterion.",
+    )
     doc.add_heading("3.7 JMA station-winter scenarios", 2)
     js = pd.read_csv(R / "jma/jma_station_summary.csv")
     para(
@@ -533,6 +698,18 @@ def build(path: Path) -> dict:
         f"a shedding roof with L_{{max}} of {f1(js.uniform_gap_lo.min())}-{f1(js.uniform_gap_lo.max())} kg m^{{-1}}, or full retention. In every station-winter, {int(js.graded_pairs_in_gap.min())}-"
         f"{int(js.graded_pairs_in_gap.max())} graded pairs lay between these options, with S_{{event,max}} of {f1(js.gap_s_event_min.min())}-{f1(js.gap_s_event_max.max())} kg m^{{-1}}. "
         "These scenario results extend the comparison to longer, observed forcing but do not validate roof behaviour.",
+    )
+
+    doc.add_heading("3.8 Roof length", 2)
+    rl = pd.read_csv(R / "review/roof_length_sensitivity.csv").set_index("roof_length_m")
+    para(
+        doc,
+        "Re-evaluating the same designs on shorter and longer roofs scaled the masses approximately with roof length but did not remove the "
+        f"uniform gap or the graded pairs inside it: the gap spanned {f1(rl.loc[4.0, 'uniform_gap_lo'])}-{f0(rl.loc[4.0, 'uniform_gap_hi'])} kg m^{{-1}} "
+        f"at 4 m and {f1(rl.loc[12.0, 'uniform_gap_lo'])}-{f0(rl.loc[12.0, 'uniform_gap_hi'])} kg m^{{-1}} at 12 m and contained "
+        f"{int(rl.loc[4.0, 'graded_pairs_in_gap'])} and {int(rl.loc[12.0, 'graded_pairs_in_gap'])} graded pairs (8 m: "
+        f"{int(rl.loc[8.0, 'graded_pairs_in_gap'])}), with S_{{event,max}} of {f1(rl.loc[4.0, 'gap_s_event_min'])}-{f1(rl.loc[4.0, 'gap_s_event_max'])} "
+        f"and {f1(rl.loc[12.0, 'gap_s_event_min'])}-{f1(rl.loc[12.0, 'gap_s_event_max'])} kg m^{{-1}}. Designs were not re-optimised for these lengths.",
     )
 
     doc.add_heading("4. Discussion", 1)
@@ -549,6 +726,22 @@ def build(path: Path) -> dict:
     )
     para(
         doc,
+        "Whether the intermediate pairs are physical or artefacts can be judged from three results. They persisted when the timestep was reduced "
+        "to 0.0625 h, the number of cells was doubled and the roof length was changed (Sections 3.4 and 3.8), so they are not artefacts of "
+        "discretisation. They arise from an identifiable mechanism that follows from the failure criterion, a retaining segment that stops snow "
+        "released upslope. Their small nominal releases, however, depend on that segment holding close to its threshold and did not survive "
+        "uncertainty (Section 3.6). Within the model's assumptions the intermediate states are therefore physical, but their release magnitudes "
+        "are model-derived and threshold-sensitive.",
+    )
+    para(
+        doc,
+        "The approach complements rather than competes with CFD and melt models. CFD and wind-tunnel methods predict deposition and drift, and "
+        "energy-balance models predict melt, liquid water and refreezing; neither is practical for the "
+        f"{int(bud.objective_evaluations.sum()):,} design evaluations performed here. A combined workflow would use such models, or measurements, "
+        "to generate roof-level snow input and melt, and a calibrated release model of the present kind to screen constructable configurations.",
+    )
+    para(
+        doc,
         "The revised metric changes the interpretation of shedding roofs. Steep smooth roofs release often, and when releases are closely spaced they form "
         "long continuous events with large integrated mass; per-step metrics hid this by dividing each release among timesteps. Whether a series of "
         "small releases is less hazardous than one large release depends on occupancy below the eave, and the fixed-window metrics are supplied for "
@@ -560,18 +753,36 @@ def build(path: Path) -> dict:
         f"86 withholds the slope reduction where sliding is prevented {c('JPR03')}. A graded roof that retains most snow should therefore be "
         "designed as a retention roof structurally, while its potential benefit is fewer clearing operations and smaller, more predictable eave releases.",
     )
-    doc.add_heading("4.1 Limitations", 2)
+    doc.add_heading("4.1 Implications for design practice and guidance", 2)
+    para(
+        doc,
+        "Graded roofs could be built from conventional components: pitch changes as multi-pitch or curved rafters, and surface zones as different "
+        "roofing finishes or retention elements. Constructability matters in two ways. Limits on segment length and transitions remove fine "
+        "profiles that a continuous search would otherwise exploit, and each change of pitch or finish adds detailing, waterproofing and "
+        "maintenance demands that the present rules represent only as counts. For guidance documents, the results point to foundational items "
+        "rather than design rules: roof-snow treatment could be described by zones along the roof rather than by a single roof type; standard "
+        "tests reporting static and kinetic friction and adhesion of roofing products across temperature and wetness would allow release "
+        "thresholds to be estimated; and any roof whose segments retain snow should be treated as a retention roof in structural design, with "
+        "the clear area below shedding zones specified. These are research needs for codes, not recommendations for current design.",
+    )
+    doc.add_heading("4.2 Limitations", 2)
     para(
         doc,
         "The model has not been calibrated or validated against roof-scale release measurements; friction, adhesion, ageing and near-melt laws are "
         "assumptions informed only qualitatively by interface studies. Slabs are rigid blocks; fracture, cornices, creep and glide, eave overhang, "
         "wind redistribution and three-dimensional flow are omitted. Meltwater and rain leave the roof immediately: liquid-water retention, refreezing, "
         "ice dams, runoff routing, drainage capacity and hydrologically triggered wet-snow releases are not represented, so rain-on-snow effects are "
-        "limited to a melt-energy term and a near-melt friction reduction. Synthetic winters are stylised, and daily JMA data cannot resolve "
-        "sub-daily timing. The release magnitude attributed to shedding roofs depends on the event-separation time (Table 3), so comparisons of S_{event,max} "
-        "are conditional on the pre-specified 1 h definition. Optimisation is heuristic and limited to a 2D strip with three surface classes.",
+        "limited to a melt-energy term and a near-melt friction reduction. Multi-scenario hydrological-triggering frameworks, such as that "
+        f"developed for debris flows in small basins {c('LIU26')}, show how rainfall and meltwater scenarios can be coupled to failure analysis; a "
+        "roof analogue would require liquid-water retention, drainage and wet-snow strength models and would be needed before application to "
+        "climates dominated by rain-on-snow. Synthetic winters are stylised, and the JMA records are ground observations at stations, not "
+        "roof-level climate; daily JMA data also cannot resolve sub-daily timing. The release magnitude attributed to shedding roofs depends on the event-separation time (Table 3), so comparisons of S_{event,max} "
+        "are conditional on the pre-specified 1 h definition. Optimisation is heuristic and limited to a 2D strip with three surface classes. "
+        "The uniform reference is exhaustive, whereas graded fronts are heuristic approximations from a fixed budget and may be incomplete; this "
+        "asymmetry biases the comparison against grading rather than in its favour. Roof length was varied only between 4 and 12 m by "
+        "re-evaluation, and other sizes, widths and roof shapes were not tested.",
     )
-    doc.add_heading("4.2 Future validation", 2)
+    doc.add_heading("4.3 Future validation", 2)
     para(
         doc,
         "Product-specific inclined-plane friction and adhesion tests across temperature and liquid-water content, instrumented roof panels with load "
@@ -581,10 +792,16 @@ def build(path: Path) -> dict:
     doc.add_heading("5. Conclusions", 1)
     para(
         doc,
-        "With a timestep-independent event metric and constructability enforced inside the search, constructable uniform roofs either shed nearly all "
-        "snow or retained all of it. Spatially graded roofs reproducibly filled this gap with intermediate retention-release combinations, which persisted "
-        "under uncertainty with substantially larger releases, but did not materially improve the overall frontier. Spatial grading is best viewed as a configurable retention strategy whose physical benefit remains to "
-        "be demonstrated experimentally.",
+        "With a timestep-independent event metric and constructability enforced inside the search, constructable uniform roofs in this model "
+        "either shed nearly all snow or retained all of it. Spatially graded roofs reproducibly filled this gap with intermediate "
+        "retention-release combinations that survived numerical refinement and persisted under uncertainty, although with substantially larger "
+        "releases, and they did not materially improve the overall frontier. The timestep sensitivity of the submitted version arose mainly from "
+        "the per-step release metric and largely disappeared with the event metric; the loss of intermediate trade-offs after post hoc mapping "
+        "arose from applying constructability after a continuous search and did not occur when the rules were enforced during the search. For "
+        "passive snow management, grading offers a design option that needs no operating energy: a roof can be configured to hold most of its "
+        "snow while limiting eave releases, but the size of those releases depends on interface properties that must be measured. Unlike CFD or "
+        "melt models, the approach does not predict deposition or meltwater processes; its role is to screen constructable configurations for "
+        "experimental testing, which remains necessary before any design recommendation.",
     )
 
     doc.add_heading("Declarations", 1)
@@ -695,8 +912,8 @@ def build(path: Path) -> dict:
 
     doc.add_heading("Figure captions", 1)
     caps = [
-        "Figure 1. (a) Example constructable graded profile coloured by surface class. (b) Eave outflow per 1-h step in the maritime warming winter with physical events shaded.",
-        "Figure 2. Synthetic forcing: snowfall rate and air temperature for the three winters.",
+        "Figure 1. (a) Example constructable graded profile coloured by surface class. (b) Eave outflow per 1-h step in the maritime warming winter with physical events shaded. (c) Research workflow.",
+        "Figure 2. Weather forcing. Synthetic winters: (a) snowfall rate, (b) air temperature and (c) rain rate. JMA station-winters (scenario forcing only): (d) daily mean air temperature, (e) daily precipitation and (f) cumulative precipitation from 1 November.",
         "Figure 3. (a) Median ratio of release endpoints to the dt = 0.0625 h reference. (b) Fraction of design-winter pairs within the pre-specified tolerance; dashed line is the 95% criterion.",
         "Figure 4. Constructable Pareto fronts for uniform, geometry-only, surface-only and joint sets: (a) full range, (b) intermediate region between the uniform shedding and retention regimes.",
         "Figure 5. Slope profiles of representative intermediate graded designs; bar colours denote surface class.",

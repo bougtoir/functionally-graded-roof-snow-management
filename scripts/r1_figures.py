@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import yaml  # noqa: E402
+from matplotlib.patches import FancyBboxPatch  # noqa: E402
 
 from graded_roof.forcing_v2 import continuous_synthetic_weather  # noqa: E402
 from graded_roof.optimization_v2 import (  # noqa: E402
@@ -66,6 +67,44 @@ def parse(key):
     return p(key)
 
 
+FLOW = [
+    ("Forcing", "3 synthetic winters\nJMA station-winters\n(scenarios only)"),
+    ("Roof model", "Coulomb-adhesion\nfailure and runout\nevent metric\n$S_{event,max}$"),
+    ("Verification", "dt 1 to 0.0625 h\n24, 48, 96 cells\nmass balance"),
+    ("Constructable\nsearch", "uniform: exhaustive\ngraded: NSGA-II\n3 modes x 5 seeds"),
+    ("Front\ncomparison", "hypervolume\nepsilon\nmatched gains\nuniform gap"),
+    ("Reliability\nchecks", "fine re-check\nrobustness\nevent and roof-length\nsensitivity"),
+]
+
+
+def flow(ax):
+    ax.set_axis_off()
+    ax.set_xlim(0, len(FLOW))
+    ax.set_ylim(0, 1)
+    for k, (head, body) in enumerate(FLOW):
+        ax.add_patch(
+            FancyBboxPatch(
+                (k + 0.04, 0.04),
+                0.84,
+                0.88,
+                boxstyle="round,pad=0.02",
+                fc="#f2f2f2",
+                ec="0.3",
+                lw=0.6,
+            )
+        )
+        ax.text(k + 0.46, 0.78, head, ha="center", va="center", fontsize=6, weight="bold")
+        ax.text(k + 0.46, 0.34, body, ha="center", va="center", fontsize=5)
+        if k < len(FLOW) - 1:
+            ax.annotate(
+                "",
+                xy=(k + 1.04, 0.47),
+                xytext=(k + 0.91, 0.47),
+                arrowprops={"arrowstyle": "->", "lw": 0.8},
+            )
+    ax.set_title("(c) Research workflow")
+
+
 def fig1(cfg):
     c = constructability_from_config(cfg)
     key = pd.read_csv(R / "pareto/front_combined.csv").query(
@@ -79,7 +118,10 @@ def fig1(cfg):
         dt_hours=1.0,
     )
     r = simulate_v2(d, w, simulation_config(cfg), EventSpec())
-    fig, ax = plt.subplots(1, 2, figsize=(7.2, 2.6), gridspec_kw={"width_ratios": [1, 1.4]})
+    fig = plt.figure(figsize=(7.2, 4.6))
+    gs = fig.add_gridspec(2, 2, width_ratios=[1, 1.4], height_ratios=[1, 0.75], hspace=0.55)
+    ax = [fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[1, :])]
+    flow(ax[2])
     x = np.linspace(0, c.length_m, c.cells + 1)
     z = np.concatenate([[0], np.cumsum(-np.tan(np.deg2rad(d.slope_deg)) * np.diff(x))])
     klass = [int(s.split("d")[1]) for s in key.split(";") for _ in range(int(s.split("x")[0]))]
@@ -110,29 +152,63 @@ def fig1(cfg):
 
 def fig2(cfg):
     rows = []
-    fig, ax = plt.subplots(2, 1, figsize=(7.2, 3.6), sharex=True)
-    for s in cfg["synthetic_weather"]["scenarios"]:
+    fig, ax = plt.subplots(3, 2, figsize=(7.2, 5.6), sharex="col")
+    for sc in cfg["synthetic_weather"]["scenarios"]:
         w = continuous_synthetic_weather(
-            s, duration_h=cfg["synthetic_weather"]["duration_h"], dt_hours=1.0
+            sc, duration_h=cfg["synthetic_weather"]["duration_h"], dt_hours=1.0
         )
         t = np.arange(len(w.temperature_c))
-        ax[0].plot(t, w.snowfall_kg_m2, lw=0.8, label=s["name"].replace("_", " "))
-        ax[1].plot(t, w.temperature_c, lw=0.8)
+        ax[0, 0].plot(t, w.snowfall_kg_m2, lw=0.8, label=sc["name"].replace("_", " "))
+        ax[1, 0].plot(t, w.temperature_c, lw=0.8)
+        ax[2, 0].plot(t, w.rain_mm, lw=0.8)
         rows.append(
             pd.DataFrame(
                 {
-                    "scenario": s["name"],
-                    "t_h": t,
+                    "source": "synthetic",
+                    "series": sc["name"],
+                    "t": t,
                     "snowfall_kg_m2_h": w.snowfall_kg_m2,
                     "rain_mm_h": w.rain_mm,
                     "temperature_c": w.temperature_c,
                 }
             )
         )
-    ax[0].set(ylabel="Snowfall (kg m$^{-2}$ h$^{-1}$)")
-    ax[0].legend(frameon=False, fontsize=6)
-    ax[1].axhline(0, color="0.6", lw=0.5)
-    ax[1].set(xlabel="Time (h)", ylabel="Air temperature (°C)")
+    ax[0, 0].set(ylabel="Snowfall (kg m$^{-2}$ h$^{-1}$)", title="(a) Synthetic snowfall")
+    ax[0, 0].legend(frameon=False, fontsize=6)
+    ax[1, 0].axhline(0, color="0.6", lw=0.5)
+    ax[1, 0].set(ylabel="Air temperature (°C)", title="(b) Synthetic temperature")
+    ax[2, 0].set(xlabel="Time (h)", ylabel="Rain (mm h$^{-1}$)", title="(c) Synthetic rain")
+    names = {st["id"]: st["name"] for st in cfg["jma"]["stations"]}
+    cols = dict(zip(names, plt.rcParams["axes.prop_cycle"].by_key()["color"], strict=False))
+    j = pd.read_csv("data/processed/jma_daily_observations.csv", parse_dates=["date"])
+    for (st, wi), g in j.groupby(["station_id", "winter"]):
+        g = g.sort_values("date")
+        d = (g.date - pd.Timestamp(f"{wi}-11-01")).dt.days
+        lab = names.get(st, st) if wi == j[j.station_id == st].winter.min() else None
+        ax[0, 1].plot(d, g.mean_temperature_c, lw=0.4, color=cols.get(st), alpha=0.8, label=lab)
+        ax[1, 1].plot(d, g.precipitation_mm, lw=0.4, color=cols.get(st), alpha=0.8)
+        ax[2, 1].plot(d, g.precipitation_mm.cumsum(), lw=0.7, color=cols.get(st))
+        rows.append(
+            pd.DataFrame(
+                {
+                    "source": "jma",
+                    "series": f"{st}_{wi}",
+                    "t": d.to_numpy(),
+                    "precipitation_mm_d": g.precipitation_mm.to_numpy(),
+                    "temperature_c": g.mean_temperature_c.to_numpy(),
+                }
+            )
+        )
+    ax[0, 1].axhline(0, color="0.6", lw=0.5)
+    ax[0, 1].set(ylabel="Daily mean temperature (°C)", title="(d) JMA temperature")
+    ax[0, 1].legend(frameon=False, fontsize=6)
+    ax[1, 1].set(ylabel="Precipitation (mm d$^{-1}$)", title="(e) JMA daily precipitation")
+    ax[2, 1].set(
+        xlabel="Days from 1 November",
+        ylabel="Cumulative (mm)",
+        title="(f) JMA cumulative precipitation",
+    )
+    fig.tight_layout()
     save(fig, "figure_2_synthetic_forcing", pd.concat(rows))
 
 
