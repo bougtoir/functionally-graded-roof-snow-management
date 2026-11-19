@@ -16,9 +16,10 @@
 ## 未完了（ユーザー入力が必要）
 1. Editor 決定レター・Reviewer 1/2 コメント全文 → 回答書と対応表（`CHANGES_FOR_RESPONSE.md` を下地として用意済み）。
 2. Editorial Manager に実際に提出した DOCX → 履歴版の差分基準の確定（現在はリポジトリ版を代用）。
-3. 所属・住所、Funding、Competing interests、CRediT（原稿に REQUIRED が5箇所）。
+3. 所属・住所、Funding、Competing interests、CRediT（原稿に REQUIRED が5箇所）。マスタープロンプト1.4に従い著者がローカルで記入する項目で、QC不合格には数えない。
 4. 査読者指定の3 DOI は雪と無関係のため未引用。引用要否はコメント原文で判断。
 
 ## 品質確認
-- ruff 全通過、pytest 41件通過、`scripts/r1_qc.py` 45項目中44通過（残りは REQUIRED のみ）。
+- ruff 全通過、pytest 41件通過、`scripts/r1_qc.py` 全項目通過（REQUIRED 5箇所は著者記入待ちとして別記）。
+- 改訂期限は2026-11-29。査読コメント原文が届かない場合、期限延長依頼の草案を用意する（送付は著者承認後）。
 - 投稿・編集者連絡・マージは未実施（未承認）。

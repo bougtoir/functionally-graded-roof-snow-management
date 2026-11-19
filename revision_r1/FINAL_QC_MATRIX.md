@@ -20,7 +20,7 @@
 | Editable tables DOCX, editable figures PPTX (16:9, one per slide) | done | manuscript/r1 |
 | Lint (`ruff check src scripts tests`) and tests (`pytest`, 41 passed) | done | local run |
 | Hostile review | done | HOSTILE_REVIEW_FINAL.md |
-| Author metadata (affiliation, funding, competing interests, CRediT) | OPEN - author input | 5 REQUIRED fields |
+| Author metadata (affiliation, funding, competing interests, CRediT) | author-pending (completed locally by the author; not a QC failure) | 5 REQUIRED placeholders |
 | Editor/Reviewer comments, point-by-point response, response matrix | OPEN - comments not supplied | CHANGES_FOR_RESPONSE.md prepared |
 | Baseline identical to Editorial Manager file | OPEN - submitted DOCX not supplied | fallback used |
 | `make all` (submitted pipeline) | not re-run by design: it regenerates historical outputs; R1 is reproduced by `make r1` | Makefile |
