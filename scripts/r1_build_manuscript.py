@@ -127,14 +127,14 @@ def table(doc, frame, caption):
         _runs(t.rows[0].cells[i].paragraphs[0], str(c))
         for r in t.rows[0].cells[i].paragraphs[0].runs:
             r.bold = True
-            r.font.size = Pt(7)
+            r.font.size = Pt(9)
     for row in frame.itertuples(index=False):
         cells = t.add_row().cells
         for i, x in enumerate(row):
             cells[i].text = ""
             _runs(cells[i].paragraphs[0], str(x))
             for r in cells[i].paragraphs[0].runs:
-                r.font.size = Pt(7)
+                r.font.size = Pt(9)
 
 
 FIGS = [
@@ -236,10 +236,14 @@ def build(path: Path) -> dict:
 
     doc = Document()
     st = doc.styles
-    st["Normal"].font.name = "Arial"
-    st["Normal"].font.size = Pt(10)
+    from docx.shared import RGBColor
+
+    st["Normal"].font.name = "Times New Roman"
+    st["Normal"].font.size = Pt(12)
+    st["Normal"].font.color.rgb = RGBColor(0, 0, 0)
     for s in ("Title", "Heading 1", "Heading 2", "Heading 3"):
-        st[s].font.name = "Arial"
+        st[s].font.name = "Times New Roman"
+        st[s].font.color.rgb = RGBColor(0, 0, 0)
     _add_line_numbering(doc)
     meta = yaml.safe_load(open("manuscript/author_metadata.yaml"))
     p = doc.add_paragraph(style="Title")
@@ -935,6 +939,10 @@ def build(path: Path) -> dict:
     for cap in caps:
         para(doc, cap)
     place_inline(doc, caps)
+    for cp in doc.paragraphs:
+        if re.match(r"(Figure|Table) \d+\.", cp.text):
+            for r in cp.runs:
+                r.font.size = Pt(10)
     OUT.mkdir(parents=True, exist_ok=True)
     doc.save(path)
     return {"refs": ref.order}
