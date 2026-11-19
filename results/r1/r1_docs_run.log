@@ -1,7 +1,7 @@
 ./.venv/bin/python scripts/r1_build_manuscript.py
 {"refs": ["JPR04", "JPR01", "JPR02", "JPR05", "JPR03", "JP02", "JP03", "JP01", "JP10", "JP09", "CRST01", "CRST02", "CRST03", "CRST04", "CRST05", "CRST06", "CRST08", "CRST09", "JP08", "CRST11", "JP05", "JP06", "CRST12", "JP04", "JP07", "CRST10", "CRST07", "WANG26", "ZHANG26", "JPR06", "LIU26"]}
 ./.venv/bin/python scripts/r1_package.py
-{'equal': 10, 'word_marked': 26, 'replaced': 5, 'inserted': 86, 'deleted': 56}
+{'equal': 10, 'word_marked': 26, 'replaced': 5, 'inserted': 87, 'deleted': 56}
 ./.venv/bin/python scripts/r1_reference_audit.py manuscript/r1/manuscript_R1_clean.docx revision_r1/REFERENCE_AUDIT_R1.csv
     number record_id                                                identifier  cited_in_text                                               crossref_record  crossref_title_match  order_of_first_appearance_ok
 0        1     JPR04                                           337AC1000000073           True                                                                no stored DOI record                          True

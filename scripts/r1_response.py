@@ -109,7 +109,9 @@ def values() -> dict:
     wx = pd.read_csv(R / "weather/synthetic_summary.csv").set_index("scenario")
     jp = pd.read_csv("revision_r1/JAPAN_SNOW_POPULATION_EVIDENCE.csv").set_index("item")
     roof, surf = cfg["roof"], cfg["surface"]
+    exs = json.loads((R / "review/exception_summary.json").read_text())
     return {
+        "exc_fail": str(exs["pairs_failing_any_metric"]),
         "conv_pairs": f"{int(conv.pairs.max()):,}",
         "s_agree_1h": pct(c1["s_event_max_kg_per_m__agree_frac"]),
         "max_abs": f0(c1["s_event_max_kg_per_m__max_abs"]),
@@ -211,7 +213,7 @@ def main() -> None:
     )
     para(
         doc,
-        "Reviewer comments are reproduced verbatim in italics, followed by our response. Section, equation, figure and table numbers refer to "
+        "Reviewer comments are reproduced verbatim in italics, followed by my response. Section, equation, figure and table numbers refer to "
         "the revised manuscript; a marked-up version against the submitted file is supplied.",
     )
     doc.add_heading("Editor", 1)

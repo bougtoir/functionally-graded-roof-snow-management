@@ -255,9 +255,9 @@ def build(path: Path) -> dict:
     doc.add_heading("Abstract", 1)
     para(
         doc,
-        f"In Japan's heavy-snowfall areas, about {jp.loc[8, 'value']}% of snow-related deaths occur during snow removal, while roofs that shed snow "
+        f"In Japan's heavy-snowfall areas, {jp.loc[8, 'value']}% of snow-related deaths occur during snow removal, while roofs that shed snow "
         "create eave-release hazards; roof designs between full retention and full shedding have not been examined under explicit constructability "
-        "limits. We asked whether spatial grading of slope and surface class along a constructable roof creates retention-release trade-offs that "
+        "limits. I asked whether spatial grading of slope and surface class along a constructable roof creates retention-release trade-offs that "
         "uniform roofs cannot provide. A reduced-order ridge-to-eave model with Coulomb-adhesion failure, exact threshold-crossing times and "
         "work-energy runout was forced by three synthetic winters. Release hazard was quantified by a pre-specified physical event metric, the "
         "largest integrated eave-release mass per event (S_{event,max}), replacing a per-timestep metric that halved whenever the timestep halved; "
@@ -265,7 +265,7 @@ def build(path: Path) -> dict:
         f"encoding, and graded searches were compared with all {len(pd.read_csv(R / 'optimization/uniform_constructable_evaluated.csv'))} "
         f"constructable uniform roofs. In the model, uniform roofs either shed nearly all snow (maximum retained mass L_{{max}} up to {f1(lo)} "
         f"kg m^{{-1}}) or retained all of it ({f0(hi)} kg m^{{-1}}). Graded roofs added {int(gj.pairs_in_uniform_gap)} nondominated intermediate "
-        f"combinations (S_{{event,max}} {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}}), found in all {len(seeds)} optimisation runs, but changed "
+        f"combinations (S_{{event,max}} {f1(gj.S_min)}-{f1(gj.S_max)} kg m^{{-1}}), reproduced in all {len(seeds)} runs and at dt = 0.0625 h, but changed "
         f"normalised hypervolume only from {fs.loc['uniform', 'hv_max_x1.1']:.3f} to {fs.loc['joint', 'hv_max_x1.1']:.3f}. Under parameter and "
         "forcing uncertainty these intermediate options persisted, but their 95th-percentile releases were an order of magnitude larger than "
         "nominal. These model-derived results identify spatial grading as a configurable means of intermediate retention rather than a general "
@@ -281,7 +281,7 @@ def build(path: Path) -> dict:
         f"Heavy snowfall shapes building practice across much of Japan. Under the Act on Special Measures for Heavy Snowfall Areas {c('JPR04')}, "
         f"{jp.loc[1, 'value']} municipalities are designated heavy-snowfall areas, covering {jp.loc[3, 'value']}% of the national land and "
         f"{pop_m} million people, about {pop_pct}% of the national population {c('JPR01')}. Snow-related deaths numbered {jp.loc[7, 'value']} in the "
-        f"FY2023 winter; over the preceding decade about {jp.loc[8, 'value']}% occurred during snow removal and about {jp.loc[9, 'value']}% "
+        f"FY2023 winter; over the preceding decade {jp.loc[8, 'value']}% occurred during snow removal and {jp.loc[9, 'value']}% "
         f"of those victims were aged 65 or older, with falls from roofs and falling roof snow among the dominant accident types {c('JPR02')}. "
         f"Annual snowfall normals reach {jp.loc[11, 'value']} cm in Sapporo and {jp.loc[12, 'value']} cm in Aomori {c('JPR05')}. "
         "Reducing the need to climb roofs and the hazard of uncontrolled releases is therefore both a structural and a public-safety problem.",
@@ -317,12 +317,12 @@ def build(path: Path) -> dict:
     )
     para(
         doc,
-        "We use the term functionally graded roof, borrowed from materials whose properties vary with position, for a roof whose slope or surface "
+        "I use the term functionally graded roof, borrowed from materials whose properties vary with position, for a roof whose slope or surface "
         "properties vary deliberately from ridge to eave. Practical realisations are piecewise: multi-pitch or curved profiles assembled from "
         "segments of constant pitch, and zones of different roofing finish, for example smooth coated steel that promotes sliding and rough or aged "
         f"finishes or snow-stop elements that promote retention {c('JP04', 'JP05', 'JP06')}. Such roofs are passive: unlike roof heating and "
         f"snow-melting systems, which clear snow at a continuing energy and operating cost {c('JP07', 'CRST10')}, they need no energy in operation. "
-        "Whether varying slope and surface along a single roof can place it between the retention and shedding extremes has not, to our knowledge, "
+        "Whether varying slope and surface along a single roof can place it between the retention and shedding extremes has not, to my knowledge, "
         "been examined under explicit constructability limits.",
     )
     para(
@@ -509,7 +509,8 @@ def build(path: Path) -> dict:
         "and 0.0625 h (reference) with 24 cells, and at 48 and 96 cells "
         f"({int(conv.pairs.max())} unique design-winter pairs). A timestep was acceptable if at least 95% of pairs agreed with the "
         "reference within max(2%, 1 kg m^{-1}) for L_{max}, S_{event,max}, S_{1h,max} and total release, at least 90% had event counts within one, "
-        "and mass-balance error was below 10^{-6} kg m^{-1}; the coarsest acceptable step was used. All final nondominated designs were then "
+        "and mass-balance error was below 10^{-6} kg m^{-1}; the coarsest acceptable step was used. The criterion is an aggregate one: a passing timestep "
+        "may still contain individual pairs outside tolerance, which are reported. All final nondominated designs were then "
         "re-evaluated at 0.0625 h and at 48 cells.",
     )
     doc.add_heading("2.5 Constructable optimisation", 2)
@@ -590,6 +591,16 @@ def build(path: Path) -> dict:
         f"The largest deviations (up to {f0(c24.loc[1.0, 's_event_max_kg_per_m__max_abs'])} kg m^{{-1}}) occurred for designs near a failure threshold. "
         f"Spatial refinement to 48 and 96 cells changed S_{{event,max}} by a 95th-percentile relative amount of "
         f"{pct(conv[(conv.cells == 96)].s_event_max_kg_per_m__p95_rel.iloc[0], 2)}. Mass-balance error was below 10^{{-6}} kg m^{{-1}} in every run.",
+    )
+    exs = json.loads((R / "review/exception_summary.json").read_text())
+    para(
+        doc,
+        f"At dt = 1 h, {exs['pairs_failing_any_metric']} of {exs['pairs_compared']} pairs failed at least one metric; "
+        f"{exs['failing_designs_on_uniform_front']} of the failing designs lie on the uniform front, {exs['failing_designs_on_combined_front']} on the combined front "
+        f"and {exs['failing_designs_graded_in_gap']} among the graded designs inside the uniform gap. Rebuilding the fronts entirely from dt = 0.0625 h objectives "
+        f"gave the same {exs['gap_fine_dt0.0625']['graded_pairs_in_gap']} graded pairs inside a uniform gap of {f1(exs['gap_fine_dt0.0625']['uniform_gap_lo'])}-"
+        f"{f0(exs['gap_fine_dt0.0625']['uniform_gap_hi'])} kg m^{{-1}}. The largest deviation was a rough 28-degree uniform roof that is held by static friction and "
+        "fails only while the near-melt friction reduction is active, so its release depends on how finely that short window is resolved.",
     )
     doc.add_heading("3.2 Uniform reference", 2)
     fu = v["fu"]
